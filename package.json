@@ -1,0 +1,11 @@
+{
+  "name": "upkeep-release-tooling",
+  "private": true,
+  "description": "Not a Node package — this file exists only to run semantic-release for versioning/changelog automation. Upkeep itself is a .NET/WinUI3 app.",
+  "devDependencies": {
+    "semantic-release": "25.0.9",
+    "@semantic-release/changelog": "6.0.3",
+    "@semantic-release/exec": "7.1.0",
+    "@semantic-release/git": "10.0.1"
+  }
+}

@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <!-- Dotify's C# standard mandates underscore-separated test names (Method_Scenario_Result);
+         CA1707 rejects underscores in member names. That rule protects public API surface, not
+         test identifiers, so it's suppressed here rather than renaming away from the standard. -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <!-- MSBuild-integration coverage collector, not the VSTest coverlet.collector above — this
+         one supports failing the build itself via /p:Threshold, which CI uses to enforce
+         CLAUDE.md's 80% branch-coverage bar on this project specifically (the UI project is
+         exempt from that bar, so this package is scoped to Core.Tests only). -->
+    <PackageReference Include="coverlet.msbuild" Version="6.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Upkeep.App.Core\Upkeep.App.Core.csproj" />
+  </ItemGroup>
+
+</Project>

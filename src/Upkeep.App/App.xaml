@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Application
+    x:Class="Upkeep.App.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Upkeep.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--
+                Design tokens (docs/design-tokens.md) — inlined here rather than in a separate
+                merged ResourceDictionary file: a standalone ResourceDictionary-rooted .xaml file
+                trips a cryptic WMC9999 compiler error in this environment (see CLAUDE.md).
+                Application-rooted files are unaffected.
+            -->
+
+            <!-- Primary (brand red) -->
+            <Color x:Key="Primary50Color">#FFFEF2F2</Color>
+            <Color x:Key="Primary100Color">#FFFEE2E2</Color>
+            <Color x:Key="Primary400Color">#FFE45A5C</Color>
+            <Color x:Key="Primary500Color">#FFD42A2C</Color>
+            <Color x:Key="Primary600Color">#FFB41618</Color>
+            <Color x:Key="Primary700Color">#FF971214</Color>
+            <Color x:Key="Primary800Color">#FF7D1012</Color>
+            <Color x:Key="Primary900Color">#FF6B1113</Color>
+            <SolidColorBrush x:Key="Primary50Brush" Color="{StaticResource Primary50Color}" />
+            <SolidColorBrush x:Key="Primary100Brush" Color="{StaticResource Primary100Color}" />
+            <SolidColorBrush x:Key="Primary600Brush" Color="{StaticResource Primary600Color}" />
+            <SolidColorBrush x:Key="Primary700Brush" Color="{StaticResource Primary700Color}" />
+
+            <!-- Secondary (navy) — data visualization, informational surfaces, links -->
+            <Color x:Key="Secondary50Color">#FFEEEEF8</Color>
+            <Color x:Key="Secondary100Color">#FFD9D9EF</Color>
+            <Color x:Key="Secondary200Color">#FFB8B7E0</Color>
+            <Color x:Key="Secondary300Color">#FF9695CF</Color>
+            <Color x:Key="Secondary400Color">#FF6E6CB8</Color>
+            <Color x:Key="Secondary600Color">#FF211F60</Color>
+            <SolidColorBrush x:Key="Secondary50Brush" Color="{StaticResource Secondary50Color}" />
+            <SolidColorBrush x:Key="Secondary100Brush" Color="{StaticResource Secondary100Color}" />
+            <SolidColorBrush x:Key="Secondary200Brush" Color="{StaticResource Secondary200Color}" />
+            <SolidColorBrush x:Key="Secondary300Brush" Color="{StaticResource Secondary300Color}" />
+            <SolidColorBrush x:Key="Secondary400Brush" Color="{StaticResource Secondary400Color}" />
+            <SolidColorBrush x:Key="Secondary600Brush" Color="{StaticResource Secondary600Color}" />
+
+            <!-- Neutrals (Tailwind gray scale) -->
+            <Color x:Key="Gray50Color">#FFF9FAFB</Color>
+            <Color x:Key="Gray100Color">#FFF3F4F6</Color>
+            <Color x:Key="Gray200Color">#FFE5E7EB</Color>
+            <Color x:Key="Gray400Color">#FF9CA3AF</Color>
+            <Color x:Key="Gray500Color">#FF6B7280</Color>
+            <Color x:Key="Gray700Color">#FF374151</Color>
+            <Color x:Key="Gray900Color">#FF111827</Color>
+            <SolidColorBrush x:Key="Gray50Brush" Color="{StaticResource Gray50Color}" />
+            <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100Color}" />
+            <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200Color}" />
+            <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400Color}" />
+            <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500Color}" />
+            <SolidColorBrush x:Key="Gray700Brush" Color="{StaticResource Gray700Color}" />
+            <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900Color}" />
+
+            <!-- Semantic (state, never the brand accent) -->
+            <Color x:Key="SuccessColor">#FF16A34A</Color>
+            <Color x:Key="WarningColor">#FFF59E0B</Color>
+            <Color x:Key="WarningSurfaceColor">#FFFEF3C7</Color>
+            <Color x:Key="WarningTextColor">#FF92400E</Color>
+            <Color x:Key="DangerColor">#FFEF4444</Color>
+            <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+            <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
+            <SolidColorBrush x:Key="WarningSurfaceBrush" Color="{StaticResource WarningSurfaceColor}" />
+            <SolidColorBrush x:Key="WarningTextBrush" Color="{StaticResource WarningTextColor}" />
+            <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+
+            <!--
+                Accent override (docs/design-tokens.md): native selection — the NavigationView
+                marker, CheckBox, ToggleSwitch, RadioButton, SelectorBar — follows the brand red
+                instead of the user's Windows accent. Upkeep is a selection-heavy app; on the
+                system accent every screen was dominated by a color that isn't Dotify's.
+            -->
+            <Color x:Key="SystemAccentColor">#FFB41618</Color>
+            <Color x:Key="SystemAccentColorLight1">#FFD42A2C</Color>
+            <Color x:Key="SystemAccentColorLight2">#FFE45A5C</Color>
+            <Color x:Key="SystemAccentColorLight3">#FFF9A8A8</Color>
+            <Color x:Key="SystemAccentColorDark1">#FF971214</Color>
+            <Color x:Key="SystemAccentColorDark2">#FF7D1012</Color>
+            <Color x:Key="SystemAccentColorDark3">#FF6B1113</Color>
+            <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="#FFB41618" />
+            <SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="#E6B41618" />
+            <SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="#CCB41618" />
+            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="#FFB41618" />
+
+            <!--
+                Typography. Montserrat is Dotify's brand face, bundled under Assets/Fonts (SIL
+                Open Font License) and used for headings and the wordmark only; everything else
+                stays on Segoe UI Variable so the app reads as native Windows.
+            -->
+            <FontFamily x:Key="BrandFontFamily">ms-appx:///Assets/Fonts/Montserrat.ttf#Montserrat</FontFamily>
+            <FontFamily x:Key="UiFontFamily">Segoe UI Variable Text, Segoe UI</FontFamily>
+
+            <!-- Type scale (px size), docs/design-tokens.md -->
+            <x:Double x:Key="FontSizeXs">12</x:Double>
+            <x:Double x:Key="FontSizeSm">14</x:Double>
+            <x:Double x:Key="FontSizeBase">16</x:Double>
+            <x:Double x:Key="FontSizeLg">18</x:Double>
+            <x:Double x:Key="FontSizeXl">20</x:Double>
+            <x:Double x:Key="FontSize2xl">24</x:Double>
+            <x:Double x:Key="FontSize3xl">30</x:Double>
+
+            <Style x:Key="PageTitleTextStyle" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource BrandFontFamily}" />
+                <Setter Property="FontSize" Value="{StaticResource FontSize2xl}" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Foreground" Value="{StaticResource Gray900Brush}" />
+            </Style>
+
+            <Style x:Key="PageSubtitleTextStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="{StaticResource FontSizeSm}" />
+                <Setter Property="Foreground" Value="{StaticResource Gray500Brush}" />
+                <Setter Property="TextWrapping" Value="Wrap" />
+            </Style>
+
+            <Style x:Key="SectionLabelTextStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="{StaticResource FontSizeSm}" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Foreground" Value="{StaticResource Gray900Brush}" />
+            </Style>
+
+            <Style x:Key="BodyTextStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="{StaticResource FontSizeSm}" />
+                <Setter Property="Foreground" Value="{StaticResource Gray700Brush}" />
+            </Style>
+
+            <Style x:Key="CaptionTextStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="{StaticResource FontSizeXs}" />
+                <Setter Property="Foreground" Value="{StaticResource Gray500Brush}" />
+                <Setter Property="TextWrapping" Value="Wrap" />
+            </Style>
+
+            <Style x:Key="CardBorderStyle" TargetType="Border">
+                <Setter Property="Background" Value="White" />
+                <Setter Property="BorderBrush" Value="{StaticResource Gray200Brush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="Padding" Value="24" />
+            </Style>
+
+            <!--
+                Every primary (red, call-to-action) button repeats the same resting-state setters.
+                A Style can't set FrameworkElement.Resources via a Setter (WMC0095), so each
+                instance that needs hover/pressed overrides repeats them in its own
+                Button.Resources block — same limitation Pulsemap documented.
+            -->
+            <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource Primary600Brush}" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="Padding" Value="16,10" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

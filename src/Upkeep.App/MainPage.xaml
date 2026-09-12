@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="Upkeep.App.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Upkeep.App"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <!--
+        The rail is the only way between sections. Pages reached from inside a section (a results
+        view, a comparison) keep their own Back affordance, and the shell back button below covers
+        the case where the rail's current item is already selected — clicking it again fires
+        ItemInvoked but not SelectionChanged, which is a dead end if only the latter is handled.
+    -->
+    <NavigationView
+        x:Name="Nav"
+        IsBackButtonVisible="Visible"
+        IsBackEnabled="False"
+        IsSettingsVisible="False"
+        SelectionChanged="Nav_SelectionChanged"
+        ItemInvoked="Nav_ItemInvoked"
+        BackRequested="Nav_BackRequested"
+        PaneDisplayMode="Left">
+
+        <NavigationView.MenuItems>
+            <NavigationViewItem x:Uid="NavHome" Tag="Home" IsSelected="True">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE80F;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem x:Uid="NavCleanup" Tag="Cleanup">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE75C;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem x:Uid="NavFiles" Tag="Files">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE8B7;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem x:Uid="NavApps" Tag="Apps">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE71D;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem x:Uid="NavStartup" Tag="Startup">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE9D9;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem x:Uid="NavDrivers" Tag="Drivers">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE895;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem x:Uid="NavHistory" Tag="History">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE81C;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem x:Uid="NavSettings" Tag="Settings">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE713;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+        </NavigationView.MenuItems>
+
+        <!--
+            Content pages are solid light cards per docs/design-tokens.md — Mica shows through the
+            title bar and this pane only, never through content. Forcing Light keeps native control
+            foregrounds legible against those explicit white surfaces whatever the system theme is.
+        -->
+        <Frame x:Name="ContentFrame" RequestedTheme="Light" />
+    </NavigationView>
+</Page>

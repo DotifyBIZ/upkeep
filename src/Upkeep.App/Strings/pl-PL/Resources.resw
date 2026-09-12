@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Pasek nawigacji -->
+  <data name="NavHome.Content">
+    <value>Start</value>
+  </data>
+  <data name="NavCleanup.Content">
+    <value>Oczyszczanie</value>
+  </data>
+  <data name="NavFiles.Content">
+    <value>Pliki</value>
+  </data>
+  <data name="NavApps.Content">
+    <value>Aplikacje</value>
+  </data>
+  <data name="NavStartup.Content">
+    <value>Autostart i wydajność</value>
+  </data>
+  <data name="NavDrivers.Content">
+    <value>Sterowniki i aktualizacje</value>
+  </data>
+  <data name="NavHistory.Content">
+    <value>Historia</value>
+  </data>
+  <data name="NavSettings.Content">
+    <value>Ustawienia</value>
+  </data>
+
+  <!-- Start -->
+  <data name="HomeSubtitle.Text">
+    <value>Oczyść, dostrój, utrzymaj — wszystko działa na tym komputerze i nic go nie opuszcza.</value>
+  </data>
+  <data name="HomeScanButtonLabel.Text">
+    <value>Skanuj ten komputer</value>
+  </data>
+  <data name="HomeDrivesHeader.Text">
+    <value>Dyski</value>
+  </data>
+  <data name="HomeRecentSessionsHeader.Text">
+    <value>Ostatnie sesje</value>
+  </data>
+  <data name="HomeNoSessionsMessage.Text">
+    <value>Nic jeszcze nie zrobiono. Skanowanie pokazuje, co Upkeep by zmienił, zanim cokolwiek zmieni.</value>
+  </data>
+  <data name="HomeUpdateActionButton.Content">
+    <value>Zobacz wydanie</value>
+  </data>
+
+  <!-- Start, teksty budowane w kodzie -->
+  <data name="HomeGreetingMorning">
+    <value>Dzień dobry</value>
+  </data>
+  <data name="HomeGreetingAfternoon">
+    <value>Dzień dobry</value>
+  </data>
+  <data name="HomeGreetingEvening">
+    <value>Dobry wieczór</value>
+  </data>
+  <data name="HomeGreetingNight">
+    <value>Witaj</value>
+  </data>
+  <data name="HomeUpdateAvailableFormat">
+    <value>Dostępny jest Upkeep {0}.</value>
+  </data>
+  <data name="DriveFreeOfTotalFormat">
+    <value>{0} wolne z {1}</value>
+  </data>
+
+  <!-- Oczyszczanie -->
+  <data name="CleanupTitle.Text">
+    <value>Oczyszczanie</value>
+  </data>
+  <data name="CleanupSubtitle.Text">
+    <value>Pliki tymczasowe i pamięć podręczna, które Windows i aplikacje odtwarzają same.</value>
+  </data>
+  <data name="CleanupNotScannedMessage.Text">
+    <value>Nic jeszcze nie zostało przeskanowane. Skanowanie tylko sprawdza — zobaczysz każdy element i jego rozmiar, zanim cokolwiek zostanie usunięte.</value>
+  </data>
+  <data name="CleanupScanButtonLabel.Text">
+    <value>Skanuj</value>
+  </data>
+
+  <!-- Kategorie do wyczyszczenia. Każdy opis mówi, co się traci, a nie tylko czym to jest. -->
+  <data name="JunkCategoryUserTempName">
+    <value>Pliki tymczasowe</value>
+  </data>
+  <data name="JunkCategoryUserTempDescription">
+    <value>%TEMP% · pliki używane w ciągu ostatnich 24 godzin są pomijane</value>
+  </data>
+  <data name="JunkCategoryBrowserCacheName">
+    <value>Pamięć podręczna przeglądarek</value>
+  </data>
+  <data name="JunkCategoryBrowserCacheDescription">
+    <value>Tylko zapisane strony i obrazy — nigdy historia, pliki cookie ani zapisane logowania</value>
+  </data>
+  <data name="JunkCategoryThumbnailCacheName">
+    <value>Pamięć podręczna miniatur</value>
+  </data>
+  <data name="JunkCategoryThumbnailCacheDescription">
+    <value>Eksplorator plików odtwarza ją podczas przeglądania</value>
+  </data>
+  <data name="JunkCategoryShaderCacheName">
+    <value>Pamięć podręczna shaderów DirectX</value>
+  </data>
+  <data name="JunkCategoryShaderCacheDescription">
+    <value>Gry i aplikacje odtwarzają ją przy następnym uruchomieniu</value>
+  </data>
+  <data name="JunkCategoryUserCrashDumpsName">
+    <value>Zrzuty awarii i raporty błędów</value>
+  </data>
+  <data name="JunkCategoryUserCrashDumpsDescription">
+    <value>Pliki raportowania błędów systemu Windows dla Twojego konta</value>
+  </data>
+  <data name="JunkCategoryRecycleBinName">
+    <value>Kosz</value>
+  </data>
+  <data name="JunkCategoryRecycleBinDescription">
+    <value>Wszystko, co usunięto i czego jeszcze nie przywrócono</value>
+  </data>
+  <data name="JunkCategoryWindowsTempName">
+    <value>Pliki tymczasowe systemu Windows</value>
+  </data>
+  <data name="JunkCategoryWindowsTempDescription">
+    <value>Systemowy folder tymczasowy, wspólny dla wszystkich kont na tym komputerze</value>
+  </data>
+  <data name="JunkCategoryOtherUsersTempName">
+    <value>Pliki tymczasowe innych użytkowników</value>
+  </data>
+  <data name="JunkCategoryOtherUsersTempDescription">
+    <value>Foldery tymczasowe pozostałych kont na tym komputerze</value>
+  </data>
+  <data name="JunkCategoryWindowsUpdateCleanupName">
+    <value>Oczyszczanie usługi Windows Update</value>
+  </data>
+  <data name="JunkCategoryWindowsUpdateCleanupDescription">
+    <value>Zastąpione składniki aktualizacji, usuwane przez sam Windows — zainstalowanych aktualizacji nie będzie już można odinstalować</value>
+  </data>
+  <data name="JunkCategoryDeliveryOptimizationName">
+    <value>Pamięć podręczna optymalizacji dostarczania</value>
+  </data>
+  <data name="JunkCategoryDeliveryOptimizationDescription">
+    <value>Fragmenty aktualizacji, które ten komputer udostępnia innym w sieci</value>
+  </data>
+  <data name="JunkCategorySystemCrashDumpsName">
+    <value>Systemowe zrzuty awarii</value>
+  </data>
+  <data name="JunkCategorySystemCrashDumpsDescription">
+    <value>Zrzuty pamięci i raporty jądra po awariach systemu</value>
+  </data>
+
+  <!-- Uwagi ze skanowania -->
+  <data name="JunkNoteBrowserRunningFormat">
+    <value>{0} jest uruchomiona — zamknij ją i zeskanuj ponownie, aby uwzględnić jej pamięć podręczną.</value>
+  </data>
+  <data name="JunkNoteSizeKnownAfterCleanup">
+    <value>Windows poda rozmiar dopiero po wykonaniu oczyszczania.</value>
+  </data>
+  <data name="JunkNoteNeedsElevation">
+    <value>Zmierzenie wymaga zgody administratora.</value>
+  </data>
+  <data name="JunkNotePartiallyUnreadableFormat">
+    <value>Nie udało się odczytać {0} elementów i zostały pominięte.</value>
+  </data>
+
+  <!-- Wspólne -->
+  <data name="CommonAdminApprovalTag">
+    <value>Zgoda administratora</value>
+  </data>
+  <data name="CommonCannotBeUndoneTag">
+    <value>Nie można cofnąć</value>
+  </data>
+  <data name="CommonElevationDeclined">
+    <value>Odmówiono zgody administratora, więc elementy systemowe zostały pominięte.</value>
+  </data>
+</root>

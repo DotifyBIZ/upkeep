@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    # Upkeep.App is a WinUI3/Windows App SDK project — the solution can only build on Windows.
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+
+      - name: Restore (locked mode — fails if packages.lock.json is out of sync)
+        run: dotnet restore Upkeep.sln --locked-mode
+
+      - name: Verify formatting
+        run: dotnet format Upkeep.sln --verify-no-changes --no-restore
+
+      - name: Build (Release)
+        run: dotnet build Upkeep.sln --configuration Release --no-restore
+
+      # CLAUDE.md mandates 80% branch coverage on Upkeep.App.Core specifically - UI projects are
+      # exempt - so coverage/threshold enforcement is scoped to just this project's test run
+      # rather than applied blanket across the solution.
+      - name: Test Upkeep.App.Core (Release, 80% branch coverage gate)
+        run: >
+          dotnet test tests/Upkeep.App.Core.Tests/Upkeep.App.Core.Tests.csproj
+          --configuration Release --no-build
+          -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura
+          -p:CoverletOutput=../../TestResults/
+          -p:Threshold=80 -p:ThresholdType=branch -p:ThresholdStat=total
+
+      - name: Test Upkeep.App (Release)
+        run: dotnet test tests/Upkeep.App.Tests/Upkeep.App.Tests.csproj --configuration Release --no-build
+
+      - name: Upload coverage results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-results
+          path: TestResults/
+          retention-days: 14

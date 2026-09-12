@@ -1,0 +1,72 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.22000.0</TargetPlatformMinVersion>
+    <RootNamespace>Upkeep.App</RootNamespace>
+    <!-- CommunityToolkit.Mvvm's partial-property [ObservableProperty] pattern (required for
+         AOT-safe WinRT/x:Bind marshalling, MVVMTK0045) needs the C# "field" keyword, which is
+         preview-only on the .NET 9 SDK (stabilizes in C# 14/.NET 10). Scoped to this project. -->
+    <LangVersion>preview</LangVersion>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</RuntimeIdentifier>
+    <PublishProfile Condition="Exists('Properties\PublishProfiles\win-$(Platform).pubxml')">win-$(Platform).pubxml</PublishProfile>
+    <UseWinUI>true</UseWinUI>
+    <!-- Needed for resources.pri generation (the .resw files) even though nothing here is MSIX. -->
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Unpackaged distribution — see docs/adr/0002-installer-innosetup-over-msix.md -->
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
+    <!-- Program.cs owns Main: the same executable runs as the WinUI shell or, with
+         an elevated-helper switch, as the elevated helper process, which never initializes WinUI.
+         See docs/adr/0005-elevated-helper-named-pipe.md. -->
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\AppIcon.ico" />
+    <Content Include="Assets\Logo.png" />
+    <Content Include="Assets\Fonts\*.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+
+  <!--
+    The .resw files are already compiled into resources.pri for XAML's x:Uid. They are ALSO
+    embedded so LocalizationService can read the same translations for strings built in code —
+    every WinRT resource-lookup API needs package identity this unpackaged app doesn't have
+    (CLAUDE.md). One source of translations, two readers.
+  -->
+  <ItemGroup>
+    <EmbeddedResource Include="Strings\en-US\Resources.resw" LogicalName="Upkeep.App.Strings.en-US.Resources.resw" />
+    <EmbeddedResource Include="Strings\pl-PL\Resources.resw" LogicalName="Upkeep.App.Strings.pl-PL.Resources.resw" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Upkeep.App.Core\Upkeep.App.Core.csproj" />
+  </ItemGroup>
+
+  <!-- Publish properties -->
+  <PropertyGroup>
+    <!-- Not trimming: the self-contained output folder is wrapped by InnoSetup (ADR-0002), not a
+         single trimmed EXE, and Microsoft's own WinRT interop assemblies aren't trim-clean, which
+         trips TreatWarningsAsErrors. ReadyToRun off for the same reason Pulsemap turned it off:
+         the crossgen runtime pack isn't in the lockfile and CI's locked restore fails (NETSDK1094). -->
+    <PublishTrimmed>False</PublishTrimmed>
+    <PublishReadyToRun>False</PublishReadyToRun>
+  </PropertyGroup>
+</Project>

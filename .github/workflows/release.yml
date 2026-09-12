@@ -1,0 +1,79 @@
+name: Release
+
+# Runs only on main — that's the branch semantic-release is configured for (.releaserc.json).
+# Short-lived feature branches never trigger this; landing on main is what cuts a release.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  build-verify:
+    # Re-verify the exact commit being released, independent of whatever CI already reported on
+    # its PR — cheap insurance against a fast-forward or admin-merge that skipped CI.
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+
+      - name: Restore (locked mode)
+        run: dotnet restore Upkeep.sln --locked-mode
+
+      - name: Build (Release)
+        run: dotnet build Upkeep.sln --configuration Release --no-restore
+
+      - name: Test (Release)
+        run: dotnet test Upkeep.sln --configuration Release --no-build
+
+  release:
+    needs: build-verify
+    # windows-latest, not ubuntu: the release also builds the InnoSetup installer
+    # (scripts/build-installer.ps1, invoked by @semantic-release/exec's prepareCmd), which needs a
+    # real `dotnet publish` of the WinUI3 app plus ISCC.exe.
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # @semantic-release/git needs to push the CHANGELOG.md commit back to main, which
+          # requires the credential actions/checkout leaves behind by default.
+          persist-credentials: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install release tooling
+        run: npm ci
+
+      # windows-latest (Windows Server 2025) dropped the Inno Setup preinstall the older
+      # windows-2022 image had, so install it here. Version pinned like every other dependency.
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup --version=6.7.1 -y --no-progress
+          Add-Content -Path $env:GITHUB_PATH -Value "C:\Program Files (x86)\Inno Setup 6"
+
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release

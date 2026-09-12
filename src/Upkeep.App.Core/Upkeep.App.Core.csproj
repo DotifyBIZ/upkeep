@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Windows-targeted, but deliberately NOT WinUI/Windows App SDK: this project holds every
+         scan/clean/analyse operation, including the Win32 and WinRT calls they need, so the
+         elevated helper (which must never load WinUI) and the unit tests can both use it.
+         See docs/adr/0007-windows-platform-code-in-core.md. -->
+    <TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
+    <RootNamespace>Upkeep.App.Core</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Required by [LibraryImport] source generation (SYSLIB1062); no hand-written unsafe code. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+</Project>

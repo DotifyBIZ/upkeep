@@ -1,0 +1,53 @@
+## .NET / Visual Studio
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## WinUI / MSIX build output
+AppPackages/
+BundleArtifacts/
+*.appx
+*.appxbundle
+*.appxsym
+*.msix
+*.msixbundle
+
+## InnoSetup output
+Output/
+*.exe.log
+
+## Test results / coverage
+TestResults/
+*.trx
+*.coverage
+coverage/
+coverage.json
+coverage.cobertura.xml
+
+## NuGet
+*.nupkg
+packages/
+
+## npm (semantic-release tooling only — this is not a Node project)
+node_modules/
+npm-debug.log*
+
+## Editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.claude/
+
+## OS
+Thumbs.db
+.DS_Store
+
+## Secrets — never commit
+*.pfx
+*.snk
+secrets.json
+appsettings.*.local.json

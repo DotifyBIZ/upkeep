@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Navigation rail -->
+  <data name="NavHome.Content">
+    <value>Home</value>
+  </data>
+  <data name="NavCleanup.Content">
+    <value>Cleanup</value>
+  </data>
+  <data name="NavFiles.Content">
+    <value>Files</value>
+  </data>
+  <data name="NavApps.Content">
+    <value>Apps</value>
+  </data>
+  <data name="NavStartup.Content">
+    <value>Startup &amp; performance</value>
+  </data>
+  <data name="NavDrivers.Content">
+    <value>Drivers &amp; updates</value>
+  </data>
+  <data name="NavHistory.Content">
+    <value>History</value>
+  </data>
+  <data name="NavSettings.Content">
+    <value>Settings</value>
+  </data>
+
+  <!-- Home -->
+  <data name="HomeSubtitle.Text">
+    <value>Clean it, tune it, keep it — everything runs on this PC, nothing leaves it.</value>
+  </data>
+  <data name="HomeScanButtonLabel.Text">
+    <value>Scan this PC</value>
+  </data>
+  <data name="HomeDrivesHeader.Text">
+    <value>Drives</value>
+  </data>
+  <data name="HomeRecentSessionsHeader.Text">
+    <value>Recent sessions</value>
+  </data>
+  <data name="HomeNoSessionsMessage.Text">
+    <value>Nothing done yet. A scan shows what Upkeep would change before it changes anything.</value>
+  </data>
+  <data name="HomeUpdateActionButton.Content">
+    <value>View release</value>
+  </data>
+
+  <!-- Home, built in code -->
+  <data name="HomeGreetingMorning">
+    <value>Good morning</value>
+  </data>
+  <data name="HomeGreetingAfternoon">
+    <value>Good afternoon</value>
+  </data>
+  <data name="HomeGreetingEvening">
+    <value>Good evening</value>
+  </data>
+  <data name="HomeGreetingNight">
+    <value>Hello</value>
+  </data>
+  <data name="HomeUpdateAvailableFormat">
+    <value>Upkeep {0} is available.</value>
+  </data>
+  <data name="DriveFreeOfTotalFormat">
+    <value>{0} free of {1}</value>
+  </data>
+
+  <!-- Cleanup -->
+  <data name="CleanupTitle.Text">
+    <value>Cleanup</value>
+  </data>
+  <data name="CleanupSubtitle.Text">
+    <value>Temporary files and caches that Windows and your apps rebuild on their own.</value>
+  </data>
+  <data name="CleanupNotScannedMessage.Text">
+    <value>Nothing has been scanned yet. Scanning only looks — you'll see every item and its size before anything is removed.</value>
+  </data>
+  <data name="CleanupScanButtonLabel.Text">
+    <value>Scan</value>
+  </data>
+
+  <!-- Junk categories. Each description says what is lost by cleaning it, never just what it is. -->
+  <data name="JunkCategoryUserTempName">
+    <value>Temporary files</value>
+  </data>
+  <data name="JunkCategoryUserTempDescription">
+    <value>%TEMP% · files used in the last 24 hours are left alone</value>
+  </data>
+  <data name="JunkCategoryBrowserCacheName">
+    <value>Browser cache</value>
+  </data>
+  <data name="JunkCategoryBrowserCacheDescription">
+    <value>Cached pages and images only — never history, cookies or saved logins</value>
+  </data>
+  <data name="JunkCategoryThumbnailCacheName">
+    <value>Thumbnail cache</value>
+  </data>
+  <data name="JunkCategoryThumbnailCacheDescription">
+    <value>File Explorer rebuilds it as you browse</value>
+  </data>
+  <data name="JunkCategoryShaderCacheName">
+    <value>DirectX shader cache</value>
+  </data>
+  <data name="JunkCategoryShaderCacheDescription">
+    <value>Games and apps rebuild it on next launch</value>
+  </data>
+  <data name="JunkCategoryUserCrashDumpsName">
+    <value>Crash dumps and error reports</value>
+  </data>
+  <data name="JunkCategoryUserCrashDumpsDescription">
+    <value>Windows Error Reporting files for your account</value>
+  </data>
+  <data name="JunkCategoryRecycleBinName">
+    <value>Recycle Bin</value>
+  </data>
+  <data name="JunkCategoryRecycleBinDescription">
+    <value>Everything you have deleted and not yet restored</value>
+  </data>
+  <data name="JunkCategoryWindowsTempName">
+    <value>Windows temporary files</value>
+  </data>
+  <data name="JunkCategoryWindowsTempDescription">
+    <value>The system temp folder, shared by every account on this PC</value>
+  </data>
+  <data name="JunkCategoryOtherUsersTempName">
+    <value>Other users' temporary files</value>
+  </data>
+  <data name="JunkCategoryOtherUsersTempDescription">
+    <value>Temp folders belonging to the other accounts on this PC</value>
+  </data>
+  <data name="JunkCategoryWindowsUpdateCleanupName">
+    <value>Windows Update cleanup</value>
+  </data>
+  <data name="JunkCategoryWindowsUpdateCleanupDescription">
+    <value>Superseded update components, removed by Windows itself — installed updates can no longer be uninstalled afterwards</value>
+  </data>
+  <data name="JunkCategoryDeliveryOptimizationName">
+    <value>Delivery Optimization cache</value>
+  </data>
+  <data name="JunkCategoryDeliveryOptimizationDescription">
+    <value>Update pieces this PC keeps to share with others on your network</value>
+  </data>
+  <data name="JunkCategorySystemCrashDumpsName">
+    <value>System crash dumps</value>
+  </data>
+  <data name="JunkCategorySystemCrashDumpsDescription">
+    <value>Memory dumps and kernel reports from system crashes</value>
+  </data>
+
+  <!-- Scan notes -->
+  <data name="JunkNoteBrowserRunningFormat">
+    <value>{0} is running — close it and scan again to include its cache.</value>
+  </data>
+  <data name="JunkNoteSizeKnownAfterCleanup">
+    <value>Windows reports the size once the cleanup has run.</value>
+  </data>
+  <data name="JunkNoteNeedsElevation">
+    <value>Needs administrator approval to measure.</value>
+  </data>
+  <data name="JunkNotePartiallyUnreadableFormat">
+    <value>{0} items couldn't be read and were left out.</value>
+  </data>
+
+  <!-- Shared -->
+  <data name="CommonAdminApprovalTag">
+    <value>Administrator approval</value>
+  </data>
+  <data name="CommonCannotBeUndoneTag">
+    <value>Can't be undone</value>
+  </data>
+  <data name="CommonElevationDeclined">
+    <value>Administrator approval was declined, so system-wide items were skipped.</value>
+  </data>
+</root>

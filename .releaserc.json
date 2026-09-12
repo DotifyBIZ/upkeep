@@ -1,0 +1,35 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md"
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "pwsh -NoProfile -File scripts/build-installer.ps1 -Version ${nextRelease.version}"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["CHANGELOG.md"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          { "path": "Output/UpkeepSetup-*.exe", "label": "Upkeep Setup ${nextRelease.version} (Windows x64, unsigned)" },
+          { "path": "Output/UpkeepSetup-*.exe.sha256", "label": "SHA-256 checksum" }
+        ]
+      }
+    ]
+  ]
+}
