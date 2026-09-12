@@ -6,9 +6,11 @@ using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Files;
 using Upkeep.App.Core.Logging;
+using Upkeep.App.Core.Performance;
 using Upkeep.App.Core.Platform;
 using Upkeep.App.Core.Quarantine;
 using Upkeep.App.Core.Safety;
+using Upkeep.App.Core.Services;
 using Upkeep.App.Core.Sessions;
 using Upkeep.App.Core.Settings;
 using Upkeep.App.Core.Startup;
@@ -104,6 +106,9 @@ public partial class App : Application
         services.AddSingleton<IWindowsToolRunner, WindowsToolRunner>();
         services.AddSingleton<IStartupItemScanner, StartupItemScanner>();
         services.AddSingleton<IStartupItemToggler, StartupItemToggler>();
+        services.AddSingleton<IServiceScanner, ServiceScanner>();
+        services.AddSingleton<IPerformanceSettings, PerformanceSettings>();
+        services.AddSingleton<IWindowsUiLauncher, WindowsUiLauncher>();
 
         // View models are transient: a fresh instance per navigation.
         services.AddTransient<HomeViewModel>();
@@ -111,6 +116,8 @@ public partial class App : Application
         services.AddTransient<FilesViewModel>();
         services.AddTransient<AppsViewModel>();
         services.AddTransient<StartupViewModel>();
+        services.AddTransient<ServicesViewModel>();
+        services.AddTransient<PerformanceViewModel>();
 
         return services.BuildServiceProvider();
     }

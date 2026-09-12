@@ -13,6 +13,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -22,77 +23,280 @@
             <TextBlock x:Uid="StartupSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
         </StackPanel>
 
+        <SelectorBar x:Name="Tabs" Grid.Row="1" Margin="-12,4,0,0" SelectionChanged="Tabs_SelectionChanged">
+            <SelectorBarItem x:Uid="StartupTabStartup" Tag="Startup" IsSelected="True" />
+            <SelectorBarItem x:Uid="StartupTabServices" Tag="Services" />
+            <SelectorBarItem x:Uid="StartupTabPerformance" Tag="Performance" />
+        </SelectorBar>
+
         <InfoBar
-            Grid.Row="1"
-            IsOpen="{x:Bind ViewModel.HasStatusMessage, Mode=OneWay}"
-            Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+            Grid.Row="2"
+            IsOpen="{x:Bind CurrentStatusIsOpen, Mode=OneWay}"
+            Message="{x:Bind CurrentStatusMessage, Mode=OneWay}"
             Severity="Warning"
             IsClosable="False" />
 
-        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="0" VerticalAlignment="Top">
-            <StackPanel>
-                <Grid Padding="20,12" ColumnSpacing="16" Background="{StaticResource Gray50Brush}" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" x:Uid="StartupColumnName" Style="{StaticResource CaptionTextStyle}" />
-                    <TextBlock Grid.Column="1" x:Uid="StartupColumnSource" Style="{StaticResource CaptionTextStyle}" Width="260" />
-                    <TextBlock Grid.Column="2" x:Uid="StartupColumnEnabled" Style="{StaticResource CaptionTextStyle}" Width="110" />
-                </Grid>
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <Grid>
 
-                <TextBlock
-                    x:Uid="StartupEmptyMessage"
-                    Style="{StaticResource CaptionTextStyle}"
-                    Margin="20,16"
-                    Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" />
+                <!--  Startup  -->
+                <Border x:Name="StartupPanel" Style="{StaticResource CardBorderStyle}" Padding="0" VerticalAlignment="Top">
+                    <StackPanel>
+                        <Grid Padding="20,12" ColumnSpacing="16" Background="{StaticResource Gray50Brush}" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" x:Uid="StartupColumnName" Style="{StaticResource CaptionTextStyle}" />
+                            <TextBlock Grid.Column="1" x:Uid="StartupColumnSource" Style="{StaticResource CaptionTextStyle}" Width="260" />
+                            <TextBlock Grid.Column="2" x:Uid="StartupColumnEnabled" Style="{StaticResource CaptionTextStyle}" Width="110" />
+                        </Grid>
 
-                <ItemsControl ItemsSource="{x:Bind ViewModel.Items}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="viewmodels:StartupItemDisplay">
-                            <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                        <TextBlock
+                            x:Uid="StartupEmptyMessage"
+                            Style="{StaticResource CaptionTextStyle}"
+                            Margin="20,16"
+                            Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" />
+
+                        <ItemsControl ItemsSource="{x:Bind ViewModel.Items}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="viewmodels:StartupItemDisplay">
+                                    <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{x:Bind Subtitle}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{x:Bind DisabledAtDisplay}" Style="{StaticResource CaptionTextStyle}" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Width="260" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Bind SourceLabel}" Style="{StaticResource BodyTextStyle}" FontSize="13" TextWrapping="Wrap" />
+                                            <FontIcon
+                                                Glyph="&#xE72E;"
+                                                FontSize="12"
+                                                Foreground="{StaticResource Secondary600Brush}"
+                                                Visibility="{x:Bind RequiresElevation}"
+                                                VerticalAlignment="Center" />
+                                        </StackPanel>
+
+                                        <ToggleSwitch
+                                            Grid.Column="2"
+                                            Width="110"
+                                            OnContent=""
+                                            OffContent=""
+                                            IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
+                                            IsEnabled="{x:Bind CanToggle}"
+                                            Toggled="OnStartupItemToggled"
+                                            VerticalAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!--  Services  -->
+                <StackPanel x:Name="ServicesPanel" Spacing="16" Visibility="Collapsed">
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox
+                            Grid.Column="0"
+                            x:Uid="ServicesSearchPlaceholder"
+                            MaxWidth="320"
+                            HorizontalAlignment="Left"
+                            Text="{x:Bind Services.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <SelectorBar Grid.Column="1" x:Name="ServiceFilters" SelectionChanged="ServiceFilters_SelectionChanged">
+                            <SelectorBarItem Tag="CommonlySafe" IsSelected="True" Text="{x:Bind Services.CommonlySafeFilterLabel, Mode=OneWay}" />
+                            <SelectorBarItem Tag="ThirdParty" Text="{x:Bind Services.ThirdPartyFilterLabel, Mode=OneWay}" />
+                            <SelectorBarItem Tag="All" Text="{x:Bind Services.AllFilterLabel, Mode=OneWay}" />
+                        </SelectorBar>
+                    </Grid>
+
+                    <Border Style="{StaticResource CardBorderStyle}" Padding="0">
+                        <StackPanel>
+                            <TextBlock
+                                x:Uid="ServicesEmptyMessage"
+                                Style="{StaticResource CaptionTextStyle}"
+                                Margin="20,16"
+                                Visibility="{x:Bind Services.IsEmpty, Mode=OneWay}" />
+
+                            <ItemsControl ItemsSource="{x:Bind Services.Items}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="viewmodels:ServiceItemDisplay">
+                                        <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind DisplayName}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{x:Bind StateLabel}" Style="{StaticResource CaptionTextStyle}" />
+                                                <TextBlock
+                                                    Text="{x:Bind WhatBreaks}"
+                                                    Style="{StaticResource CaptionTextStyle}"
+                                                    TextWrapping="Wrap"
+                                                    MaxWidth="520"
+                                                    HorizontalAlignment="Left"
+                                                    Visibility="{x:Bind HasWhatBreaks}" />
+                                            </StackPanel>
+
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                Text="{x:Bind TierLabel}"
+                                                Style="{StaticResource BodyTextStyle}"
+                                                FontSize="13"
+                                                Width="140"
+                                                TextWrapping="Wrap"
+                                                VerticalAlignment="Center" />
+
+                                            <ToggleSwitch
+                                                Grid.Column="2"
+                                                Width="110"
+                                                OnContent=""
+                                                OffContent=""
+                                                IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
+                                                IsEnabled="{x:Bind CanToggle}"
+                                                Toggled="OnServiceToggled"
+                                                VerticalAlignment="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Left">
+                        <Expander.Header>
+                            <TextBlock x:Uid="ServicesLegendHeader" Style="{StaticResource BodyTextStyle}" />
+                        </Expander.Header>
+                        <ItemsControl ItemsSource="{x:Bind Services.Legend}" Margin="0,4,0,8">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="viewmodels:ServiceTierLegendEntry">
+                                    <StackPanel Spacing="2" Margin="0,0,0,10">
+                                        <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{x:Bind Description}" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+                </StackPanel>
+
+                <!--  Performance  -->
+                <StackPanel x:Name="PerformancePanel" Spacing="16" Visibility="Collapsed">
+                    <Border Style="{StaticResource CardBorderStyle}">
+                        <StackPanel Spacing="16">
+                            <TextBlock x:Uid="PerformanceVisualEffectsHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+
+                            <Grid ColumnSpacing="16">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-
-                                <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                                    <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
-                                    <TextBlock Text="{x:Bind Subtitle}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" />
-                                    <TextBlock Text="{x:Bind DisabledAtDisplay}" Style="{StaticResource CaptionTextStyle}" />
+                                <StackPanel Grid.Column="0" Spacing="2">
+                                    <TextBlock x:Uid="PerformanceAnimations" Style="{StaticResource BodyTextStyle}" />
+                                    <TextBlock x:Uid="PerformanceAnimationsNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
                                 </StackPanel>
-
-                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" Width="260" VerticalAlignment="Center">
-                                    <TextBlock Text="{x:Bind SourceLabel}" Style="{StaticResource BodyTextStyle}" FontSize="13" TextWrapping="Wrap" />
-                                    <FontIcon
-                                        Glyph="&#xE72E;"
-                                        FontSize="12"
-                                        Foreground="{StaticResource Secondary600Brush}"
-                                        Visibility="{x:Bind RequiresElevation}"
-                                        VerticalAlignment="Center" />
-                                </StackPanel>
-
                                 <ToggleSwitch
-                                    Grid.Column="2"
-                                    Width="110"
+                                    Grid.Column="1"
                                     OnContent=""
                                     OffContent=""
-                                    IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
-                                    IsEnabled="{x:Bind CanToggle}"
-                                    Toggled="OnStartupItemToggled"
+                                    IsOn="{x:Bind Performance.AnimationsEnabled, Mode=TwoWay}"
+                                    Toggled="OnAnimationsToggled"
                                     VerticalAlignment="Center" />
                             </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
-        </Border>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="12">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Spacing="2">
+                                    <TextBlock x:Uid="PerformanceTransparency" Style="{StaticResource BodyTextStyle}" />
+                                    <TextBlock x:Uid="PerformanceTransparencyNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                </StackPanel>
+                                <ToggleSwitch
+                                    Grid.Column="1"
+                                    OnContent=""
+                                    OffContent=""
+                                    IsOn="{x:Bind Performance.TransparencyEnabled, Mode=TwoWay}"
+                                    Toggled="OnTransparencyToggled"
+                                    VerticalAlignment="Center" />
+                            </Grid>
+
+                            <StackPanel Spacing="4">
+                                <Button x:Uid="PerformanceAdvancedButton" Command="{x:Bind Performance.OpenAdvancedPerformanceOptionsCommand}" />
+                                <TextBlock x:Uid="PerformanceAdvancedNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource CardBorderStyle}">
+                        <StackPanel Spacing="12">
+                            <TextBlock x:Uid="PerformancePowerPlanHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+
+                            <ComboBox
+                                x:Name="PowerPlanBox"
+                                MinWidth="320"
+                                HorizontalAlignment="Left"
+                                DisplayMemberPath="Name"
+                                ItemsSource="{x:Bind Performance.PowerPlans}"
+                                SelectedItem="{x:Bind Performance.SelectedPowerPlan, Mode=TwoWay}"
+                                IsEnabled="{x:Bind Performance.HasPowerPlanChoice, Mode=OneWay}"
+                                SelectionChanged="OnPowerPlanChanged" />
+
+                            <TextBlock x:Uid="PerformancePowerPlanNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="620" HorizontalAlignment="Left" />
+                            <Button x:Uid="PerformancePowerSettingsButton" Command="{x:Bind Performance.OpenPowerSettingsCommand}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource CardBorderStyle}">
+                        <StackPanel Spacing="12">
+                            <TextBlock x:Uid="PerformanceIndexingHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Spacing="2">
+                                    <TextBlock x:Uid="PerformanceIndexingLabel" Style="{StaticResource BodyTextStyle}" />
+                                    <TextBlock x:Uid="PerformanceIndexingNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                </StackPanel>
+                                <ToggleSwitch
+                                    Grid.Column="1"
+                                    OnContent=""
+                                    OffContent=""
+                                    IsOn="{x:Bind Performance.IndexingEnabled, Mode=TwoWay}"
+                                    Toggled="OnIndexingToggled"
+                                    VerticalAlignment="Center" />
+                            </Grid>
+
+                            <Button x:Uid="PerformanceIndexingOptionsButton" Command="{x:Bind Performance.OpenIndexingOptionsCommand}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="12">
             <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Width="20" Height="20" />
-            <TextBlock x:Uid="StartupToggleNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" VerticalAlignment="Center" />
+            <TextBlock x:Name="StartupNote" x:Uid="StartupToggleNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" VerticalAlignment="Center" />
+            <TextBlock x:Name="ServicesNote" x:Uid="ServicesDisableNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" VerticalAlignment="Center" Visibility="Collapsed" />
+            <TextBlock x:Name="ServicesSpeedNote" x:Uid="ServicesSpeedNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" VerticalAlignment="Center" Visibility="Collapsed" />
         </StackPanel>
     </Grid>
 </Page>

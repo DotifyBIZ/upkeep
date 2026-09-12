@@ -717,4 +717,19 @@
   <data name="CommonElevationDeclined">
     <value>Administrator approval was declined, so system-wide items were skipped.</value>
   </data>
+  <data name="ServicesChangeRefusedFormat">
+    <value>Windows would not change {0}.</value>
+  </data>
+  <data name="PerformanceChangeRefusedFormat">
+    <value>Windows would not change {0}.</value>
+  </data>
+  <data name="PerformanceCouldNotOpenWindows">
+    <value>Windows could not open that page.</value>
+  </data>
+  <data name="PerformanceIndexingName">
+    <value>Search indexing</value>
+  </data>
+  <data name="ServicesEmptyMessage.Text">
+    <value>No services match this filter.</value>
+  </data>
 </root>

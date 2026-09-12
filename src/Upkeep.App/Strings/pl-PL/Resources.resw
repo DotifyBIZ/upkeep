@@ -717,4 +717,19 @@
   <data name="CommonElevationDeclined">
     <value>Odmówiono zgody administratora, więc elementy systemowe zostały pominięte.</value>
   </data>
+  <data name="ServicesChangeRefusedFormat">
+    <value>System Windows nie zmienił ustawienia {0}.</value>
+  </data>
+  <data name="PerformanceChangeRefusedFormat">
+    <value>System Windows nie zmienił ustawienia {0}.</value>
+  </data>
+  <data name="PerformanceCouldNotOpenWindows">
+    <value>Nie udało się otworzyć tego okna systemu Windows.</value>
+  </data>
+  <data name="PerformanceIndexingName">
+    <value>Indeksowanie wyszukiwania</value>
+  </data>
+  <data name="ServicesEmptyMessage.Text">
+    <value>Żadna usługa nie pasuje do tego filtra.</value>
+  </data>
 </root>

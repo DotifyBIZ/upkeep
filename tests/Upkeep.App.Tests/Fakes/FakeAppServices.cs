@@ -44,6 +44,11 @@ public sealed class FakeElevationService : IElevationService
 
     public List<HelperRequest> SentRequests { get; } = [];
 
+    /// <summary>Whether the helper accepts a service start-type change.</summary>
+    public bool ServiceChangeSucceeds { get; set; } = true;
+
+    public string? ServiceChangeFailureCode { get; set; } = "windows_refused";
+
     public bool IsElevated => Availability.IsAvailable;
 
     public void SetSystemScan(JunkCategoryScan scan) => _systemScans[scan.CategoryId] = scan;
@@ -59,6 +64,9 @@ public sealed class FakeElevationService : IElevationService
         {
             ScanJunkCategoryRequest scan when _systemScans.TryGetValue(scan.CategoryId, out var result) => new JunkScanResponse(result),
             ScanJunkCategoryRequest scan => new JunkScanResponse(JunkCategoryScan.Empty(scan.CategoryId)),
+            SetServiceStartTypeRequest => ServiceChangeSucceeds
+                ? new ServiceChangeResponse(true, null, null)
+                : new ServiceChangeResponse(false, ServiceChangeFailureCode, null),
             _ => new HelperOkResponse(),
         };
 
