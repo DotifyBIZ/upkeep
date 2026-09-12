@@ -29,7 +29,14 @@ public sealed record ElevationResult(ElevationStatus Status, string? Detail = nu
 /// The shell's side of the elevated helper (docs/adr/0005-elevated-helper-named-pipe.md). Starts
 /// one helper per session on first use — one UAC prompt, not one per action — and keeps the pipe
 /// open until the app exits.
+/// <para>
+/// Process launching and pipe connection can't be exercised without actually elevating, so this
+/// class is excluded from the coverage bar; what it decides — the closed operation set, the frame
+/// format, the refusal handling — lives in <see cref="HelperDispatcher"/>,
+/// <see cref="PipeFraming"/> and the view models, which are tested.
+/// </para>
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "Starts an elevated process and connects its pipe; the protocol and the decisions around it are tested separately.")]
 public sealed class ElevatedHelperClient : IElevationService, IDisposable
 {
     private readonly string _helperExecutablePath;

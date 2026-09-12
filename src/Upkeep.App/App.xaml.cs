@@ -1,8 +1,13 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Upkeep.App.Core.Abstractions;
+using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Logging;
+using Upkeep.App.Core.Platform;
+using Upkeep.App.Core.Quarantine;
+using Upkeep.App.Core.Safety;
+using Upkeep.App.Core.Sessions;
 using Upkeep.App.Core.Settings;
 using Upkeep.App.Core.Storage;
 using Upkeep.App.Services;
@@ -65,8 +70,20 @@ public partial class App : Application
         services.AddHttpClient();
         services.AddSingleton<IUpdateCheckService, GitHubUpdateCheckService>();
 
+        // The cleanup chain: scan (here), plan, execute. Machine-wide work and restore points go
+        // through the helper, which is why those two are the elevated implementations.
+        services.AddSingleton<IWellKnownPaths, WellKnownPaths>();
+        services.AddSingleton<IRecycleBin, RecycleBin>();
+        services.AddSingleton<IRunningProcesses, RunningProcesses>();
+        services.AddSingleton<IJunkScanner, JunkScanner>();
+        services.AddSingleton<ISessionJournal, SessionJournal>();
+        services.AddSingleton<IQuarantineStore, QuarantineStore>();
+        services.AddSingleton<IRestorePointService, ElevatedRestorePointService>();
+        services.AddSingleton<ICleanupExecutor, CleanupExecutor>();
+
         // View models are transient: a fresh instance per navigation.
         services.AddTransient<HomeViewModel>();
+        services.AddTransient<CleanupViewModel>();
 
         return services.BuildServiceProvider();
     }

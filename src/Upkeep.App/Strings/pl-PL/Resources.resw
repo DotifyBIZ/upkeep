@@ -138,6 +138,90 @@
   <data name="CleanupScanButtonLabel.Text">
     <value>Skanuj</value>
   </data>
+  <data name="CleanupRescanButton.Content">
+    <value>Skanuj ponownie</value>
+  </data>
+  <data name="CleanupScanningMessage.Text">
+    <value>Sprawdzanie — nic nie jest jeszcze usuwane.</value>
+  </data>
+  <data name="CleanupUserSectionHeader.Text">
+    <value>Twoje konto</value>
+  </data>
+  <data name="CleanupUserSectionNote.Text">
+    <value>Nie wymaga uprawnień administratora</value>
+  </data>
+  <data name="CleanupSystemSectionHeader.Text">
+    <value>Cały system</value>
+  </data>
+  <data name="CleanupSystemSectionNote.Text">
+    <value>Windows zapyta raz — zgoda obejmie resztę tej sesji.</value>
+  </data>
+  <data name="CleanupIncludeSystemButton.Content">
+    <value>Zmierz te elementy</value>
+  </data>
+  <data name="CleanupCleanButtonLabel.Text">
+    <value>Wyczyść zaznaczone</value>
+  </data>
+  <data name="CleanupFooterNote.Text">
+    <value>Najpierw tworzony jest punkt przywracania systemu. Elementy oznaczone „Nie można cofnąć” znikają na zawsze.</value>
+  </data>
+  <data name="CleanupSelectionSummaryFormat">
+    <value>{0} z {1} kategorii · {2}</value>
+  </data>
+  <data name="CleanupSizeAfterCleanup">
+    <value>Po oczyszczeniu</value>
+  </data>
+  <data name="CleanupSizeNeedsAdmin">
+    <value>Wymaga administratora</value>
+  </data>
+  <data name="CleanupConfirmTitleFormat">
+    <value>Wyczyścić {0}?</value>
+  </data>
+  <data name="CleanupConfirmElevation">
+    <value>Windows poprosi raz o zgodę administratora. Obejmie ona elementy systemowe przez resztę tej sesji.</value>
+  </data>
+  <data name="CleanupConfirmRestorePoint">
+    <value>Najpierw tworzony jest punkt przywracania systemu, aby można było cofnąć zmiany systemowe.</value>
+  </data>
+  <data name="CleanupConfirmIrreversible">
+    <value>To pamięć podręczna, która odtwarza się sama, więc jest usuwana, a nie przechowywana. Opróżnienia Kosza i oczyszczania usługi Windows Update nie można cofnąć.</value>
+  </data>
+  <data name="CleanupConfirmDeleted">
+    <value>To pamięć podręczna, która odtwarza się sama, więc jest usuwana, a nie przenoszona do kwarantanny.</value>
+  </data>
+  <data name="CleanupConfirmPrimary">
+    <value>Wyczyść</value>
+  </data>
+  <data name="CleanupConfirmCancel">
+    <value>Anuluj</value>
+  </data>
+  <data name="CleanupResultsFreedFormat">
+    <value>Zwolniono {0}</value>
+  </data>
+  <data name="CleanupResultsFreeSpaceFormat">
+    <value>Ten komputer ma teraz {0} wolnego miejsca.</value>
+  </data>
+  <data name="CleanupResultsItemsRemovedLabel.Text">
+    <value>usuniętych elementów</value>
+  </data>
+  <data name="CleanupResultsItemsSkippedLabel.Text">
+    <value>pominięto — w użyciu</value>
+  </data>
+  <data name="CleanupResultsDoneButton.Content">
+    <value>Gotowe</value>
+  </data>
+  <data name="CleanupResultsRestorePointEnabledFormat">
+    <value>Utworzono punkt przywracania „{0}”. Ochrona systemu była wyłączona, więc Upkeep najpierw ją włączył.</value>
+  </data>
+  <data name="CleanupResultsRestorePointReusedFormat">
+    <value>Objęte istniejącym punktem przywracania: „{0}”. Windows tworzy najwyżej jeden dziennie.</value>
+  </data>
+  <data name="CleanupResultsRestorePointUnavailable">
+    <value>Nie utworzono punktu przywracania — przywracanie systemu nie było dostępne na tym komputerze.</value>
+  </data>
+  <data name="CommonCannotBeUndoneTagText.Text">
+    <value>Nie można cofnąć</value>
+  </data>
 
   <!-- Kategorie do wyczyszczenia. Każdy opis mówi, co się traci, a nie tylko czym to jest. -->
   <data name="JunkCategoryUserTempName">

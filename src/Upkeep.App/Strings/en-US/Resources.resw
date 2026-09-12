@@ -138,6 +138,90 @@
   <data name="CleanupScanButtonLabel.Text">
     <value>Scan</value>
   </data>
+  <data name="CleanupRescanButton.Content">
+    <value>Scan again</value>
+  </data>
+  <data name="CleanupScanningMessage.Text">
+    <value>Looking — nothing is being removed yet.</value>
+  </data>
+  <data name="CleanupUserSectionHeader.Text">
+    <value>Your account</value>
+  </data>
+  <data name="CleanupUserSectionNote.Text">
+    <value>No administrator rights needed</value>
+  </data>
+  <data name="CleanupSystemSectionHeader.Text">
+    <value>System-wide</value>
+  </data>
+  <data name="CleanupSystemSectionNote.Text">
+    <value>Windows asks once — the approval covers the rest of this session.</value>
+  </data>
+  <data name="CleanupIncludeSystemButton.Content">
+    <value>Measure these</value>
+  </data>
+  <data name="CleanupCleanButtonLabel.Text">
+    <value>Clean selected</value>
+  </data>
+  <data name="CleanupFooterNote.Text">
+    <value>A System Restore point is created first. Items marked “Can't be undone” are gone for good.</value>
+  </data>
+  <data name="CleanupSelectionSummaryFormat">
+    <value>{0} of {1} categories · {2}</value>
+  </data>
+  <data name="CleanupSizeAfterCleanup">
+    <value>After cleanup</value>
+  </data>
+  <data name="CleanupSizeNeedsAdmin">
+    <value>Needs admin</value>
+  </data>
+  <data name="CleanupConfirmTitleFormat">
+    <value>Clean {0}?</value>
+  </data>
+  <data name="CleanupConfirmElevation">
+    <value>Windows will ask for administrator approval once. It covers the system-wide items for the rest of this session.</value>
+  </data>
+  <data name="CleanupConfirmRestorePoint">
+    <value>A System Restore point is created first, so system changes can be rolled back.</value>
+  </data>
+  <data name="CleanupConfirmIrreversible">
+    <value>These are caches that rebuild themselves, so they're deleted rather than kept. Emptying the Recycle Bin and Windows Update cleanup can't be undone.</value>
+  </data>
+  <data name="CleanupConfirmDeleted">
+    <value>These are caches that rebuild themselves, so they're deleted rather than moved to quarantine.</value>
+  </data>
+  <data name="CleanupConfirmPrimary">
+    <value>Clean</value>
+  </data>
+  <data name="CleanupConfirmCancel">
+    <value>Cancel</value>
+  </data>
+  <data name="CleanupResultsFreedFormat">
+    <value>{0} freed</value>
+  </data>
+  <data name="CleanupResultsFreeSpaceFormat">
+    <value>This PC now has {0} free.</value>
+  </data>
+  <data name="CleanupResultsItemsRemovedLabel.Text">
+    <value>items removed</value>
+  </data>
+  <data name="CleanupResultsItemsSkippedLabel.Text">
+    <value>skipped — in use</value>
+  </data>
+  <data name="CleanupResultsDoneButton.Content">
+    <value>Done</value>
+  </data>
+  <data name="CleanupResultsRestorePointEnabledFormat">
+    <value>Restore point “{0}” created. System Protection was off, so Upkeep turned it on first.</value>
+  </data>
+  <data name="CleanupResultsRestorePointReusedFormat">
+    <value>Covered by an existing restore point: “{0}”. Windows makes at most one a day.</value>
+  </data>
+  <data name="CleanupResultsRestorePointUnavailable">
+    <value>No restore point was created — System Restore wasn't available on this PC.</value>
+  </data>
+  <data name="CommonCannotBeUndoneTagText.Text">
+    <value>Can't be undone</value>
+  </data>
 
   <!-- Junk categories. Each description says what is lost by cleaning it, never just what it is. -->
   <data name="JunkCategoryUserTempName">

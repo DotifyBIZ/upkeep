@@ -1,9 +1,13 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Pipes;
 using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text.Json;
+using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Logging;
 using Upkeep.App.Core.Platform;
+using Upkeep.App.Core.Safety;
 
 namespace Upkeep.App.Core.Elevation;
 
@@ -17,7 +21,13 @@ namespace Upkeep.App.Core.Elevation;
 /// HKEY_CURRENT_USER inside this process belong to whoever's credentials went into the UAC
 /// prompt, which is not necessarily the person using the app.
 /// </para>
+/// <para>
+/// This class is pipe and process plumbing only. Every decision it used to make now lives in
+/// <see cref="HelperDispatcher"/> (which request becomes what work) and
+/// <see cref="HelperStartupArguments"/> (what arguments are acceptable) — both of which are tested.
+/// </para>
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = "Named-pipe server and process lifetime for an elevated process; its decisions live in HelperDispatcher and HelperStartupArguments, which are tested.")]
 public static class HelperHost
 {
     /// <summary>How long the helper waits for the shell to connect before giving up and exiting.</summary>
@@ -65,10 +75,11 @@ public static class HelperHost
                 return 0;
             }
 
-            var pipeSecurity = new PipeSecurity();
             var shellUser = NativeProcessIdentity.GetProcessUserSid(startup.ParentProcessId);
+
+            var pipeSecurity = new PipeSecurity();
             pipeSecurity.AddAccessRule(new PipeAccessRule(shellUser, PipeAccessRights.ReadWrite | PipeAccessRights.Synchronize, AccessControlType.Allow));
-            pipeSecurity.AddAccessRule(new PipeAccessRule(System.Security.Principal.WindowsIdentity.GetCurrent().User!, PipeAccessRights.FullControl, AccessControlType.Allow));
+            pipeSecurity.AddAccessRule(new PipeAccessRule(WindowsIdentity.GetCurrent().User!, PipeAccessRights.FullControl, AccessControlType.Allow));
 
             // FirstPipeInstance + a single instance: if the name is already taken, creation fails
             // rather than silently joining something else's pipe.
@@ -102,12 +113,34 @@ public static class HelperHost
                 return 4;
             }
 
-            await ServeAsync(server, logger, shellExited.Token);
+            await ServeAsync(server, BuildDispatcher(shellUser, logger), logger, shellExited.Token);
             return 0;
         }
     }
 
-    private static async Task ServeAsync(NamedPipeServerStream server, FileAppLogger logger, CancellationToken cancellationToken)
+    /// <summary>
+    /// Everything the helper is able to do, built once per session. The profile path is resolved
+    /// from the *shell's* owner rather than this process's identity — under over-the-shoulder
+    /// elevation they are different accounts, and excluding the wrong one would mean cleaning the
+    /// temp folder of the person actually using the machine.
+    /// </summary>
+    private static HelperDispatcher BuildDispatcher(SecurityIdentifier shellUser, FileAppLogger logger)
+    {
+        var paths = new WellKnownPaths();
+        var scanner = new SystemJunkScanner(paths);
+        var cleaner = new SystemJunkCleaner(scanner, new WindowsToolRunner(), paths, logger);
+        IRestorePointService restorePoints = new SystemRestoreService(paths, logger);
+
+        var operations = new WindowsHelperOperations(
+            scanner,
+            cleaner,
+            restorePoints,
+            UserProfileResolver.TryGetProfilePath(shellUser));
+
+        return new HelperDispatcher(operations, logger);
+    }
+
+    private static async Task ServeAsync(NamedPipeServerStream server, HelperDispatcher dispatcher, FileAppLogger logger, CancellationToken cancellationToken)
     {
         while (server.IsConnected && !cancellationToken.IsCancellationRequested)
         {
@@ -133,7 +166,7 @@ public static class HelperHost
                 return;
             }
 
-            var response = await HandleAsync(request, logger, cancellationToken);
+            var response = await dispatcher.DispatchAsync(request, cancellationToken);
 
             try
             {
@@ -143,24 +176,6 @@ public static class HelperHost
             {
                 return;
             }
-        }
-    }
-
-    /// <summary>
-    /// The one place a request turns into work. A switch rather than a handler registry on
-    /// purpose: the set of things this process will do should be readable top to bottom in a
-    /// single review.
-    /// </summary>
-    private static async Task<HelperResponse> HandleAsync(HelperRequest request, FileAppLogger logger, CancellationToken cancellationToken)
-    {
-        switch (request)
-        {
-            case PingRequest:
-                return new HelperOkResponse { RequestId = request.RequestId };
-
-            default:
-                await logger.LogWarningAsync($"Elevated helper refused an unsupported operation: {request.GetType().Name}.", cancellationToken);
-                return new HelperErrorResponse(HelperErrorCodes.UnsupportedOperation, request.GetType().Name) { RequestId = request.RequestId };
         }
     }
 

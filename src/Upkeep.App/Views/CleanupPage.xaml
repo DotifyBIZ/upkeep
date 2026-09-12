@@ -5,37 +5,247 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:Upkeep.App.ViewModels"
     mc:Ignorable="d"
     Background="{StaticResource Gray50Brush}">
 
-    <Grid Padding="32,24" RowSpacing="24">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Page.Resources>
+        <DataTemplate x:Key="CategoryRowTemplate" x:DataType="viewmodels:CleanupCategoryDisplay">
+            <Grid Padding="20,14" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,1,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Spacing="4">
-            <TextBlock x:Uid="CleanupTitle" Style="{StaticResource PageTitleTextStyle}" />
-            <TextBlock x:Uid="CleanupSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="620" HorizontalAlignment="Left" />
-        </StackPanel>
+                <CheckBox
+                    Grid.Column="0"
+                    MinWidth="0"
+                    IsChecked="{x:Bind IsSelected, Mode=TwoWay}"
+                    IsEnabled="{x:Bind IsSelectable}" />
 
-        <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" VerticalAlignment="Top">
-            <StackPanel Spacing="12" HorizontalAlignment="Left">
-                <TextBlock x:Uid="CleanupNotScannedMessage" Style="{StaticResource BodyTextStyle}" MaxWidth="520" TextWrapping="Wrap" />
-                <Button x:Name="ScanButton" Style="{StaticResource PrimaryButtonStyle}" Click="Scan_Click" HorizontalAlignment="Left">
-                    <Button.Resources>
-                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
-                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
-                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
-                        <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
-                    </Button.Resources>
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon Glyph="&#xE721;" FontSize="14" Foreground="White" />
-                        <TextBlock x:Uid="CleanupScanButtonLabel" Foreground="White" FontWeight="SemiBold" />
+                <StackPanel Grid.Column="1" Spacing="2">
+                    <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" />
+                    <TextBlock Text="{x:Bind Description}" Style="{StaticResource CaptionTextStyle}" />
+                    <StackPanel Orientation="Horizontal" Spacing="6" Visibility="{x:Bind HasNote}">
+                        <FontIcon Glyph="&#xE7BA;" FontSize="12" Foreground="{StaticResource WarningTextBrush}" />
+                        <TextBlock Text="{x:Bind Note}" FontSize="{StaticResource FontSizeXs}" Foreground="{StaticResource WarningTextBrush}" TextWrapping="Wrap" />
                     </StackPanel>
-                </Button>
-                <ProgressRing x:Name="ScanProgress" IsActive="False" HorizontalAlignment="Left" />
+                </StackPanel>
+
+                <Border
+                    Grid.Column="2"
+                    Visibility="{x:Bind IsIrreversible}"
+                    Background="{StaticResource WarningSurfaceBrush}"
+                    CornerRadius="10"
+                    Padding="8,2"
+                    VerticalAlignment="Center">
+                    <TextBlock x:Uid="CommonCannotBeUndoneTagText" FontSize="{StaticResource FontSizeXs}" Foreground="{StaticResource WarningTextBrush}" />
+                </Border>
+
+                <TextBlock
+                    Grid.Column="3"
+                    Text="{x:Bind SizeDisplay}"
+                    MinWidth="110"
+                    TextAlignment="Right"
+                    VerticalAlignment="Center"
+                    FontSize="{StaticResource FontSizeSm}"
+                    FontWeight="SemiBold"
+                    Foreground="{StaticResource Gray900Brush}" />
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <!-- Preview: scan, review, confirm. Nothing here changes anything until the user says so. -->
+        <Grid Padding="32,24" Visibility="{x:Bind ViewModel.ShowPreview, Mode=OneWay}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Spacing="4">
+                    <TextBlock x:Uid="CleanupTitle" Style="{StaticResource PageTitleTextStyle}" />
+                    <TextBlock x:Uid="CleanupSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="620" HorizontalAlignment="Left" />
+                </StackPanel>
+
+                <Button
+                    x:Uid="CleanupRescanButton"
+                    Grid.Column="1"
+                    VerticalAlignment="Top"
+                    Visibility="{x:Bind ViewModel.HasScanned, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.ScanCommand}" />
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" Margin="0,24,0,0" VerticalScrollBarVisibility="Auto">
+                <StackPanel Spacing="16">
+                    <InfoBar
+                        IsOpen="{x:Bind ViewModel.HasStatusMessage, Mode=OneWay}"
+                        Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                        Severity="Warning"
+                        IsClosable="False" />
+
+                    <!-- Before the first scan: say what scanning does, and nothing else. -->
+                    <Border Style="{StaticResource CardBorderStyle}" HorizontalAlignment="Left" Visibility="{x:Bind ViewModel.ShowScanPrompt, Mode=OneWay}">
+                        <StackPanel Spacing="12" HorizontalAlignment="Left">
+                            <TextBlock x:Uid="CleanupNotScannedMessage" Style="{StaticResource BodyTextStyle}" MaxWidth="520" TextWrapping="Wrap" />
+                            <Button Style="{StaticResource PrimaryButtonStyle}" Command="{x:Bind ViewModel.ScanCommand}" HorizontalAlignment="Left">
+                                <Button.Resources>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
+                                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
+                                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
+                                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
+                                </Button.Resources>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE721;" FontSize="14" Foreground="White" />
+                                    <TextBlock x:Uid="CleanupScanButtonLabel" Foreground="White" FontWeight="SemiBold" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel Orientation="Horizontal" Spacing="12" Visibility="{x:Bind ViewModel.IsScanning, Mode=OneWay}">
+                        <ProgressRing IsActive="{x:Bind ViewModel.IsScanning, Mode=OneWay}" Width="20" Height="20" />
+                        <TextBlock x:Uid="CleanupScanningMessage" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- Your account -->
+                    <Border Style="{StaticResource CardBorderStyle}" Padding="0" Visibility="{x:Bind ViewModel.HasScanned, Mode=OneWay}">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="12" Padding="20,16" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE77B;" FontSize="16" Foreground="{StaticResource Gray700Brush}" />
+                                <TextBlock x:Uid="CleanupUserSectionHeader" Style="{StaticResource SectionLabelTextStyle}" VerticalAlignment="Center" />
+                                <TextBlock x:Uid="CleanupUserSectionNote" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <ItemsControl ItemsSource="{x:Bind ViewModel.UserCategories}" ItemTemplate="{StaticResource CategoryRowTemplate}" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- System-wide -->
+                    <Border Style="{StaticResource CardBorderStyle}" Padding="0" Visibility="{x:Bind ViewModel.HasScanned, Mode=OneWay}">
+                        <StackPanel>
+                            <Grid Padding="20,16" ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Grid.Column="0" Glyph="&#xE72E;" FontSize="16" Foreground="{StaticResource Secondary600Brush}" />
+                                <TextBlock Grid.Column="1" x:Uid="CleanupSystemSectionHeader" Style="{StaticResource SectionLabelTextStyle}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="2" x:Uid="CleanupSystemSectionNote" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
+                                <Button
+                                    Grid.Column="3"
+                                    x:Uid="CleanupIncludeSystemButton"
+                                    Visibility="{x:Bind ViewModel.CanIncludeSystemItems, Mode=OneWay}"
+                                    Command="{x:Bind ViewModel.IncludeSystemItemsCommand}" />
+                            </Grid>
+                            <ItemsControl ItemsSource="{x:Bind ViewModel.SystemCategories}" ItemTemplate="{StaticResource CategoryRowTemplate}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- What will happen, and the one button that makes it happen. -->
+            <Border
+                Grid.Row="2"
+                Margin="-32,16,-32,-24"
+                Padding="32,16"
+                Background="White"
+                BorderBrush="{StaticResource Gray200Brush}"
+                BorderThickness="0,1,0,0"
+                Visibility="{x:Bind ViewModel.HasScanned, Mode=OneWay}">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Spacing="2">
+                        <TextBlock Text="{x:Bind ViewModel.SelectionSummary, Mode=OneWay}" Style="{StaticResource SectionLabelTextStyle}" />
+                        <TextBlock x:Uid="CleanupFooterNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                        <ProgressRing IsActive="{x:Bind ViewModel.IsRunning, Mode=OneWay}" Width="20" Height="20" />
+                        <Button
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            IsEnabled="{x:Bind ViewModel.CanClean, Mode=OneWay}"
+                            Click="Clean_Click">
+                            <Button.Resources>
+                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
+                                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
+                                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
+                                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
+                            </Button.Resources>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE72E;" FontSize="14" Foreground="White" />
+                                <TextBlock x:Uid="CleanupCleanButtonLabel" Foreground="White" FontWeight="SemiBold" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Results: one number, then the detail behind it. -->
+        <ScrollViewer Padding="32,24" Visibility="{x:Bind ViewModel.ShowResults, Mode=OneWay}">
+            <StackPanel Spacing="24">
+                <StackPanel Spacing="4">
+                    <TextBlock x:Uid="CleanupTitle" Style="{StaticResource PageTitleTextStyle}" />
+                    <TextBlock x:Uid="CleanupSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="620" HorizontalAlignment="Left" />
+                </StackPanel>
+
+                <Border Style="{StaticResource CardBorderStyle}" Padding="32" HorizontalAlignment="Left" MinWidth="560">
+                    <StackPanel Spacing="24">
+                        <StackPanel Orientation="Horizontal" Spacing="20">
+                            <FontIcon Glyph="&#xE930;" FontSize="36" Foreground="{StaticResource SuccessBrush}" VerticalAlignment="Top" />
+                            <StackPanel Spacing="4">
+                                <TextBlock
+                                    Text="{x:Bind ViewModel.FreedDisplay, Mode=OneWay}"
+                                    FontFamily="{StaticResource BrandFontFamily}"
+                                    FontSize="{StaticResource FontSize3xl}"
+                                    FontWeight="SemiBold"
+                                    Foreground="{StaticResource Gray900Brush}" />
+                                <TextBlock Text="{x:Bind ViewModel.FreeSpaceDisplay, Mode=OneWay}" Style="{StaticResource PageSubtitleTextStyle}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Spacing="40">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="{x:Bind ViewModel.ItemsRemovedDisplay, Mode=OneWay}" FontSize="{StaticResource FontSizeBase}" FontWeight="SemiBold" />
+                                <TextBlock x:Uid="CleanupResultsItemsRemovedLabel" Style="{StaticResource CaptionTextStyle}" />
+                            </StackPanel>
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="{x:Bind ViewModel.ItemsSkippedDisplay, Mode=OneWay}" FontSize="{StaticResource FontSizeBase}" FontWeight="SemiBold" />
+                                <TextBlock x:Uid="CleanupResultsItemsSkippedLabel" Style="{StaticResource CaptionTextStyle}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8" Visibility="{x:Bind ViewModel.HasRestorePointNote, Mode=OneWay}">
+                            <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{StaticResource Gray500Brush}" VerticalAlignment="Top" />
+                            <TextBlock Text="{x:Bind ViewModel.RestorePointDisplay, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" MaxWidth="480" />
+                        </StackPanel>
+
+                        <Button x:Uid="CleanupResultsDoneButton" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Left" Command="{x:Bind ViewModel.DoneCommand}">
+                            <Button.Resources>
+                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
+                                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
+                                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
+                                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
+                            </Button.Resources>
+                        </Button>
+                    </StackPanel>
+                </Border>
             </StackPanel>
-        </Border>
+        </ScrollViewer>
     </Grid>
 </Page>
