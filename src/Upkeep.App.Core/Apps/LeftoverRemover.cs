@@ -34,6 +34,7 @@ public sealed class LeftoverRemover : ILeftoverRemover
     private readonly IQuarantineStore _quarantine;
     private readonly ISessionJournal _journal;
     private readonly IRegistryProbe _registry;
+    private readonly RegistryKeyBackupService _backups;
     private readonly IWellKnownPaths _paths;
     private readonly IAppLogger _logger;
 
@@ -47,6 +48,7 @@ public sealed class LeftoverRemover : ILeftoverRemover
         _quarantine = quarantine;
         _journal = journal;
         _registry = registry;
+        _backups = new RegistryKeyBackupService(registry);
         _paths = paths;
         _logger = logger;
     }
@@ -194,12 +196,26 @@ public sealed class LeftoverRemover : ILeftoverRemover
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(backupPath)!);
-            var backup = new RegistryKeyBackup(item.Hive.ToString(), item.Path, _registry.GetSubKeyNames(item.Hive, item.Path));
-            await File.WriteAllTextAsync(backupPath, JsonSerializer.Serialize(backup, BackupOptions), cancellationToken);
 
-            // Deleting the key itself is the elevated helper's job for HKLM; for HKCU the shell
-            // does it, and the backup above is what makes that safe to offer.
-            success = _registry.DeleteCurrentUserKeyTree(item.Path, out failure);
+            // Captured with its values and everything under it, not just its subkey names: a
+            // backup that cannot put the key back would make the entry's reversible claim untrue.
+            var backup = _backups.Capture(item.Hive, item.Path);
+
+            if (backup is null)
+            {
+                // The key went away between the check and the capture; there is nothing to
+                // remove and nothing worth claiming was removed.
+                success = false;
+                failure = $"The key {item.Path} could not be read.";
+            }
+            else
+            {
+                await File.WriteAllTextAsync(backupPath, JsonSerializer.Serialize(backup, BackupOptions), cancellationToken);
+
+                // Deleting the key itself is the elevated helper's job for HKLM; for HKCU the
+                // shell does it, and the backup above is what makes that safe to offer.
+                success = _registry.DeleteCurrentUserKeyTree(item.Path, out failure);
+            }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -250,4 +266,3 @@ public sealed class LeftoverRemover : ILeftoverRemover
 }
 
 /// <summary>What was under a registry key when Upkeep removed it.</summary>
-internal sealed record RegistryKeyBackup(string Hive, string KeyPath, IReadOnlyList<string> SubKeyNames);

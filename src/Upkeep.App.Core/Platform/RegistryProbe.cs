@@ -41,6 +41,15 @@ public interface IRegistryProbe
     /// <summary>A binary value, or null when it is missing or of another type.</summary>
     byte[]? GetBinaryValue(RegistryHiveName hive, string keyPath, string valueName);
 
+    /// <summary>Every value directly under a key, with enough of each to put it back.</summary>
+    IReadOnlyList<RegistryValueSnapshot> GetValues(RegistryHiveName hive, string keyPath);
+
+    /// <summary>Creates a key in the current user's hive, or succeeds if it is already there.</summary>
+    bool CreateCurrentUserKey(string keyPath, out string? failure);
+
+    /// <summary>Writes one captured value back into the current user's hive.</summary>
+    bool SetCurrentUserValue(string keyPath, RegistryValueSnapshot value, out string? failure);
+
     /// <summary>Writes a binary value in the current user's hive, creating the key if needed.</summary>
     bool SetCurrentUserBinaryValue(string keyPath, string valueName, byte[] value, out string? failure);
 
@@ -123,6 +132,101 @@ public sealed class RegistryProbe : IRegistryProbe
             return null;
         }
     }
+
+    public IReadOnlyList<RegistryValueSnapshot> GetValues(RegistryHiveName hive, string keyPath)
+    {
+        try
+        {
+            using var key = Root(hive).OpenSubKey(keyPath);
+            if (key is null)
+            {
+                return [];
+            }
+
+            var values = new List<RegistryValueSnapshot>();
+            foreach (string name in key.GetValueNames())
+            {
+                values.Add(Snapshot(key, name));
+            }
+
+            return values;
+        }
+        catch (Exception ex) when (ex is System.Security.SecurityException or UnauthorizedAccessException or IOException)
+        {
+            return [];
+        }
+    }
+
+    public bool CreateCurrentUserKey(string keyPath, out string? failure)
+    {
+        try
+        {
+            using var key = Registry.CurrentUser.CreateSubKey(keyPath, writable: true);
+            failure = null;
+            return true;
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException or System.Security.SecurityException or IOException or ArgumentException)
+        {
+            failure = ex.Message;
+            return false;
+        }
+    }
+
+    public bool SetCurrentUserValue(string keyPath, RegistryValueSnapshot value, out string? failure)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+
+        try
+        {
+            using var key = Registry.CurrentUser.CreateSubKey(keyPath, writable: true);
+            var kind = ParseKind(value.Kind);
+            object? data = DataFor(value, kind);
+
+            if (data is null)
+            {
+                // Nothing usable was captured, so writing something made up would be worse than
+                // leaving the value absent.
+                failure = $"The backup holds no usable data for {value.Name}.";
+                return false;
+            }
+
+            key.SetValue(value.Name, data, kind);
+            failure = null;
+            return true;
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException or System.Security.SecurityException or IOException or ArgumentException)
+        {
+            failure = ex.Message;
+            return false;
+        }
+    }
+
+    private static RegistryValueSnapshot Snapshot(RegistryKey key, string name)
+    {
+        var kind = key.GetValueKind(name);
+        object? data = key.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
+
+        return kind switch
+        {
+            RegistryValueKind.Binary => new RegistryValueSnapshot(name, kind.ToString(), Binary: data as byte[]),
+            RegistryValueKind.DWord or RegistryValueKind.QWord =>
+                new RegistryValueSnapshot(name, kind.ToString(), Number: Convert.ToInt64(data, System.Globalization.CultureInfo.InvariantCulture)),
+            RegistryValueKind.MultiString => new RegistryValueSnapshot(name, kind.ToString(), Lines: data as string[]),
+            _ => new RegistryValueSnapshot(name, kind.ToString(), Text: data?.ToString()),
+        };
+    }
+
+    private static RegistryValueKind ParseKind(string kind) =>
+        Enum.TryParse(kind, ignoreCase: true, out RegistryValueKind parsed) ? parsed : RegistryValueKind.String;
+
+    private static object? DataFor(RegistryValueSnapshot value, RegistryValueKind kind) => kind switch
+    {
+        RegistryValueKind.Binary => value.Binary,
+        RegistryValueKind.DWord => value.Number is long number ? unchecked((int)number) : null,
+        RegistryValueKind.QWord => value.Number,
+        RegistryValueKind.MultiString => value.Lines?.ToArray(),
+        _ => value.Text,
+    };
 
     public bool SetCurrentUserBinaryValue(string keyPath, string valueName, byte[] value, out string? failure)
     {

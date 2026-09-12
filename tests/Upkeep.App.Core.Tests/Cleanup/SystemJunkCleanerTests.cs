@@ -137,7 +137,7 @@ public class SystemJunkCleanerTests : IDisposable
     [Fact]
     public async Task CleanAsync_DismFails_ReportsItRatherThanClaimingSuccess()
     {
-        _toolRunner.Result = new Platform.ToolResult(87, "Error: 87");
+        _toolRunner.Result = new Upkeep.App.Core.Platform.ToolResult(87, "Error: 87");
 
         var outcome = await _cleaner.CleanAsync(JunkCategoryId.WindowsUpdateCleanup, [], null, CancellationToken.None);
 
@@ -161,7 +161,7 @@ public class SystemJunkCleanerTests : IDisposable
     [Fact]
     public async Task CleanAsync_DeliveryOptimizationCmdletFails_IsReportedAsSkipped()
     {
-        _toolRunner.Result = new Platform.ToolResult(1, "The term is not recognized.");
+        _toolRunner.Result = new Upkeep.App.Core.Platform.ToolResult(1, "The term is not recognized.");
 
         var outcome = await _cleaner.CleanAsync(JunkCategoryId.DeliveryOptimization, [], null, CancellationToken.None);
 
