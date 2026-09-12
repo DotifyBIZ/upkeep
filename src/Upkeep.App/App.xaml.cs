@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Upkeep.App.Core.Abstractions;
+using Upkeep.App.Core.Apps;
 using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Files;
@@ -90,10 +91,19 @@ public partial class App : Application
         services.AddSingleton<IFileActionExecutor, FileActionExecutor>();
         services.AddSingleton<IFolderPickerService, FolderPickerService>();
 
+        // Apps: list, uninstall through the app's own uninstaller, then clear its leftovers.
+        services.AddSingleton<IRegistryProbe, RegistryProbe>();
+        services.AddSingleton<IInstalledAppScanner, InstalledAppScanner>();
+        services.AddSingleton<IUninstallLauncher, UninstallLauncher>();
+        services.AddSingleton<LeftoverScanner>();
+        services.AddSingleton<IAppUninstaller, AppUninstaller>();
+        services.AddSingleton<ILeftoverRemover, LeftoverRemover>();
+
         // View models are transient: a fresh instance per navigation.
         services.AddTransient<HomeViewModel>();
         services.AddTransient<CleanupViewModel>();
         services.AddTransient<FilesViewModel>();
+        services.AddTransient<AppsViewModel>();
 
         return services.BuildServiceProvider();
     }
