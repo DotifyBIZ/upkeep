@@ -25,8 +25,12 @@ jobs:
           cache: true
           cache-dependency-path: '**/packages.lock.json'
 
+      # The RID is passed explicitly: a self-contained Windows App SDK build needs the win-x64
+      # .NET runtime pack, and locked-mode restore only fetches what it is asked for. Without this
+      # the build fails with NETSDK1112 on a clean runner, while a developer machine survives on a
+      # warm NuGet cache.
       - name: Restore (locked mode — fails if packages.lock.json is out of sync)
-        run: dotnet restore Upkeep.sln --locked-mode
+        run: dotnet restore Upkeep.sln --locked-mode -p:RuntimeIdentifier=win-x64
 
       - name: Verify formatting
         run: dotnet format Upkeep.sln --verify-no-changes --no-restore
