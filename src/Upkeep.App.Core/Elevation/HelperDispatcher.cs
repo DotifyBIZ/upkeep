@@ -40,22 +40,22 @@ public sealed class HelperDispatcher
                     };
 
                 case CleanJunkCategoryRequest clean:
-                {
-                    var outcome = await _operations.CleanCategoryAsync(clean.CategoryId, clean.Paths, cancellationToken);
-                    return new JunkCleanResponse(outcome.FreedBytes, outcome.ItemsRemoved, outcome.ItemsSkipped)
                     {
-                        RequestId = request.RequestId,
-                    };
-                }
+                        var outcome = await _operations.CleanCategoryAsync(clean.CategoryId, clean.Paths, cancellationToken);
+                        return new JunkCleanResponse(outcome.FreedBytes, outcome.ItemsRemoved, outcome.ItemsSkipped)
+                        {
+                            RequestId = request.RequestId,
+                        };
+                    }
 
                 case CreateRestorePointRequest restorePoint:
-                {
-                    var result = await _operations.CreateRestorePointAsync(restorePoint.Description, cancellationToken);
-                    return new RestorePointResponse(result.Status, result.Description, result.ProtectionWasEnabled)
                     {
-                        RequestId = request.RequestId,
-                    };
-                }
+                        var result = await _operations.CreateRestorePointAsync(restorePoint.Description, cancellationToken);
+                        return new RestorePointResponse(result.Status, result.Description, result.ProtectionWasEnabled)
+                        {
+                            RequestId = request.RequestId,
+                        };
+                    }
 
                 default:
                     await _logger.LogWarningAsync($"Elevated helper refused an unsupported operation: {request.GetType().Name}.", cancellationToken);
