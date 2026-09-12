@@ -15,6 +15,15 @@ public interface IStartupItemToggler
         StartupItem item,
         bool enabled,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Switches an item without writing a journal entry. This is the way back for a revert, which
+    /// is undoing a session rather than adding to it.
+    /// </summary>
+    Task<(bool Success, string? Failure)> SetEnabledWithoutJournalAsync(
+        StartupItem item,
+        bool enabled,
+        CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -72,9 +81,7 @@ public sealed class StartupItemToggler : IStartupItemToggler
             cancellationToken);
         int entryIndex = session.Entries.Count - 1;
 
-        (bool success, string? failure) = item.Source == StartupSource.ScheduledTask
-            ? await SetTaskEnabledAsync(item, enabled, cancellationToken)
-            : SetApprovedValue(item, enabled);
+        (bool success, string? failure) = await SetEnabledWithoutJournalAsync(item, enabled, cancellationToken);
 
         session = await _journal.UpdateEntryAsync(
             session,
@@ -87,6 +94,24 @@ public sealed class StartupItemToggler : IStartupItemToggler
             cancellationToken);
 
         return (session, success);
+    }
+
+    /// <inheritdoc />
+    public async Task<(bool Success, string? Failure)> SetEnabledWithoutJournalAsync(
+        StartupItem item,
+        bool enabled,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (!item.CanToggle)
+        {
+            return (false, "This entry cannot be toggled.");
+        }
+
+        return item.Source == StartupSource.ScheduledTask
+            ? await SetTaskEnabledAsync(item, enabled, cancellationToken)
+            : SetApprovedValue(item, enabled);
     }
 
     /// <summary>

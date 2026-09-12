@@ -137,7 +137,7 @@ public sealed partial class PerformanceViewModel : ObservableObject
     /// <summary>Applies the animations switch, putting it back if Windows would not take it.</summary>
     public Task ApplyAnimationsAsync(CancellationToken cancellationToken) =>
         ApplySettingAsync(
-            "visual-effects-animations",
+            PerformanceSettingIds.Animations,
             AnimationsEnabled,
             enabled => _settings.SetAnimationsEnabled(enabled, out string? failure) ? null : failure ?? string.Empty,
             () => AnimationsEnabled = !AnimationsEnabled,
@@ -146,7 +146,7 @@ public sealed partial class PerformanceViewModel : ObservableObject
     /// <summary>Applies the transparency switch, putting it back if Windows would not take it.</summary>
     public Task ApplyTransparencyAsync(CancellationToken cancellationToken) =>
         ApplySettingAsync(
-            "visual-effects-transparency",
+            PerformanceSettingIds.Transparency,
             TransparencyEnabled,
             enabled => _settings.SetTransparencyEnabled(enabled, out string? failure) ? null : failure ?? string.Empty,
             () => TransparencyEnabled = !TransparencyEnabled,
@@ -170,7 +170,7 @@ public sealed partial class PerformanceViewModel : ObservableObject
         }
 
         await JournalAsync(
-            new SystemSettingChangedEntry("power-plan", previous?.Id.ToString() ?? string.Empty, plan.Id.ToString()),
+            new SystemSettingChangedEntry(PerformanceSettingIds.PowerPlan, previous?.Id.ToString() ?? string.Empty, plan.Id.ToString()),
             cancellationToken);
 
         if (_settings.SetActivePowerPlan(plan.Id, out string? failure))

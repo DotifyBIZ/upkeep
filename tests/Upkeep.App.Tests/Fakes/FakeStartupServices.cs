@@ -31,4 +31,11 @@ public sealed class FakeStartupItemToggler : IStartupItemToggler
         Changes.Add((item.Id, enabled));
         return Task.FromResult((session, Succeeds));
     }
+
+    public Task<(bool Success, string? Failure)> SetEnabledWithoutJournalAsync(StartupItem item, bool enabled, CancellationToken cancellationToken = default)
+    {
+        Changes.Add((item.Id, enabled));
+        string? failure = Succeeds ? null : "Windows refused it.";
+        return Task.FromResult((Succeeds, failure));
+    }
 }

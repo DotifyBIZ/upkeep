@@ -82,6 +82,7 @@ public partial class App : Application
         services.AddSingleton<IRunningProcesses, RunningProcesses>();
         services.AddSingleton<IJunkScanner, JunkScanner>();
         services.AddSingleton<ISessionJournal, SessionJournal>();
+        services.AddSingleton<ISessionReverter, SessionReverter>();
         services.AddSingleton<IQuarantineStore, QuarantineStore>();
         services.AddSingleton<IRestorePointService, ElevatedRestorePointService>();
         services.AddSingleton<ICleanupExecutor, CleanupExecutor>();
@@ -96,6 +97,7 @@ public partial class App : Application
 
         // Apps: list, uninstall through the app's own uninstaller, then clear its leftovers.
         services.AddSingleton<IRegistryProbe, RegistryProbe>();
+        services.AddSingleton<RegistryKeyBackupService>();
         services.AddSingleton<IInstalledAppScanner, InstalledAppScanner>();
         services.AddSingleton<IUninstallLauncher, UninstallLauncher>();
         services.AddSingleton<LeftoverScanner>();
