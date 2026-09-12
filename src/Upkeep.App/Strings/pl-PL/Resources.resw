@@ -788,4 +788,99 @@
   <data name="HistoryRevertFailedFormat">
     <value>Nie udało się cofnąć: {0}.</value>
   </data>
+
+  <!-- Ustawienia -->
+  <data name="SettingsTitle.Text">
+    <value>Ustawienia</value>
+  </data>
+  <data name="SettingsSubtitle.Text">
+    <value>Wszystko, co Upkeep zapisuje, zostaje na tym komputerze. Nie ma konta ani serwera.</value>
+  </data>
+  <data name="SettingsLanguageHeader.Text">
+    <value>Język</value>
+  </data>
+  <data name="SettingsLanguageNote.Text">
+    <value>Zmiana zadziała po ponownym uruchomieniu Upkeep.</value>
+  </data>
+  <data name="SettingsLanguageSystem">
+    <value>Zgodnie z systemem Windows</value>
+  </data>
+  <data name="SettingsLanguageEnglish">
+    <value>English</value>
+  </data>
+  <data name="SettingsLanguagePolish">
+    <value>Polski</value>
+  </data>
+  <data name="SettingsUpdatesHeader.Text">
+    <value>Aktualizacje</value>
+  </data>
+  <data name="SettingsUpdatesLabel.Text">
+    <value>Sprawdzaj nowe wersje</value>
+  </data>
+  <data name="SettingsUpdatesNote.Text">
+    <value>Jedno zapytanie do publicznej strony wydań w serwisie GitHub, mniej więcej raz w tygodniu. Żadne dane o tym komputerze nie są wysyłane.</value>
+  </data>
+  <data name="SettingsCheckNowButton.Content">
+    <value>Sprawdź teraz</value>
+  </data>
+  <data name="SettingsUpdateAvailableFormat">
+    <value>Dostępna jest wersja {0}.</value>
+  </data>
+  <data name="SettingsUpdateUpToDate">
+    <value>Upkeep jest aktualny.</value>
+  </data>
+  <data name="SettingsUpdateCheckFailed">
+    <value>Nie udało się połączyć z serwisem GitHub.</value>
+  </data>
+  <data name="SettingsQuarantineHeader.Text">
+    <value>Kwarantanna</value>
+  </data>
+  <data name="SettingsQuarantineNote.Text">
+    <value>Pliki odłożone przez Upkeep zamiast usunięcia. Po upływie okresu przechowywania są usuwane na stałe.</value>
+  </data>
+  <data name="SettingsQuarantineHoldingFormat">
+    <value>Zajmuje {0}</value>
+  </data>
+  <data name="SettingsQuarantineEmptyNow.Content">
+    <value>Opróżnij teraz</value>
+  </data>
+  <data name="SettingsQuarantineEmptiedFormat">
+    <value>Trwale usunięto {0}.</value>
+  </data>
+  <data name="SettingsRetentionLabel.Text">
+    <value>Przechowuj pliki z kwarantanny przez</value>
+  </data>
+  <data name="SettingsRetentionDaysFormat">
+    <value>{0} dni</value>
+  </data>
+  <data name="SettingsLogsHeader.Text">
+    <value>Dzienniki</value>
+  </data>
+  <data name="SettingsLogsNote.Text">
+    <value>Zapisywane lokalnie, aby technik mógł sprawdzić, co się wydarzyło. Nic nie jest wysyłane.</value>
+  </data>
+  <data name="SettingsOpenLogsButton.Content">
+    <value>Otwórz folder dzienników</value>
+  </data>
+  <data name="SettingsCouldNotOpen">
+    <value>Nie udało się otworzyć tego folderu.</value>
+  </data>
+  <data name="SettingsAboutHeader.Text">
+    <value>Informacje</value>
+  </data>
+  <data name="SettingsVersionFormat">
+    <value>Wersja {0}</value>
+  </data>
+  <data name="SettingsVersionUnknown">
+    <value>Kompilacja deweloperska</value>
+  </data>
+  <data name="SettingsLicenseNote.Text">
+    <value>PolyForm Shield 1.0.0. Tworzone z sercem przez Dotify.</value>
+  </data>
+  <data name="SettingsProjectButton.Content">
+    <value>Strona projektu</value>
+  </data>
+  <data name="SettingsOpenReleaseButton.Content">
+    <value>Zobacz nowości</value>
+  </data>
 </root>

@@ -788,4 +788,99 @@
   <data name="HistoryRevertFailedFormat">
     <value>{0} could not be put back.</value>
   </data>
+
+  <!-- Settings -->
+  <data name="SettingsTitle.Text">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsSubtitle.Text">
+    <value>Everything Upkeep stores stays on this PC. There is no account and no server.</value>
+  </data>
+  <data name="SettingsLanguageHeader.Text">
+    <value>Language</value>
+  </data>
+  <data name="SettingsLanguageNote.Text">
+    <value>Takes effect the next time Upkeep starts.</value>
+  </data>
+  <data name="SettingsLanguageSystem">
+    <value>Follow Windows</value>
+  </data>
+  <data name="SettingsLanguageEnglish">
+    <value>English</value>
+  </data>
+  <data name="SettingsLanguagePolish">
+    <value>Polski</value>
+  </data>
+  <data name="SettingsUpdatesHeader.Text">
+    <value>Updates</value>
+  </data>
+  <data name="SettingsUpdatesLabel.Text">
+    <value>Check for new versions</value>
+  </data>
+  <data name="SettingsUpdatesNote.Text">
+    <value>One request to GitHub's public releases page, about once a week. Nothing about this PC is sent.</value>
+  </data>
+  <data name="SettingsCheckNowButton.Content">
+    <value>Check now</value>
+  </data>
+  <data name="SettingsUpdateAvailableFormat">
+    <value>Version {0} is available.</value>
+  </data>
+  <data name="SettingsUpdateUpToDate">
+    <value>Upkeep is up to date.</value>
+  </data>
+  <data name="SettingsUpdateCheckFailed">
+    <value>The update check could not reach GitHub.</value>
+  </data>
+  <data name="SettingsQuarantineHeader.Text">
+    <value>Quarantine</value>
+  </data>
+  <data name="SettingsQuarantineNote.Text">
+    <value>Files Upkeep moved aside instead of deleting. They are deleted for good once the retention period passes.</value>
+  </data>
+  <data name="SettingsQuarantineHoldingFormat">
+    <value>Holding {0}</value>
+  </data>
+  <data name="SettingsQuarantineEmptyNow.Content">
+    <value>Empty now</value>
+  </data>
+  <data name="SettingsQuarantineEmptiedFormat">
+    <value>Deleted {0} for good.</value>
+  </data>
+  <data name="SettingsRetentionLabel.Text">
+    <value>Keep quarantined items for</value>
+  </data>
+  <data name="SettingsRetentionDaysFormat">
+    <value>{0} days</value>
+  </data>
+  <data name="SettingsLogsHeader.Text">
+    <value>Logs</value>
+  </data>
+  <data name="SettingsLogsNote.Text">
+    <value>Written locally so a technician can see what happened. Nothing is uploaded.</value>
+  </data>
+  <data name="SettingsOpenLogsButton.Content">
+    <value>Open logs folder</value>
+  </data>
+  <data name="SettingsCouldNotOpen">
+    <value>That folder could not be opened.</value>
+  </data>
+  <data name="SettingsAboutHeader.Text">
+    <value>About</value>
+  </data>
+  <data name="SettingsVersionFormat">
+    <value>Version {0}</value>
+  </data>
+  <data name="SettingsVersionUnknown">
+    <value>Development build</value>
+  </data>
+  <data name="SettingsLicenseNote.Text">
+    <value>PolyForm Shield 1.0.0. Crafted with love by Dotify.</value>
+  </data>
+  <data name="SettingsProjectButton.Content">
+    <value>Project page</value>
+  </data>
+  <data name="SettingsOpenReleaseButton.Content">
+    <value>See what's new</value>
+  </data>
 </root>

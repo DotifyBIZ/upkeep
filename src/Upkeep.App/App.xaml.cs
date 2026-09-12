@@ -121,6 +121,7 @@ public partial class App : Application
         services.AddTransient<ServicesViewModel>();
         services.AddTransient<PerformanceViewModel>();
         services.AddTransient<HistoryViewModel>();
+        services.AddTransient<SettingsViewModel>();
 
         return services.BuildServiceProvider();
     }

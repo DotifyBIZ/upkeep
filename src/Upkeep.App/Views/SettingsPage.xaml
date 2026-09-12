@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="Upkeep.App.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{StaticResource Gray50Brush}">
+
+    <Grid Padding="32,24" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Spacing="4">
+            <TextBlock x:Uid="SettingsTitle" Style="{StaticResource PageTitleTextStyle}" />
+            <TextBlock x:Uid="SettingsSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
+        </StackPanel>
+
+        <InfoBar
+            Grid.Row="1"
+            IsOpen="{x:Bind ViewModel.HasStatusMessage, Mode=OneWay}"
+            Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+            Severity="Informational"
+            IsClosable="False" />
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16" MaxWidth="720" HorizontalAlignment="Left">
+
+                <!--  Language  -->
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <StackPanel Spacing="8">
+                        <TextBlock x:Uid="SettingsLanguageHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                        <ComboBox
+                            x:Name="LanguageBox"
+                            MinWidth="280"
+                            DisplayMemberPath="Label"
+                            ItemsSource="{x:Bind ViewModel.Languages}"
+                            SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}"
+                            SelectionChanged="Language_SelectionChanged" />
+                        <TextBlock x:Uid="SettingsLanguageNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <!--  Updates  -->
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock x:Uid="SettingsUpdatesHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock x:Uid="SettingsUpdatesLabel" Style="{StaticResource BodyTextStyle}" />
+                                <TextBlock x:Uid="SettingsUpdatesNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                            </StackPanel>
+                            <ToggleSwitch
+                                Grid.Column="1"
+                                OnContent=""
+                                OffContent=""
+                                IsOn="{x:Bind ViewModel.CheckForUpdatesEnabled, Mode=TwoWay}"
+                                Toggled="Updates_Toggled"
+                                VerticalAlignment="Center" />
+                        </Grid>
+
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Button x:Uid="SettingsCheckNowButton" Click="CheckNow_Click" />
+                            <ProgressRing IsActive="{x:Bind ViewModel.IsCheckingForUpdates, Mode=OneWay}" Width="18" Height="18" VerticalAlignment="Center" />
+                            <TextBlock Text="{x:Bind ViewModel.UpdateStatus, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
+                            <HyperlinkButton
+                                x:Uid="SettingsOpenReleaseButton"
+                                Command="{x:Bind ViewModel.OpenReleaseCommand}"
+                                Visibility="{x:Bind ViewModel.HasRelease, Mode=OneWay}"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!--  Quarantine  -->
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock x:Uid="SettingsQuarantineHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                        <TextBlock x:Uid="SettingsQuarantineNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Text="{x:Bind ViewModel.QuarantineHolding, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" />
+                            <Button x:Uid="SettingsQuarantineEmptyNow" Click="EmptyQuarantine_Click" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock x:Uid="SettingsRetentionLabel" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" />
+                            <NumberBox
+                                x:Name="RetentionBox"
+                                Minimum="1"
+                                Maximum="90"
+                                SpinButtonPlacementMode="Compact"
+                                Value="{x:Bind ViewModel.RetentionDays, Mode=TwoWay}"
+                                ValueChanged="Retention_ValueChanged"
+                                Width="140" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!--  Logs  -->
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <StackPanel Spacing="8">
+                        <TextBlock x:Uid="SettingsLogsHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                        <TextBlock x:Uid="SettingsLogsNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                        <Button x:Uid="SettingsOpenLogsButton" Command="{x:Bind ViewModel.OpenLogsFolderCommand}" HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+
+                <!--  About  -->
+                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,16">
+                    <StackPanel Spacing="8">
+                        <TextBlock x:Uid="SettingsAboutHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="{x:Bind ViewModel.VersionDisplay}" Style="{StaticResource BodyTextStyle}" />
+                        <TextBlock x:Uid="SettingsLicenseNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                        <Button x:Uid="SettingsProjectButton" Command="{x:Bind ViewModel.OpenProjectPageCommand}" HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
