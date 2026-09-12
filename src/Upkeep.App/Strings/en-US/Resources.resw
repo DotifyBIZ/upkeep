@@ -305,6 +305,214 @@
     <value>{0} items couldn't be read and were left out.</value>
   </data>
 
+  <!-- Files -->
+  <data name="FilesTitle.Text">
+    <value>Files</value>
+  </data>
+  <data name="FilesSubtitle.Text">
+    <value>Find duplicate, oversized and forgotten files. Nothing is removed until you confirm.</value>
+  </data>
+  <data name="FilesTabDuplicates.Text">
+    <value>Duplicates</value>
+  </data>
+  <data name="FilesTabLarge.Text">
+    <value>Large &amp; old files</value>
+  </data>
+  <data name="FilesTabUsage.Text">
+    <value>Disk usage</value>
+  </data>
+  <data name="FilesLookInLabel.Text">
+    <value>Look in</value>
+  </data>
+  <data name="FilesAddFolderButton.Content">
+    <value>Add folder</value>
+  </data>
+  <data name="FilesScanButton.Content">
+    <value>Scan</value>
+  </data>
+  <data name="FilesRescanButton.Content">
+    <value>Scan again</value>
+  </data>
+  <data name="FilesSkippedExplanation.Text">
+    <value>Windows and app folders are skipped, and so are cloud-only OneDrive files — reading one would download it.</value>
+  </data>
+  <data name="FilesScanningMessage.Text">
+    <value>Scanning — nothing is being removed.</value>
+  </data>
+  <data name="FilesMatchExplanation.Text">
+    <value>Matched by content (SHA-256) — identical bytes only, never by name. The oldest copy in each group is kept.</value>
+  </data>
+  <data name="FilesDuplicateSummaryFormat">
+    <value>{0} groups · {1} in extra copies</value>
+  </data>
+  <data name="FilesCopyCountFormat">
+    <value>{0} copies · {1} each</value>
+  </data>
+  <data name="FilesKeepingTag">
+    <value>Keeping</value>
+  </data>
+  <data name="FilesKeepingTagText.Text">
+    <value>Keeping</value>
+  </data>
+  <data name="FilesConfirmQuarantineTitleFormat">
+    <value>Move {0} files to quarantine?</value>
+  </data>
+  <data name="FilesConfirmQuarantineBody">
+    <value>They leave their folders now and are deleted for good after 7 days. Until then, History can put them back exactly where they were.</value>
+  </data>
+  <data name="FilesConfirmQuarantinePrimary">
+    <value>Move to quarantine</value>
+  </data>
+  <data name="FilesConfirmDeleteTitleFormat">
+    <value>Delete {0} files permanently?</value>
+  </data>
+  <data name="FilesConfirmDeleteBody">
+    <value>These files are removed immediately and Upkeep cannot bring them back. Windows may still hold copies elsewhere, such as File History or a backup.</value>
+  </data>
+  <data name="FilesConfirmDeletePrimary">
+    <value>Delete permanently</value>
+  </data>
+  <data name="FilesModifiedFormat">
+    <value>Modified {0}</value>
+  </data>
+  <data name="FilesSelectionSummaryFormat">
+    <value>{0} files selected · {1}</value>
+  </data>
+  <data name="FilesDeletePermanentlyLabel.Content">
+    <value>Delete permanently instead</value>
+  </data>
+  <data name="FilesQuarantineButtonLabel.Text">
+    <value>Move to quarantine</value>
+  </data>
+  <data name="FilesQuarantineNote.Text">
+    <value>Quarantined files can be restored from History for 7 days.</value>
+  </data>
+  <data name="FilesNoDuplicatesMessage.Text">
+    <value>No duplicates found in the folders you picked.</value>
+  </data>
+  <data name="FilesLargeThresholdLabel.Text">
+    <value>Bigger than</value>
+  </data>
+  <data name="FilesOldThresholdLabel.Text">
+    <value>Untouched for</value>
+  </data>
+  <data name="FilesLargeSummaryFormat">
+    <value>{0} files · {1}</value>
+  </data>
+  <data name="FilesReasonLarge">
+    <value>Large</value>
+  </data>
+  <data name="FilesReasonOld">
+    <value>Not opened in a long time</value>
+  </data>
+  <data name="FilesReasonBoth">
+    <value>Large and untouched</value>
+  </data>
+  <data name="FilesNoLargeFilesMessage.Text">
+    <value>Nothing over those thresholds in the folders you picked.</value>
+  </data>
+  <data name="FilesUsageLargestHeader.Text">
+    <value>Largest here</value>
+  </data>
+  <data name="FilesUsageScannedFormat">
+    <value>{0} files · scanned in {1}</value>
+  </data>
+  <data name="FilesUsageUnreadableFormat">
+    <value>{0} folders need administrator rights to measure.</value>
+  </data>
+  <data name="FilesUsageSmallerFilesFormat">
+    <value>{0} smaller files</value>
+  </data>
+  <data name="FilesRemovedSummaryFormat">
+    <value>{0} files moved to quarantine · {1}</value>
+  </data>
+  <data name="FilesDeletedSummaryFormat">
+    <value>{0} files deleted · {1} freed</value>
+  </data>
+  <data name="FilesFailedSummaryFormat">
+    <value>{0} couldn't be removed and were left alone.</value>
+  </data>
+
+  <!-- Apps -->
+  <data name="AppsTitle.Text">
+    <value>Apps</value>
+  </data>
+  <data name="AppsSubtitle.Text">
+    <value>Uninstall with the app's own uninstaller, then clear only what that app left behind.</value>
+  </data>
+  <data name="AppsSearchPlaceholder.PlaceholderText">
+    <value>Search apps</value>
+  </data>
+  <data name="AppsUninstallButton.Content">
+    <value>Uninstall</value>
+  </data>
+  <data name="AppsScanningMessage.Text">
+    <value>Reading the list of installed apps…</value>
+  </data>
+  <data name="AppsCountFormat">
+    <value>{0} apps</value>
+  </data>
+  <data name="AppsSourceDesktop">
+    <value>Desktop</value>
+  </data>
+  <data name="AppsSourceStore">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="AppsScopeAllUsers">
+    <value>All users</value>
+  </data>
+  <data name="AppsScopeCurrentUser">
+    <value>Your account</value>
+  </data>
+  <data name="AppsSizeUnknown">
+    <value>Size unknown</value>
+  </data>
+  <data name="AppsInstalledOnFormat">
+    <value>Installed {0}</value>
+  </data>
+  <data name="AppsUninstallRunningFormat">
+    <value>Running {0}'s own uninstaller. Finish it in that window, then come back here.</value>
+  </data>
+  <data name="AppsStillInstalledFormat">
+    <value>{0} still looks installed. Some uninstallers keep working after their window closes — check again in a moment.</value>
+  </data>
+  <data name="AppsUninstallDeclined">
+    <value>The uninstaller was cancelled, so nothing was removed.</value>
+  </data>
+  <data name="AppsUninstallFailedFormat">
+    <value>The uninstaller couldn't be started: {0}</value>
+  </data>
+  <data name="AppsNoLeftoversFormat">
+    <value>{0} was removed cleanly — nothing left behind.</value>
+  </data>
+  <data name="AppsLeftoversTitleFormat">
+    <value>{0} left some things behind</value>
+  </data>
+  <data name="AppsLeftoversBody">
+    <value>The uninstaller finished. These still look like they belong to this app — only items matching it are listed.</value>
+  </data>
+  <data name="AppsLeftoversFoldersHeader">
+    <value>Folders</value>
+  </data>
+  <data name="AppsLeftoversRegistryHeader">
+    <value>Registry</value>
+  </data>
+  <data name="AppsLeftoversNote">
+    <value>Folders go to quarantine for 7 days. Registry keys are backed up first, so History can put them back.</value>
+  </data>
+  <data name="AppsLeftoversPrimaryFormat">
+    <value>Remove {0} items</value>
+  </data>
+  <data name="AppsLeftoversKeep">
+    <value>Keep everything</value>
+  </data>
+  <data name="AppsLeftoversRemovedFormat">
+    <value>{0} items removed · {1} moved to quarantine</value>
+  </data>
+  <data name="AppsLeftoversFailedFormat">
+    <value>{0} items couldn't be removed and were left alone.</value>
+  </data>
+
   <!-- Shared -->
   <data name="CommonAdminApprovalTag">
     <value>Administrator approval</value>

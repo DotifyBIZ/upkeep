@@ -305,6 +305,214 @@
     <value>Nie udało się odczytać {0} elementów i zostały pominięte.</value>
   </data>
 
+  <!-- Pliki -->
+  <data name="FilesTitle.Text">
+    <value>Pliki</value>
+  </data>
+  <data name="FilesSubtitle.Text">
+    <value>Znajdź duplikaty oraz pliki zbyt duże i zapomniane. Nic nie zostanie usunięte bez Twojego potwierdzenia.</value>
+  </data>
+  <data name="FilesTabDuplicates.Text">
+    <value>Duplikaty</value>
+  </data>
+  <data name="FilesTabLarge.Text">
+    <value>Duże i stare pliki</value>
+  </data>
+  <data name="FilesTabUsage.Text">
+    <value>Wykorzystanie dysku</value>
+  </data>
+  <data name="FilesLookInLabel.Text">
+    <value>Szukaj w</value>
+  </data>
+  <data name="FilesAddFolderButton.Content">
+    <value>Dodaj folder</value>
+  </data>
+  <data name="FilesScanButton.Content">
+    <value>Skanuj</value>
+  </data>
+  <data name="FilesRescanButton.Content">
+    <value>Skanuj ponownie</value>
+  </data>
+  <data name="FilesSkippedExplanation.Text">
+    <value>Foldery systemu Windows i aplikacji są pomijane, podobnie jak pliki OneDrive dostępne tylko w chmurze — odczyt spowodowałby ich pobranie.</value>
+  </data>
+  <data name="FilesScanningMessage.Text">
+    <value>Skanowanie — nic nie jest usuwane.</value>
+  </data>
+  <data name="FilesMatchExplanation.Text">
+    <value>Dopasowanie według zawartości (SHA-256) — wyłącznie identyczne bajty, nigdy według nazwy. W każdej grupie zachowywana jest najstarsza kopia.</value>
+  </data>
+  <data name="FilesDuplicateSummaryFormat">
+    <value>Grupy: {0} · {1} w nadmiarowych kopiach</value>
+  </data>
+  <data name="FilesCopyCountFormat">
+    <value>Kopie: {0} · po {1}</value>
+  </data>
+  <data name="FilesKeepingTag">
+    <value>Zachowywany</value>
+  </data>
+  <data name="FilesKeepingTagText.Text">
+    <value>Zachowywany</value>
+  </data>
+  <data name="FilesConfirmQuarantineTitleFormat">
+    <value>Przenieść {0} plików do kwarantanny?</value>
+  </data>
+  <data name="FilesConfirmQuarantineBody">
+    <value>Opuszczą teraz swoje foldery i po 7 dniach zostaną usunięte na stałe. Do tego czasu Historia może przywrócić je dokładnie tam, gdzie były.</value>
+  </data>
+  <data name="FilesConfirmQuarantinePrimary">
+    <value>Przenieś do kwarantanny</value>
+  </data>
+  <data name="FilesConfirmDeleteTitleFormat">
+    <value>Usunąć trwale {0} plików?</value>
+  </data>
+  <data name="FilesConfirmDeleteBody">
+    <value>Te pliki zostaną usunięte natychmiast i Upkeep nie będzie mógł ich przywrócić. Windows może nadal przechowywać kopie gdzie indziej, na przykład w Historii plików lub kopii zapasowej.</value>
+  </data>
+  <data name="FilesConfirmDeletePrimary">
+    <value>Usuń trwale</value>
+  </data>
+  <data name="FilesModifiedFormat">
+    <value>Zmodyfikowano {0}</value>
+  </data>
+  <data name="FilesSelectionSummaryFormat">
+    <value>Zaznaczone pliki: {0} · {1}</value>
+  </data>
+  <data name="FilesDeletePermanentlyLabel.Content">
+    <value>Usuń trwale zamiast tego</value>
+  </data>
+  <data name="FilesQuarantineButtonLabel.Text">
+    <value>Przenieś do kwarantanny</value>
+  </data>
+  <data name="FilesQuarantineNote.Text">
+    <value>Pliki w kwarantannie można przywrócić z Historii przez 7 dni.</value>
+  </data>
+  <data name="FilesNoDuplicatesMessage.Text">
+    <value>Nie znaleziono duplikatów w wybranych folderach.</value>
+  </data>
+  <data name="FilesLargeThresholdLabel.Text">
+    <value>Większe niż</value>
+  </data>
+  <data name="FilesOldThresholdLabel.Text">
+    <value>Nieużywane od</value>
+  </data>
+  <data name="FilesLargeSummaryFormat">
+    <value>Pliki: {0} · {1}</value>
+  </data>
+  <data name="FilesReasonLarge">
+    <value>Duży</value>
+  </data>
+  <data name="FilesReasonOld">
+    <value>Dawno nieotwierany</value>
+  </data>
+  <data name="FilesReasonBoth">
+    <value>Duży i nieużywany</value>
+  </data>
+  <data name="FilesNoLargeFilesMessage.Text">
+    <value>Brak plików powyżej tych progów w wybranych folderach.</value>
+  </data>
+  <data name="FilesUsageLargestHeader.Text">
+    <value>Największe tutaj</value>
+  </data>
+  <data name="FilesUsageScannedFormat">
+    <value>Pliki: {0} · przeskanowano w {1}</value>
+  </data>
+  <data name="FilesUsageUnreadableFormat">
+    <value>Zmierzenie {0} folderów wymaga uprawnień administratora.</value>
+  </data>
+  <data name="FilesUsageSmallerFilesFormat">
+    <value>Mniejsze pliki: {0}</value>
+  </data>
+  <data name="FilesRemovedSummaryFormat">
+    <value>Przeniesiono do kwarantanny: {0} plików · {1}</value>
+  </data>
+  <data name="FilesDeletedSummaryFormat">
+    <value>Usunięto plików: {0} · zwolniono {1}</value>
+  </data>
+  <data name="FilesFailedSummaryFormat">
+    <value>Nie udało się usunąć {0} — zostały nietknięte.</value>
+  </data>
+
+  <!-- Aplikacje -->
+  <data name="AppsTitle.Text">
+    <value>Aplikacje</value>
+  </data>
+  <data name="AppsSubtitle.Text">
+    <value>Odinstaluj za pomocą własnego dezinstalatora aplikacji, a potem usuń tylko to, co po niej zostało.</value>
+  </data>
+  <data name="AppsSearchPlaceholder.PlaceholderText">
+    <value>Szukaj aplikacji</value>
+  </data>
+  <data name="AppsUninstallButton.Content">
+    <value>Odinstaluj</value>
+  </data>
+  <data name="AppsScanningMessage.Text">
+    <value>Odczytywanie listy zainstalowanych aplikacji…</value>
+  </data>
+  <data name="AppsCountFormat">
+    <value>Aplikacje: {0}</value>
+  </data>
+  <data name="AppsSourceDesktop">
+    <value>Klasyczna</value>
+  </data>
+  <data name="AppsSourceStore">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="AppsScopeAllUsers">
+    <value>Wszyscy użytkownicy</value>
+  </data>
+  <data name="AppsScopeCurrentUser">
+    <value>Twoje konto</value>
+  </data>
+  <data name="AppsSizeUnknown">
+    <value>Nieznany rozmiar</value>
+  </data>
+  <data name="AppsInstalledOnFormat">
+    <value>Zainstalowano {0}</value>
+  </data>
+  <data name="AppsUninstallRunningFormat">
+    <value>Trwa dezinstalacja aplikacji {0} jej własnym dezinstalatorem. Dokończ ją w tamtym oknie i wróć tutaj.</value>
+  </data>
+  <data name="AppsStillInstalledFormat">
+    <value>Aplikacja {0} nadal wygląda na zainstalowaną. Niektóre dezinstalatory pracują po zamknięciu okna — sprawdź ponownie za chwilę.</value>
+  </data>
+  <data name="AppsUninstallDeclined">
+    <value>Dezinstalacja została anulowana, więc nic nie zostało usunięte.</value>
+  </data>
+  <data name="AppsUninstallFailedFormat">
+    <value>Nie udało się uruchomić dezinstalatora: {0}</value>
+  </data>
+  <data name="AppsNoLeftoversFormat">
+    <value>Aplikacja {0} została usunięta czysto — nic nie pozostało.</value>
+  </data>
+  <data name="AppsLeftoversTitleFormat">
+    <value>Aplikacja {0} coś po sobie zostawiła</value>
+  </data>
+  <data name="AppsLeftoversBody">
+    <value>Dezinstalator zakończył pracę. Te elementy nadal wyglądają na należące do tej aplikacji — wymienione są wyłącznie pasujące do niej.</value>
+  </data>
+  <data name="AppsLeftoversFoldersHeader">
+    <value>Foldery</value>
+  </data>
+  <data name="AppsLeftoversRegistryHeader">
+    <value>Rejestr</value>
+  </data>
+  <data name="AppsLeftoversNote">
+    <value>Foldery trafiają do kwarantanny na 7 dni. Klucze rejestru są najpierw kopiowane, więc Historia może je przywrócić.</value>
+  </data>
+  <data name="AppsLeftoversPrimaryFormat">
+    <value>Usuń {0} elementów</value>
+  </data>
+  <data name="AppsLeftoversKeep">
+    <value>Zachowaj wszystko</value>
+  </data>
+  <data name="AppsLeftoversRemovedFormat">
+    <value>Usunięto elementów: {0} · przeniesiono do kwarantanny {1}</value>
+  </data>
+  <data name="AppsLeftoversFailedFormat">
+    <value>Nie udało się usunąć {0} elementów — zostały nietknięte.</value>
+  </data>
+
   <!-- Wspólne -->
   <data name="CommonAdminApprovalTag">
     <value>Zgoda administratora</value>

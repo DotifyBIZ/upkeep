@@ -18,6 +18,7 @@ public sealed partial class MainPage : Page
     {
         "Home" => typeof(HomePage),
         "Cleanup" => typeof(CleanupPage),
+        "Files" => typeof(FilesPage),
         _ => typeof(HomePage),
     };
 
@@ -71,6 +72,7 @@ public sealed partial class MainPage : Page
         {
             var type when type == typeof(HomePage) => "Home",
             var type when type == typeof(CleanupPage) => "Cleanup",
+            var type when type == typeof(FilesPage) => "Files",
             _ => null,
         };
 

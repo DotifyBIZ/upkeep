@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Upkeep.App.Core.Abstractions;
 using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Elevation;
+using Upkeep.App.Core.Files;
 using Upkeep.App.Core.Logging;
 using Upkeep.App.Core.Platform;
 using Upkeep.App.Core.Quarantine;
@@ -81,9 +82,18 @@ public partial class App : Application
         services.AddSingleton<IRestorePointService, ElevatedRestorePointService>();
         services.AddSingleton<ICleanupExecutor, CleanupExecutor>();
 
+        // Files: three read-only scans, and one executor that removes what the user picked.
+        services.AddSingleton<IFileIdentityReader, FileIdentityReader>();
+        services.AddSingleton<IDuplicateFinder, DuplicateFinder>();
+        services.AddSingleton<ILargeFileFinder, LargeFileFinder>();
+        services.AddSingleton<IDiskUsageScanner, DiskUsageScanner>();
+        services.AddSingleton<IFileActionExecutor, FileActionExecutor>();
+        services.AddSingleton<IFolderPickerService, FolderPickerService>();
+
         // View models are transient: a fresh instance per navigation.
         services.AddTransient<HomeViewModel>();
         services.AddTransient<CleanupViewModel>();
+        services.AddTransient<FilesViewModel>();
 
         return services.BuildServiceProvider();
     }
