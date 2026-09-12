@@ -8,6 +8,7 @@ using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Logging;
 using Upkeep.App.Core.Platform;
 using Upkeep.App.Core.Safety;
+using Upkeep.App.Core.Services;
 
 namespace Upkeep.App.Core.Elevation;
 
@@ -128,13 +129,17 @@ public static class HelperHost
     {
         var paths = new WellKnownPaths();
         var scanner = new SystemJunkScanner(paths);
-        var cleaner = new SystemJunkCleaner(scanner, new WindowsToolRunner(), paths, logger);
+        var toolRunner = new WindowsToolRunner();
+        var cleaner = new SystemJunkCleaner(scanner, toolRunner, paths, logger);
         IRestorePointService restorePoints = new SystemRestoreService(paths, logger);
+
+        var serviceConfigurator = new ServiceConfigurator(new ServiceScanner(new RegistryProbe()), toolRunner, paths, logger);
 
         var operations = new WindowsHelperOperations(
             scanner,
             cleaner,
             restorePoints,
+            serviceConfigurator,
             UserProfileResolver.TryGetProfilePath(shellUser));
 
         return new HelperDispatcher(operations, logger);

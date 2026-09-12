@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Safety;
+using Upkeep.App.Core.Services;
 
 namespace Upkeep.App.Core.Elevation;
 
@@ -19,6 +20,12 @@ public interface IHelperOperations
 
     /// <summary>Turns System Protection on if needed, then takes a restore point.</summary>
     Task<RestorePointResult> CreateRestorePointAsync(string description, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Changes a service's start type, after re-checking for itself that the service is one Upkeep
+    /// is willing to change.
+    /// </summary>
+    Task<ServiceChangeResult> SetServiceStartTypeAsync(string serviceName, ServiceStartType startType, CancellationToken cancellationToken);
 }
 
 /// <summary>
@@ -32,17 +39,20 @@ public sealed class WindowsHelperOperations : IHelperOperations
     private readonly SystemJunkScanner _scanner;
     private readonly SystemJunkCleaner _cleaner;
     private readonly IRestorePointService _restorePoints;
+    private readonly ServiceConfigurator _serviceConfigurator;
     private readonly string? _shellUserProfilePath;
 
     public WindowsHelperOperations(
         SystemJunkScanner scanner,
         SystemJunkCleaner cleaner,
         IRestorePointService restorePoints,
+        ServiceConfigurator serviceConfigurator,
         string? shellUserProfilePath)
     {
         _scanner = scanner;
         _cleaner = cleaner;
         _restorePoints = restorePoints;
+        _serviceConfigurator = serviceConfigurator;
         _shellUserProfilePath = shellUserProfilePath;
     }
 
@@ -54,4 +64,7 @@ public sealed class WindowsHelperOperations : IHelperOperations
 
     public Task<RestorePointResult> CreateRestorePointAsync(string description, CancellationToken cancellationToken) =>
         _restorePoints.EnsureRestorePointAsync(description, cancellationToken);
+
+    public Task<ServiceChangeResult> SetServiceStartTypeAsync(string serviceName, ServiceStartType startType, CancellationToken cancellationToken) =>
+        _serviceConfigurator.SetStartTypeAsync(serviceName, startType, cancellationToken);
 }

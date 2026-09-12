@@ -17,6 +17,7 @@ namespace Upkeep.App.Core.Elevation;
 [JsonDerivedType(typeof(ScanJunkCategoryRequest), "scan-junk")]
 [JsonDerivedType(typeof(CleanJunkCategoryRequest), "clean-junk")]
 [JsonDerivedType(typeof(CreateRestorePointRequest), "create-restore-point")]
+[JsonDerivedType(typeof(SetServiceStartTypeRequest), "set-service-start-type")]
 public abstract record HelperRequest
 {
     /// <summary>Correlates a response with its request; the shell sends one request at a time.</summary>
@@ -51,6 +52,15 @@ public sealed record CleanJunkCategoryRequest(Cleanup.JunkCategoryId CategoryId,
 public sealed record CreateRestorePointRequest(string Description) : HelperRequest;
 
 /// <summary>
+/// Changes one service's start type.
+/// <para>
+/// The helper classifies the service itself before acting: a service Windows needs stays locked
+/// whatever arrives here, and the request carries a name and a start type — never a command line.
+/// </para>
+/// </summary>
+public sealed record SetServiceStartTypeRequest(string ServiceName, Services.ServiceStartType StartType) : HelperRequest;
+
+/// <summary>
 /// Result of one helper operation. Failures cross the pipe as an error code the shell can
 /// localize — never as a raw exception or a stack trace.
 /// </summary>
@@ -60,6 +70,7 @@ public sealed record CreateRestorePointRequest(string Description) : HelperReque
 [JsonDerivedType(typeof(JunkScanResponse), "junk-scan")]
 [JsonDerivedType(typeof(JunkCleanResponse), "junk-clean")]
 [JsonDerivedType(typeof(RestorePointResponse), "restore-point")]
+[JsonDerivedType(typeof(ServiceChangeResponse), "service-change")]
 public abstract record HelperResponse
 {
     public int RequestId { get; init; }
@@ -75,6 +86,9 @@ public sealed record JunkCleanResponse(long FreedBytes, long ItemsRemoved, long 
 
 /// <summary>What Windows did when asked for a restore point.</summary>
 public sealed record RestorePointResponse(Safety.RestorePointStatus Status, string? Description, bool ProtectionWasEnabled) : HelperResponse;
+
+/// <summary>Whether a service's start type was changed, and why not when it wasn't.</summary>
+public sealed record ServiceChangeResponse(bool Success, string? FailureCode, string? Detail) : HelperResponse;
 
 /// <summary>
 /// A failed operation. <paramref name="Code"/> is one of <see cref="HelperErrorCodes"/> — a stable

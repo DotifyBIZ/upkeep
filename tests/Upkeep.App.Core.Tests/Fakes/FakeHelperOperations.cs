@@ -2,6 +2,7 @@ using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Platform;
 using Upkeep.App.Core.Safety;
+using Upkeep.App.Core.Services;
 
 namespace Upkeep.App.Core.Tests.Fakes;
 
@@ -36,6 +37,11 @@ public sealed class FakeHelperOperations : IHelperOperations
     {
         Calls.Add($"restore:{description}");
         return ThrowOnOperation is not null ? throw ThrowOnOperation : Task.FromResult(RestorePointResult);
+    }
+
+    public Task<ServiceChangeResult> SetServiceStartTypeAsync(string serviceName, ServiceStartType startType, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }
 

@@ -48,6 +48,15 @@ public sealed class HelperDispatcher
                         };
                     }
 
+                case SetServiceStartTypeRequest service:
+                    {
+                        var result = await _operations.SetServiceStartTypeAsync(service.ServiceName, service.StartType, cancellationToken);
+                        return new ServiceChangeResponse(result.Success, result.FailureCode, result.Detail)
+                        {
+                            RequestId = request.RequestId,
+                        };
+                    }
+
                 case CreateRestorePointRequest restorePoint:
                     {
                         var result = await _operations.CreateRestorePointAsync(restorePoint.Description, cancellationToken);
