@@ -6,8 +6,16 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:Upkeep.App.ViewModels"
+    xmlns:converters="using:Upkeep.App.Converters"
     mc:Ignorable="d"
     Background="{StaticResource Gray50Brush}">
+
+    <Page.Resources>
+        <!-- Declared per page rather than in App.xaml: the XAML compiler's second pass runs
+             without a LocalAssembly reference (WMC1509), so a type from this project referenced
+             from App.xaml fails to resolve with WMC0001. -->
+        <converters:HexBrushConverter x:Key="HexBrush" />
+    </Page.Resources>
 
     <Grid Padding="32,24">
         <Grid.RowDefinitions>

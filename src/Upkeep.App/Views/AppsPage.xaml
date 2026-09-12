@@ -6,8 +6,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:Upkeep.App.ViewModels"
+    xmlns:converters="using:Upkeep.App.Converters"
     mc:Ignorable="d"
     Background="{StaticResource Gray50Brush}">
+
+    <Page.Resources>
+        <!-- Declared per page rather than in App.xaml — see FilesPage.xaml for why (WMC0001). -->
+        <converters:HexBrushConverter x:Key="HexBrush" />
+    </Page.Resources>
 
     <Grid Padding="32,24" RowSpacing="16">
         <Grid.RowDefinitions>
