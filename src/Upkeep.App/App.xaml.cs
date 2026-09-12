@@ -120,6 +120,7 @@ public partial class App : Application
         services.AddTransient<StartupViewModel>();
         services.AddTransient<ServicesViewModel>();
         services.AddTransient<PerformanceViewModel>();
+        services.AddTransient<HistoryViewModel>();
 
         return services.BuildServiceProvider();
     }

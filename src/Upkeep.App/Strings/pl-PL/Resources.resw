@@ -732,4 +732,60 @@
   <data name="ServicesEmptyMessage.Text">
     <value>Żadna usługa nie pasuje do tego filtra.</value>
   </data>
+
+  <!-- Historia -->
+  <data name="HistoryTitle.Text">
+    <value>Historia</value>
+  </data>
+  <data name="HistorySubtitle.Text">
+    <value>Każda zmiana wprowadzona przez Upkeep na tym komputerze i to, co można jeszcze cofnąć.</value>
+  </data>
+  <data name="HistoryEmptyMessage.Text">
+    <value>Upkeep nie wprowadził jeszcze żadnych zmian na tym komputerze.</value>
+  </data>
+  <data name="HistoryKindCleanup">
+    <value>Czyszczenie</value>
+  </data>
+  <data name="HistoryKindFiles">
+    <value>Pliki</value>
+  </data>
+  <data name="HistoryKindApps">
+    <value>Aplikacje</value>
+  </data>
+  <data name="HistoryKindStartup">
+    <value>Autostart i wydajność</value>
+  </data>
+  <data name="HistoryKindDrivers">
+    <value>Sterowniki i aktualizacje</value>
+  </data>
+  <data name="HistoryChangesFormat">
+    <value>Zmiany: {0}</value>
+  </data>
+  <data name="HistoryFreedFormat">
+    <value>Zwolniono {0}</value>
+  </data>
+  <data name="HistoryUnfinished">
+    <value>Ta sesja nie została ukończona.</value>
+  </data>
+  <data name="HistoryRestorePointCreated">
+    <value>Tę sesję obejmuje punkt przywracania.</value>
+  </data>
+  <data name="HistoryRestorePointReused">
+    <value>Objęta punktem przywracania utworzonym wcześniej tego dnia.</value>
+  </data>
+  <data name="HistoryRevertButton.Content">
+    <value>Przywróć</value>
+  </data>
+  <data name="HistoryRevertedFormat">
+    <value>Przywrócono {0}</value>
+  </data>
+  <data name="HistoryNothingToRevert">
+    <value>Nic w tej sesji nie może zostać cofnięte.</value>
+  </data>
+  <data name="HistoryRevertResultFormat">
+    <value>Przywrócono {0} z {1} zmian.</value>
+  </data>
+  <data name="HistoryRevertFailedFormat">
+    <value>Nie udało się cofnąć: {0}.</value>
+  </data>
 </root>

@@ -732,4 +732,60 @@
   <data name="ServicesEmptyMessage.Text">
     <value>No services match this filter.</value>
   </data>
+
+  <!-- History -->
+  <data name="HistoryTitle.Text">
+    <value>History</value>
+  </data>
+  <data name="HistorySubtitle.Text">
+    <value>Every change Upkeep made on this PC, and what can still be put back.</value>
+  </data>
+  <data name="HistoryEmptyMessage.Text">
+    <value>Upkeep hasn't changed anything on this PC yet.</value>
+  </data>
+  <data name="HistoryKindCleanup">
+    <value>Cleanup</value>
+  </data>
+  <data name="HistoryKindFiles">
+    <value>Files</value>
+  </data>
+  <data name="HistoryKindApps">
+    <value>Apps</value>
+  </data>
+  <data name="HistoryKindStartup">
+    <value>Startup &amp; performance</value>
+  </data>
+  <data name="HistoryKindDrivers">
+    <value>Drivers &amp; updates</value>
+  </data>
+  <data name="HistoryChangesFormat">
+    <value>{0} changes</value>
+  </data>
+  <data name="HistoryFreedFormat">
+    <value>{0} freed</value>
+  </data>
+  <data name="HistoryUnfinished">
+    <value>This session didn't finish.</value>
+  </data>
+  <data name="HistoryRestorePointCreated">
+    <value>A restore point covers this session.</value>
+  </data>
+  <data name="HistoryRestorePointReused">
+    <value>Covered by a restore point Windows had already made that day.</value>
+  </data>
+  <data name="HistoryRevertButton.Content">
+    <value>Put it back</value>
+  </data>
+  <data name="HistoryRevertedFormat">
+    <value>Put back on {0}</value>
+  </data>
+  <data name="HistoryNothingToRevert">
+    <value>Nothing in this session can be put back.</value>
+  </data>
+  <data name="HistoryRevertResultFormat">
+    <value>Put back {0} of {1} changes.</value>
+  </data>
+  <data name="HistoryRevertFailedFormat">
+    <value>{0} could not be put back.</value>
+  </data>
 </root>

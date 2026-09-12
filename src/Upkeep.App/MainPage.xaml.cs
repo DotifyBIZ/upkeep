@@ -21,6 +21,7 @@ public sealed partial class MainPage : Page
         "Files" => typeof(FilesPage),
         "Apps" => typeof(AppsPage),
         "Startup" => typeof(StartupPage),
+        "History" => typeof(HistoryPage),
         _ => typeof(HomePage),
     };
 
@@ -77,6 +78,7 @@ public sealed partial class MainPage : Page
             var type when type == typeof(FilesPage) => "Files",
             var type when type == typeof(AppsPage) => "Apps",
             var type when type == typeof(StartupPage) => "Startup",
+            var type when type == typeof(HistoryPage) => "History",
             _ => null,
         };
 
