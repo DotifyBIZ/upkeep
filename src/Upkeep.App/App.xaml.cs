@@ -11,6 +11,7 @@ using Upkeep.App.Core.Quarantine;
 using Upkeep.App.Core.Safety;
 using Upkeep.App.Core.Sessions;
 using Upkeep.App.Core.Settings;
+using Upkeep.App.Core.Startup;
 using Upkeep.App.Core.Storage;
 using Upkeep.App.Services;
 using Upkeep.App.ViewModels;
@@ -99,11 +100,17 @@ public partial class App : Application
         services.AddSingleton<IAppUninstaller, AppUninstaller>();
         services.AddSingleton<ILeftoverRemover, LeftoverRemover>();
 
+        // Startup: read what runs at sign-in, and toggle it the way Task Manager does.
+        services.AddSingleton<IWindowsToolRunner, WindowsToolRunner>();
+        services.AddSingleton<IStartupItemScanner, StartupItemScanner>();
+        services.AddSingleton<IStartupItemToggler, StartupItemToggler>();
+
         // View models are transient: a fresh instance per navigation.
         services.AddTransient<HomeViewModel>();
         services.AddTransient<CleanupViewModel>();
         services.AddTransient<FilesViewModel>();
         services.AddTransient<AppsViewModel>();
+        services.AddTransient<StartupViewModel>();
 
         return services.BuildServiceProvider();
     }

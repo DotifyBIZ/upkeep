@@ -134,7 +134,7 @@ public class LeftoverRemoverTests : IDisposable
     public async Task RemoveAsync_RegistryDeletionRefused_IsReportedAndStillBackedUp()
     {
         _registry.AddKey(RegistryHiveName.CurrentUser, @"Software\Zoom Workplace");
-        _registry.Undeletable.Add(@"Software\Zoom Workplace");
+        _registry.Unwritable.Add(@"Software\Zoom Workplace");
         var items = new[] { new LeftoverItem(LeftoverKind.RegistryKey, @"Software\Zoom Workplace") { Hive = RegistryHiveName.CurrentUser } };
 
         var outcome = await _remover.RemoveAsync(App(), items, CancellationToken.None);

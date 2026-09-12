@@ -11,6 +11,11 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-$([System.Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString().ToLowerInvariant())</RuntimeIdentifier>
+    <!-- Declared so restore records the win-x64 assets — including the .NET runtime pack a
+         self-contained Windows App SDK build needs — in packages.lock.json. Without it, CI's
+         locked-mode restore has nothing to download and the build fails with NETSDK1112; a local
+         build only survives because the pack is already in the developer's NuGet cache. -->
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <PublishProfile Condition="Exists('Properties\PublishProfiles\win-$(Platform).pubxml')">win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <!-- Needed for resources.pri generation (the .resw files) even though nothing here is MSIX. -->

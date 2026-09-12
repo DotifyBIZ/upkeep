@@ -513,6 +513,200 @@
     <value>{0} items couldn't be removed and were left alone.</value>
   </data>
 
+  <!-- Startup and performance -->
+  <data name="StartupTitle.Text">
+    <value>Startup &amp; performance</value>
+  </data>
+  <data name="StartupSubtitle.Text">
+    <value>What starts with Windows, what runs in the background, and how Windows spends its effort.</value>
+  </data>
+  <data name="StartupTabStartup.Text">
+    <value>Startup</value>
+  </data>
+  <data name="StartupTabServices.Text">
+    <value>Services</value>
+  </data>
+  <data name="StartupTabPerformance.Text">
+    <value>Performance</value>
+  </data>
+  <data name="StartupColumnName.Text">
+    <value>Name</value>
+  </data>
+  <data name="StartupColumnSource.Text">
+    <value>Starts from</value>
+  </data>
+  <data name="StartupColumnEnabled.Text">
+    <value>Enabled</value>
+  </data>
+  <data name="StartupToggleNote.Text">
+    <value>Turning an item off works like Task Manager's Startup tab — nothing is deleted, and History can turn it back on.</value>
+  </data>
+  <data name="StartupSourceRunKeyCurrentUser">
+    <value>Run key · your account</value>
+  </data>
+  <data name="StartupSourceRunKeyAllUsers">
+    <value>Run key · all users</value>
+  </data>
+  <data name="StartupSourceRunOnce">
+    <value>RunOnce · runs once at next sign-in</value>
+  </data>
+  <data name="StartupSourceStartupFolder">
+    <value>Startup folder</value>
+  </data>
+  <data name="StartupSourceScheduledTask">
+    <value>Scheduled task at sign-in</value>
+  </data>
+  <data name="StartupRemoveButton">
+    <value>Remove</value>
+  </data>
+  <data name="StartupDisabledAtFormat">
+    <value>Disabled {0}</value>
+  </data>
+  <data name="StartupOn">
+    <value>On</value>
+  </data>
+  <data name="StartupOff">
+    <value>Off</value>
+  </data>
+  <data name="StartupEmptyMessage.Text">
+    <value>Nothing starts with Windows on this PC beyond Windows itself.</value>
+  </data>
+  <data name="StartupChangeRefusedFormat">
+    <value>Windows wouldn't change {0}. Its switch has been put back.</value>
+  </data>
+
+  <!-- Services -->
+  <data name="ServicesSearchPlaceholder.PlaceholderText">
+    <value>Search services</value>
+  </data>
+  <data name="ServicesFilterCommonlySafeFormat">
+    <value>Commonly safe · {0}</value>
+  </data>
+  <data name="ServicesFilterThirdPartyFormat">
+    <value>Third-party · {0}</value>
+  </data>
+  <data name="ServicesFilterAllFormat">
+    <value>All · {0}</value>
+  </data>
+  <data name="ServicesLegendHeader.Text">
+    <value>How services are labeled</value>
+  </data>
+  <data name="ServicesTierCommonlySafe">
+    <value>Commonly safe</value>
+  </data>
+  <data name="ServicesTierCommonlySafeDescription">
+    <value>Turning it off has a well-known, limited effect. Each one says what stops working.</value>
+  </data>
+  <data name="ServicesTierThirdParty">
+    <value>Third-party</value>
+  </data>
+  <data name="ServicesTierThirdPartyDescription">
+    <value>Not from Microsoft — usually an app's updater or helper. Check what it belongs to first.</value>
+  </data>
+  <data name="ServicesTierLeaveAlone">
+    <value>Leave alone</value>
+  </data>
+  <data name="ServicesTierLeaveAloneDescription">
+    <value>Part of Windows. Can be changed, but Upkeep warns first.</value>
+  </data>
+  <data name="ServicesTierLocked">
+    <value>Locked</value>
+  </data>
+  <data name="ServicesTierLockedDescription">
+    <value>Windows needs it to start, sign in, stay secure or update. Can't be changed here.</value>
+  </data>
+  <data name="ServicesDisableNote.Text">
+    <value>A switch off sets the service to Disabled. History remembers the previous start type. Changes need administrator approval.</value>
+  </data>
+  <data name="ServicesSpeedNote.Text">
+    <value>Most of these only start when something asks for them, so turning them off is tidiness more than speed.</value>
+  </data>
+  <data name="ServicesStateFormat">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="ServicesStateRunning">
+    <value>Running</value>
+  </data>
+  <data name="ServicesStateStopped">
+    <value>Stopped</value>
+  </data>
+
+  <!-- What each curated service costs you -->
+  <data name="ServiceBreaksDiagTrack">
+    <value>Sends diagnostic data to Microsoft. Nothing on this PC depends on it.</value>
+  </data>
+  <data name="ServiceBreaksMapsBroker">
+    <value>Only the Maps app uses it, for offline maps.</value>
+  </data>
+  <data name="ServiceBreaksXbox">
+    <value>Only needed if you use Xbox apps or Game Pass.</value>
+  </data>
+  <data name="ServiceBreaksXboxAccessories">
+    <value>Only needed for Xbox controllers and accessories.</value>
+  </data>
+  <data name="ServiceBreaksFax">
+    <value>Only needed to send or receive faxes from this PC.</value>
+  </data>
+  <data name="ServiceBreaksRetailDemo">
+    <value>Only used by shop display machines.</value>
+  </data>
+  <data name="ServiceBreaksParentalControls">
+    <value>Needed for Microsoft Family Safety limits.</value>
+  </data>
+  <data name="ServiceBreaksPayments">
+    <value>Needed for tap-to-pay and NFC payments on this PC.</value>
+  </data>
+  <data name="ServiceBreaksInsider">
+    <value>Needed only if this PC is in the Windows Insider Program.</value>
+  </data>
+  <data name="ServiceBreaksRemoteRegistry">
+    <value>Lets other computers edit this registry. Best left disabled.</value>
+  </data>
+
+  <!-- Performance -->
+  <data name="PerformanceVisualEffectsHeader.Text">
+    <value>Visual effects</value>
+  </data>
+  <data name="PerformanceAnimations.Text">
+    <value>Animation effects</value>
+  </data>
+  <data name="PerformanceAnimationsNote.Text">
+    <value>Window, menu and control animations.</value>
+  </data>
+  <data name="PerformanceTransparency.Text">
+    <value>Transparency effects</value>
+  </data>
+  <data name="PerformanceTransparencyNote.Text">
+    <value>See-through title bars, Start and taskbar.</value>
+  </data>
+  <data name="PerformanceAdvancedButton.Content">
+    <value>Advanced performance options</value>
+  </data>
+  <data name="PerformanceAdvancedNote.Text">
+    <value>Opens Windows' own Performance Options.</value>
+  </data>
+  <data name="PerformancePowerPlanHeader.Text">
+    <value>Power plan</value>
+  </data>
+  <data name="PerformancePowerPlanNote.Text">
+    <value>Plans come from Windows. On PCs that only offer Balanced, pick a Power mode in Settings instead.</value>
+  </data>
+  <data name="PerformancePowerSettingsButton.Content">
+    <value>Power &amp; battery settings</value>
+  </data>
+  <data name="PerformanceIndexingHeader.Text">
+    <value>Search indexing</value>
+  </data>
+  <data name="PerformanceIndexingLabel.Text">
+    <value>Index files for faster search</value>
+  </data>
+  <data name="PerformanceIndexingNote.Text">
+    <value>Turning it off stops background indexing. Search in Start and File Explorer gets slower.</value>
+  </data>
+  <data name="PerformanceIndexingOptionsButton.Content">
+    <value>Indexing options</value>
+  </data>
+
   <!-- Shared -->
   <data name="CommonAdminApprovalTag">
     <value>Administrator approval</value>

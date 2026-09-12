@@ -79,8 +79,18 @@ public static class ScheduledTaskXmlParser
 
         bool runsAtLogon = task.Descendants().Any(element => element.Name.LocalName == "LogonTrigger");
 
+        // Read from <Settings> specifically, not from anywhere in the task: a trigger carries its
+        // own <Enabled> element, and a document-wide search finds the trigger's first — which made
+        // a disabled task read as enabled.
+        string? enabledValue = task.Elements()
+            .FirstOrDefault(element => element.Name.LocalName == "Settings")?
+            .Elements()
+            .FirstOrDefault(element => element.Name.LocalName == "Enabled")?
+            .Value
+            .Trim();
+
         // Absent <Enabled> means enabled: the schema's default, and what Task Scheduler shows.
-        bool isEnabled = !string.Equals(Value(task, "Enabled"), "false", StringComparison.OrdinalIgnoreCase);
+        bool isEnabled = !string.Equals(enabledValue, "false", StringComparison.OrdinalIgnoreCase);
 
         string? command = task.Descendants()
             .Where(element => element.Name.LocalName == "Exec")

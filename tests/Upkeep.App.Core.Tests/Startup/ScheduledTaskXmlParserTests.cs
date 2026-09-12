@@ -64,6 +64,27 @@ public class ScheduledTaskXmlParserTests
     }
 
     [Fact]
+    public void Parse_TriggerEnabledFlag_DoesNotShadowTheTasksOwn()
+    {
+        // A trigger carries its own <Enabled>, and it appears before <Settings> in the document.
+        // Reading the first one found reported disabled tasks as enabled.
+        string xml = $"""
+        <Tasks>
+          <Task xmlns="{TaskNamespace}">
+            <Settings><Enabled>false</Enabled></Settings>
+            <RegistrationInfo><URI>\VendorUpdater</URI></RegistrationInfo>
+            <Triggers><LogonTrigger><Enabled>true</Enabled></LogonTrigger></Triggers>
+            <Actions><Exec><Command>C:\Vendor\Update.exe</Command></Exec></Actions>
+          </Task>
+        </Tasks>
+        """;
+
+        var entries = ScheduledTaskXmlParser.Parse(xml);
+
+        Assert.False(Assert.Single(entries).IsEnabled);
+    }
+
+    [Fact]
     public void Parse_TaskWithNoEnabledElement_CountsAsEnabled()
     {
         // The schema's default, and what Task Scheduler shows.

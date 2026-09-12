@@ -513,6 +513,200 @@
     <value>Nie udało się usunąć {0} elementów — zostały nietknięte.</value>
   </data>
 
+  <!-- Autostart i wydajność -->
+  <data name="StartupTitle.Text">
+    <value>Autostart i wydajność</value>
+  </data>
+  <data name="StartupSubtitle.Text">
+    <value>Co uruchamia się z systemem Windows, co działa w tle i na co Windows poświęca zasoby.</value>
+  </data>
+  <data name="StartupTabStartup.Text">
+    <value>Autostart</value>
+  </data>
+  <data name="StartupTabServices.Text">
+    <value>Usługi</value>
+  </data>
+  <data name="StartupTabPerformance.Text">
+    <value>Wydajność</value>
+  </data>
+  <data name="StartupColumnName.Text">
+    <value>Nazwa</value>
+  </data>
+  <data name="StartupColumnSource.Text">
+    <value>Uruchamiane z</value>
+  </data>
+  <data name="StartupColumnEnabled.Text">
+    <value>Włączone</value>
+  </data>
+  <data name="StartupToggleNote.Text">
+    <value>Wyłączenie elementu działa jak karta Uruchamianie w Menedżerze zadań — nic nie jest usuwane, a Historia może je z powrotem włączyć.</value>
+  </data>
+  <data name="StartupSourceRunKeyCurrentUser">
+    <value>Klucz Run · Twoje konto</value>
+  </data>
+  <data name="StartupSourceRunKeyAllUsers">
+    <value>Klucz Run · wszyscy użytkownicy</value>
+  </data>
+  <data name="StartupSourceRunOnce">
+    <value>RunOnce · uruchomi się raz przy następnym logowaniu</value>
+  </data>
+  <data name="StartupSourceStartupFolder">
+    <value>Folder Autostart</value>
+  </data>
+  <data name="StartupSourceScheduledTask">
+    <value>Zadanie zaplanowane przy logowaniu</value>
+  </data>
+  <data name="StartupRemoveButton">
+    <value>Usuń</value>
+  </data>
+  <data name="StartupDisabledAtFormat">
+    <value>Wyłączono {0}</value>
+  </data>
+  <data name="StartupOn">
+    <value>Wł.</value>
+  </data>
+  <data name="StartupOff">
+    <value>Wył.</value>
+  </data>
+  <data name="StartupEmptyMessage.Text">
+    <value>Poza samym systemem Windows nic nie uruchamia się na tym komputerze.</value>
+  </data>
+  <data name="StartupChangeRefusedFormat">
+    <value>Windows nie zmienił elementu {0}. Przełącznik wrócił do poprzedniego stanu.</value>
+  </data>
+
+  <!-- Usługi -->
+  <data name="ServicesSearchPlaceholder.PlaceholderText">
+    <value>Szukaj usług</value>
+  </data>
+  <data name="ServicesFilterCommonlySafeFormat">
+    <value>Zwykle bezpieczne · {0}</value>
+  </data>
+  <data name="ServicesFilterThirdPartyFormat">
+    <value>Firm trzecich · {0}</value>
+  </data>
+  <data name="ServicesFilterAllFormat">
+    <value>Wszystkie · {0}</value>
+  </data>
+  <data name="ServicesLegendHeader.Text">
+    <value>Jak oznaczane są usługi</value>
+  </data>
+  <data name="ServicesTierCommonlySafe">
+    <value>Zwykle bezpieczne</value>
+  </data>
+  <data name="ServicesTierCommonlySafeDescription">
+    <value>Wyłączenie ma znany i ograniczony skutek. Przy każdej podano, co przestanie działać.</value>
+  </data>
+  <data name="ServicesTierThirdParty">
+    <value>Firm trzecich</value>
+  </data>
+  <data name="ServicesTierThirdPartyDescription">
+    <value>Nie od Microsoftu — zwykle aktualizator lub pomocnik aplikacji. Najpierw sprawdź, do czego należy.</value>
+  </data>
+  <data name="ServicesTierLeaveAlone">
+    <value>Zostaw w spokoju</value>
+  </data>
+  <data name="ServicesTierLeaveAloneDescription">
+    <value>Część systemu Windows. Można zmienić, ale Upkeep najpierw ostrzeże.</value>
+  </data>
+  <data name="ServicesTierLocked">
+    <value>Zablokowane</value>
+  </data>
+  <data name="ServicesTierLockedDescription">
+    <value>Windows potrzebuje jej do uruchomienia, logowania, bezpieczeństwa lub aktualizacji. Nie można tego tu zmienić.</value>
+  </data>
+  <data name="ServicesDisableNote.Text">
+    <value>Wyłączenie ustawia typ uruchomienia na Wyłączona. Historia pamięta poprzedni typ. Zmiany wymagają zgody administratora.</value>
+  </data>
+  <data name="ServicesSpeedNote.Text">
+    <value>Większość z nich uruchamia się dopiero na żądanie, więc ich wyłączenie to bardziej porządek niż szybkość.</value>
+  </data>
+  <data name="ServicesStateFormat">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="ServicesStateRunning">
+    <value>Działa</value>
+  </data>
+  <data name="ServicesStateStopped">
+    <value>Zatrzymana</value>
+  </data>
+
+  <!-- Co tracisz, wyłączając daną usługę -->
+  <data name="ServiceBreaksDiagTrack">
+    <value>Wysyła dane diagnostyczne do Microsoftu. Nic na tym komputerze od niej nie zależy.</value>
+  </data>
+  <data name="ServiceBreaksMapsBroker">
+    <value>Używa jej tylko aplikacja Mapy, do map offline.</value>
+  </data>
+  <data name="ServiceBreaksXbox">
+    <value>Potrzebna tylko, jeśli korzystasz z aplikacji Xbox lub Game Pass.</value>
+  </data>
+  <data name="ServiceBreaksXboxAccessories">
+    <value>Potrzebna tylko do kontrolerów i akcesoriów Xbox.</value>
+  </data>
+  <data name="ServiceBreaksFax">
+    <value>Potrzebna tylko do wysyłania i odbierania faksów z tego komputera.</value>
+  </data>
+  <data name="ServiceBreaksRetailDemo">
+    <value>Używana wyłącznie przez komputery ekspozycyjne w sklepach.</value>
+  </data>
+  <data name="ServiceBreaksParentalControls">
+    <value>Potrzebna do ograniczeń Microsoft Family Safety.</value>
+  </data>
+  <data name="ServiceBreaksPayments">
+    <value>Potrzebna do płatności zbliżeniowych i NFC na tym komputerze.</value>
+  </data>
+  <data name="ServiceBreaksInsider">
+    <value>Potrzebna tylko, jeśli ten komputer jest w programie Windows Insider.</value>
+  </data>
+  <data name="ServiceBreaksRemoteRegistry">
+    <value>Pozwala innym komputerom edytować ten rejestr. Najlepiej zostawić wyłączoną.</value>
+  </data>
+
+  <!-- Wydajność -->
+  <data name="PerformanceVisualEffectsHeader.Text">
+    <value>Efekty wizualne</value>
+  </data>
+  <data name="PerformanceAnimations.Text">
+    <value>Efekty animacji</value>
+  </data>
+  <data name="PerformanceAnimationsNote.Text">
+    <value>Animacje okien, menu i kontrolek.</value>
+  </data>
+  <data name="PerformanceTransparency.Text">
+    <value>Efekty przezroczystości</value>
+  </data>
+  <data name="PerformanceTransparencyNote.Text">
+    <value>Przezroczyste paski tytułu, menu Start i pasek zadań.</value>
+  </data>
+  <data name="PerformanceAdvancedButton.Content">
+    <value>Zaawansowane opcje wydajności</value>
+  </data>
+  <data name="PerformanceAdvancedNote.Text">
+    <value>Otwiera własne Opcje wydajności systemu Windows.</value>
+  </data>
+  <data name="PerformancePowerPlanHeader.Text">
+    <value>Plan zasilania</value>
+  </data>
+  <data name="PerformancePowerPlanNote.Text">
+    <value>Plany pochodzą z systemu Windows. Na komputerach oferujących tylko Zrównoważony wybierz tryb zasilania w Ustawieniach.</value>
+  </data>
+  <data name="PerformancePowerSettingsButton.Content">
+    <value>Ustawienia zasilania i baterii</value>
+  </data>
+  <data name="PerformanceIndexingHeader.Text">
+    <value>Indeksowanie wyszukiwania</value>
+  </data>
+  <data name="PerformanceIndexingLabel.Text">
+    <value>Indeksuj pliki dla szybszego wyszukiwania</value>
+  </data>
+  <data name="PerformanceIndexingNote.Text">
+    <value>Wyłączenie zatrzymuje indeksowanie w tle. Wyszukiwanie w menu Start i Eksploratorze plików stanie się wolniejsze.</value>
+  </data>
+  <data name="PerformanceIndexingOptionsButton.Content">
+    <value>Opcje indeksowania</value>
+  </data>
+
   <!-- Wspólne -->
   <data name="CommonAdminApprovalTag">
     <value>Zgoda administratora</value>
