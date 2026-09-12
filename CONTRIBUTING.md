@@ -13,7 +13,13 @@ This file covers *process* — branching, commits, the PR checklist. For how the
 
 ## Branching and commits
 
-We use trunk-based development: `main` is always deployable, work happens on short-lived branches.
+`main` is always deployable and is what cuts a release. Work happens on short-lived branches that land on `staging` first, so changes are exercised together before they reach `main`:
+
+```
+feat/my-change  →  staging  →  main
+```
+
+CI runs on pushes and pull requests to both `main` and `staging`; the release workflow runs on `main` only.
 
 **Branch naming:** `<type>/<short-description>`, kebab-case, e.g. `feat/add-duplicate-finder`, `fix/quarantine-restore-path`.
 
