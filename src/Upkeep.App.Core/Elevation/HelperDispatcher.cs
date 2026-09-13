@@ -110,5 +110,15 @@ public sealed class HelperDispatcher
             await _logger.LogErrorAsync($"Elevated helper could not complete {request.GetType().Name}.", ex, cancellationToken);
             return new HelperErrorResponse(HelperErrorCodes.WindowsRefused, ex.Message) { RequestId = request.RequestId };
         }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            // Last resort. Anything unexpected from an operation — a COM failure from the update
+            // agent, a WMI provider that will not answer, a bug in this process — used to unwind
+            // past here and end the process, which drops the pipe and costs the user a second
+            // elevation prompt in the middle of their work. One failed operation is one failed
+            // response; the helper stays up and the shell hears why.
+            await _logger.LogErrorAsync($"Elevated helper hit an unexpected failure in {request.GetType().Name}.", ex, CancellationToken.None);
+            return new HelperErrorResponse(HelperErrorCodes.WindowsRefused, ex.Message) { RequestId = request.RequestId };
+        }
     }
 }

@@ -203,4 +203,31 @@ public class HelperDispatcherTests : IDisposable
         Assert.False(state.Success);
         Assert.Equal("Access is denied.", state.FailureDetail);
     }
+
+    [Fact]
+    public async Task DispatchAsync_OperationThrowsSomethingUnexpected_AnswersInsteadOfEndingTheProcess()
+    {
+        // An exception escaping here unwinds out of the pipe loop and ends the elevated process,
+        // which drops the connection and costs the user a second elevation prompt mid-operation.
+        _operations.ThrowOnOperation = new InvalidOperationException("the update agent fell over");
+
+        var response = await CreateDispatcher().DispatchAsync(
+            new SearchDriverUpdatesRequest { RequestId = 9 },
+            CancellationToken.None);
+
+        var error = Assert.IsType<HelperErrorResponse>(response);
+        Assert.Equal(HelperErrorCodes.WindowsRefused, error.Code);
+        Assert.Equal(9, error.RequestId);
+    }
+
+    [Fact]
+    public async Task DispatchAsync_OperationIsCancelled_StillEndsTheSession()
+    {
+        // Cancellation is the helper shutting down, not an operation failing, so it must keep
+        // unwinding rather than being answered as a refusal.
+        _operations.ThrowOnOperation = new OperationCanceledException();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            CreateDispatcher().DispatchAsync(new SearchDriverUpdatesRequest(), CancellationToken.None));
+    }
 }

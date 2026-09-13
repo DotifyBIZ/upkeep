@@ -32,7 +32,7 @@ Implement these as XAML `Color`/`SolidColorBrush`/`FontFamily` resources in `App
 
 **Neutrals** — Tailwind gray scale. Page background `gray-50` (`#f9fafb`), card surfaces white, borders `gray-200` (`#e5e7eb`), body text `gray-700` (`#374151`), headings `gray-900` (`#111827`), captions `gray-500` (`#6b7280`).
 
-**Semantic** (state, never the brand accent): success `#16a34a`, warning `#f59e0b` (on `#fef3c7` with `#92400e` text), danger `#ef4444`. Always paired with an icon or text — never color alone.
+**Semantic** (state, never the brand accent): success `#16a34a` (on `#dcfce7` with `#166534` text), warning `#f59e0b` (on `#fef3c7` with `#92400e` text), danger `#ef4444`. Always paired with an icon or text — never color alone.
 
 ### The accent override
 

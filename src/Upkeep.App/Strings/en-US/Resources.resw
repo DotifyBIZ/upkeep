@@ -327,6 +327,9 @@
   <data name="FilesAddFolderButton.Content">
     <value>Add folder</value>
   </data>
+  <data name="FilesRemoveFolderButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name">
+    <value>Remove this folder from the search</value>
+  </data>
   <data name="FilesScanButton.Content">
     <value>Scan</value>
   </data>

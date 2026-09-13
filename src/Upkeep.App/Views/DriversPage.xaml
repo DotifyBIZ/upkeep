@@ -86,7 +86,7 @@
                                                 FontSize="13"
                                                 Width="220"
                                                 VerticalAlignment="Center"
-                                                TextWrapping="Wrap" />
+                                                TextTrimming="CharacterEllipsis" />
 
                                             <TextBlock
                                                 Grid.Column="2"

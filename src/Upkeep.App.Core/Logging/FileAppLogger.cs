@@ -56,10 +56,13 @@ public sealed class FileAppLogger : IAppLogger, IDisposable
                 _writeLock.Release();
             }
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or OperationCanceledException or ObjectDisposedException)
         {
-            // Logging must never itself throw — a failure here (disk full, permissions) costs this
-            // one line, not the caller's own error handling.
+            // Logging must never itself throw — a failure here costs this one line, not the
+            // caller's own error handling. Cancellation counts: a caller that logs on the way out
+            // of a cancelled operation passes the token that was just cancelled, and letting that
+            // surface once took down the whole elevated helper mid-cleanup. Disposal counts for
+            // the same reason, on the way through shutdown.
         }
     }
 

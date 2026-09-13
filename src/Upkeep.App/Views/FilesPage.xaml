@@ -62,6 +62,7 @@
                                             <StackPanel Orientation="Horizontal" Spacing="6">
                                                 <TextBlock Text="{x:Bind}" FontSize="{StaticResource FontSizeSm}" VerticalAlignment="Center" />
                                                 <Button
+                                                    x:Uid="FilesRemoveFolderButton"
                                                     Tag="{x:Bind}"
                                                     Click="RemoveFolder_Click"
                                                     Background="Transparent"
@@ -117,20 +118,24 @@
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" />
                                                             <ColumnDefinition Width="*" />
-                                                            <ColumnDefinition Width="Auto" />
-                                                            <ColumnDefinition Width="Auto" />
+                                                            <!--  Pinned, not Auto: every row is its own Grid and WinUI has no shared size scope,
+                                                                  so an Auto column is measured per row and the values never line up. The keeper
+                                                                  tag is absent on most rows, which would shift the date column on the rest.  -->
+                                                            <ColumnDefinition Width="110" />
+                                                            <ColumnDefinition Width="96" />
                                                         </Grid.ColumnDefinitions>
                                                         <CheckBox Grid.Column="0" MinWidth="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
                                                         <TextBlock Grid.Column="1" Text="{x:Bind Path}" Style="{StaticResource BodyTextStyle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-                                                        <TextBlock Grid.Column="2" Text="{x:Bind ModifiedDisplay}" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
+                                                        <TextBlock Grid.Column="2" Text="{x:Bind ModifiedDisplay}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                                                         <Border
                                                             Grid.Column="3"
                                                             Visibility="{x:Bind IsKeeper}"
-                                                            Background="#DCFCE7"
+                                                            Background="{StaticResource SuccessSurfaceBrush}"
                                                             CornerRadius="10"
                                                             Padding="8,2"
+                                                            HorizontalAlignment="Left"
                                                             VerticalAlignment="Center">
-                                                            <TextBlock x:Uid="FilesKeepingTagText" FontSize="{StaticResource FontSizeXs}" Foreground="#166534" />
+                                                            <TextBlock x:Uid="FilesKeepingTagText" FontSize="{StaticResource FontSizeXs}" Foreground="{StaticResource SuccessTextBrush}" />
                                                         </Border>
                                                     </Grid>
                                                 </DataTemplate>
@@ -157,18 +162,21 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
+                                            <!--  Pinned, not Auto: each row is its own Grid and WinUI has no shared size scope, so
+                                                  an Auto column sizes to that row alone. "Large" and "Not opened in two years" are
+                                                  different widths, which walked the date and size columns left and right per row.  -->
+                                            <ColumnDefinition Width="170" />
+                                            <ColumnDefinition Width="110" />
+                                            <ColumnDefinition Width="90" />
                                         </Grid.ColumnDefinitions>
                                         <CheckBox Grid.Column="0" MinWidth="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
                                         <StackPanel Grid.Column="1" Spacing="2">
-                                            <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" />
+                                            <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
                                             <TextBlock Text="{x:Bind Path}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" />
                                         </StackPanel>
-                                        <TextBlock Grid.Column="2" Text="{x:Bind Reason}" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Column="3" Text="{x:Bind ModifiedDisplay}" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Column="4" Text="{x:Bind SizeDisplay}" MinWidth="90" TextAlignment="Right" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" Text="{x:Bind Reason}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="3" Text="{x:Bind ModifiedDisplay}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="4" Text="{x:Bind SizeDisplay}" TextAlignment="Right" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" VerticalAlignment="Center" />
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -206,8 +214,8 @@
                                             CornerRadius="4"
                                             Background="{x:Bind Fill, Converter={StaticResource HexBrush}}">
                                             <StackPanel Margin="8,6" Visibility="{x:Bind ShowLabel}">
-                                                <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeXs}" FontWeight="SemiBold" Foreground="#100E33" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="{x:Bind SizeDisplay}" FontSize="{StaticResource FontSizeXs}" Foreground="#100E33" />
+                                                <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeXs}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{x:Bind SizeDisplay}" FontSize="{StaticResource FontSizeXs}" Foreground="{StaticResource Gray900Brush}" />
                                             </StackPanel>
                                         </Border>
                                     </DataTemplate>
