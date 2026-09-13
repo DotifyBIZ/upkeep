@@ -90,10 +90,21 @@ public sealed partial class FilesViewModel : ObservableObject
     public partial bool DeletePermanently { get; set; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasNoDuplicates))]
     public partial bool HasScannedDuplicates { get; set; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasNoLargeFiles))]
     public partial bool HasScannedLargeFiles { get; set; }
+
+    /// <summary>
+    /// A scan ran and turned nothing up. Distinct from not having scanned yet, and distinct from
+    /// having found something — the message must not sit above a table full of results.
+    /// </summary>
+    public bool HasNoDuplicates => HasScannedDuplicates && DuplicateGroups.Count == 0;
+
+    /// <inheritdoc cref="HasNoDuplicates" />
+    public bool HasNoLargeFiles => HasScannedLargeFiles && LargeFiles.Count == 0;
 
     [ObservableProperty]
     public partial string UsageBreadcrumb { get; set; } = string.Empty;
@@ -162,6 +173,10 @@ public sealed partial class FilesViewModel : ObservableObject
                 ByteSize.Format(result.ReclaimableBytes));
 
             HasScannedDuplicates = true;
+
+            // Raised explicitly: on a second scan the flag is already true, so the generated
+            // notification does not fire and the empty-state message would keep its old answer.
+            OnPropertyChanged(nameof(HasNoDuplicates));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -215,6 +230,9 @@ public sealed partial class FilesViewModel : ObservableObject
                 ByteSize.Format(results.Sum(result => result.SizeBytes)));
 
             HasScannedLargeFiles = true;
+
+            // Raised explicitly, for the same reason as the duplicates scan.
+            OnPropertyChanged(nameof(HasNoLargeFiles));
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
