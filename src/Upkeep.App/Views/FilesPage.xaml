@@ -21,6 +21,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -36,8 +37,9 @@
             <SelectorBarItem x:Uid="FilesTabUsage" Tag="Usage" />
         </SelectorBar>
 
-        <ScrollViewer Grid.Row="2" Margin="0,16,0,0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="16">
+
+        <!--  Shared by all three tabs, so it stays put while the results scroll.  -->
+        <StackPanel Grid.Row="2" Spacing="16" Margin="0,16,0,0">
                 <InfoBar
                     IsOpen="{x:Bind ViewModel.HasStatusMessage, Mode=OneWay}"
                     Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
@@ -89,20 +91,36 @@
 
                 <TextBlock Text="{x:Bind ViewModel.SummaryText, Mode=OneWay}" Style="{StaticResource SectionLabelTextStyle}" />
 
-                <!-- Duplicates -->
-                <StackPanel x:Name="DuplicatesPanel" Spacing="16">
-                    <TextBlock x:Uid="FilesMatchExplanation" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" HorizontalAlignment="Left" />
-                    <TextBlock
+            <TextBlock
+                Text="{x:Bind ViewModel.ShowingSomeOfTotal, Mode=OneWay}"
+                Style="{StaticResource CaptionTextStyle}"
+                Visibility="{x:Bind ViewModel.IsShowingSomeOfTotal, Mode=OneWay}" />
+        </StackPanel>
+
+        <!--  One tab is visible at a time, and each scrolls its own results: an ItemsRepeater only
+              virtualizes when a ScrollViewer gives it a real viewport, which a page-wide scroll
+              around stacked panels does not.  -->
+        <Grid Grid.Row="3" Margin="0,16,0,0">
+
+            <!--  Duplicates  -->
+            <Grid x:Name="DuplicatesPanel" RowSpacing="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" x:Uid="FilesMatchExplanation" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" HorizontalAlignment="Left" />
+                    <TextBlock Grid.Row="1"
                         x:Uid="FilesNoDuplicatesMessage"
                         Style="{StaticResource CaptionTextStyle}"
                         Visibility="{x:Bind ViewModel.HasNoDuplicates, Mode=OneWay}" />
-                    <ItemsControl ItemsSource="{x:Bind ViewModel.DuplicateGroups}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Spacing="12" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
+
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                            <ItemsRepeater ItemsSource="{x:Bind ViewModel.DuplicateGroups}">
+                                <ItemsRepeater.Layout>
+                                    <StackLayout Spacing="12" />
+                                </ItemsRepeater.Layout>
+                                <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="viewmodels:DuplicateGroupDisplay">
                                 <Border Style="{StaticResource CardBorderStyle}" Padding="0">
                                     <StackPanel>
@@ -144,19 +162,26 @@
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
+                                </ItemsRepeater.ItemTemplate>
+                            </ItemsRepeater>
+                </ScrollViewer>
+            </Grid>
 
-                <!-- Large and forgotten files -->
-                <StackPanel x:Name="LargePanel" Spacing="16" Visibility="Collapsed">
-                    <TextBlock
+            <!--  Large and forgotten files  -->
+            <Grid x:Name="LargePanel" RowSpacing="16" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0"
                         x:Uid="FilesNoLargeFilesMessage"
                         Style="{StaticResource CaptionTextStyle}"
                         Visibility="{x:Bind ViewModel.HasNoLargeFiles, Mode=OneWay}" />
-                    <Border Style="{StaticResource CardBorderStyle}" Padding="0">
-                        <ItemsControl ItemsSource="{x:Bind ViewModel.LargeFiles}">
-                            <ItemsControl.ItemTemplate>
+
+                    <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Padding="0">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsRepeater ItemsSource="{x:Bind ViewModel.LargeFiles}">
+                                <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="viewmodels:LargeFileDisplay">
                                     <Grid Padding="20,12" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,1,0,0">
                                         <Grid.ColumnDefinitions>
@@ -179,13 +204,15 @@
                                         <TextBlock Grid.Column="4" Text="{x:Bind SizeDisplay}" TextAlignment="Right" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" VerticalAlignment="Center" />
                                     </Grid>
                                 </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                                </ItemsRepeater.ItemTemplate>
+                            </ItemsRepeater>
+                        </ScrollViewer>
                     </Border>
-                </StackPanel>
+            </Grid>
 
-                <!-- Disk usage -->
-                <StackPanel x:Name="UsagePanel" Spacing="16" Visibility="Collapsed">
+            <!--  Disk usage  -->
+            <ScrollViewer x:Name="UsagePanel" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
+                <StackPanel Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="16">
                         <TextBlock Text="{x:Bind ViewModel.UsageBreadcrumb, Mode=OneWay}" Style="{StaticResource SectionLabelTextStyle}" VerticalAlignment="Center" />
                         <TextBlock Text="{x:Bind ViewModel.UsageSummary, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
@@ -253,13 +280,14 @@
                         </Border>
                     </StackPanel>
                 </StackPanel>
-            </StackPanel>
-        </ScrollViewer>
+            </ScrollViewer>
+        </Grid>
+
 
         <!-- What is selected, and the two ways to act on it. -->
         <Border
             x:Name="ActionBar"
-            Grid.Row="3"
+            Grid.Row="4"
             Margin="-32,16,-32,-24"
             Padding="32,16"
             Background="White"

@@ -101,4 +101,67 @@ public class FilesViewModelTests
         Assert.Empty(viewModel.DuplicateGroups);
         Assert.True(viewModel.HasNoDuplicates);
     }
+
+    [Fact]
+    public async Task ScanLargeFilesAsync_MoreResultsThanThePageShows_StopsAtTheCap()
+    {
+        // Realizing every row is what made the window stop responding on a folder with tens of
+        // thousands of files. The finder returns them biggest-first, so the cap keeps the useful end.
+        for (int i = 0; i < FilesViewModel.MaximumDisplayedResults + 250; i++)
+        {
+            _largeFiles.Results.Add(LargeFile($@"C:\Users\Test\Videos\clip-{i}.mp4"));
+        }
+
+        var viewModel = CreateViewModel();
+        await viewModel.ScanLargeFilesAsync(CancellationToken.None);
+
+        Assert.Equal(FilesViewModel.MaximumDisplayedResults, viewModel.LargeFiles.Count);
+        Assert.True(viewModel.IsShowingSomeOfTotal);
+    }
+
+    [Fact]
+    public async Task ScanLargeFilesAsync_EverythingFits_SaysNothingAboutACap()
+    {
+        _largeFiles.Results.Add(LargeFile());
+
+        var viewModel = CreateViewModel();
+        await viewModel.ScanLargeFilesAsync(CancellationToken.None);
+
+        Assert.False(viewModel.IsShowingSomeOfTotal);
+        Assert.Null(viewModel.ShowingSomeOfTotal);
+    }
+
+    [Fact]
+    public async Task ScanLargeFilesAsync_CappedThenSmallResult_DropsTheCapNotice()
+    {
+        // The notice is per scan, not sticky.
+        for (int i = 0; i < FilesViewModel.MaximumDisplayedResults + 1; i++)
+        {
+            _largeFiles.Results.Add(LargeFile($@"C:\Users\Test\Videos\clip-{i}.mp4"));
+        }
+
+        var viewModel = CreateViewModel();
+        await viewModel.ScanLargeFilesAsync(CancellationToken.None);
+
+        _largeFiles.Results.Clear();
+        _largeFiles.Results.Add(LargeFile());
+        await viewModel.ScanLargeFilesAsync(CancellationToken.None);
+
+        Assert.False(viewModel.IsShowingSomeOfTotal);
+    }
+
+    [Fact]
+    public async Task ScanDuplicatesAsync_MoreGroupsThanThePageShows_StopsAtTheCap()
+    {
+        for (int i = 0; i < FilesViewModel.MaximumDisplayedResults + 10; i++)
+        {
+            _duplicates.Groups.Add(Group());
+        }
+
+        var viewModel = CreateViewModel();
+        await viewModel.ScanDuplicatesAsync(CancellationToken.None);
+
+        Assert.Equal(FilesViewModel.MaximumDisplayedResults, viewModel.DuplicateGroups.Count);
+        Assert.True(viewModel.IsShowingSomeOfTotal);
+    }
 }

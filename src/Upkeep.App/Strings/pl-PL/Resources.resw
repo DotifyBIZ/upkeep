@@ -414,6 +414,9 @@
   <data name="FilesNoLargeFilesMessage.Text">
     <value>Brak plików powyżej tych progów w wybranych folderach.</value>
   </data>
+  <data name="FilesShowingLargestFormat">
+    <value>Widocznych jest największych {0} z {1}.</value>
+  </data>
   <data name="FilesUsageLargestHeader.Text">
     <value>Największe tutaj</value>
   </data>

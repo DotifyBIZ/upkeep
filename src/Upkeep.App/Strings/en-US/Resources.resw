@@ -414,6 +414,9 @@
   <data name="FilesNoLargeFilesMessage.Text">
     <value>Nothing over those thresholds in the folders you picked.</value>
   </data>
+  <data name="FilesShowingLargestFormat">
+    <value>Showing the largest {0} of {1}.</value>
+  </data>
   <data name="FilesUsageLargestHeader.Text">
     <value>Largest here</value>
   </data>

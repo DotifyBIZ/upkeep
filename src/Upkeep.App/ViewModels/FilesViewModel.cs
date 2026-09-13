@@ -106,6 +106,16 @@ public sealed partial class FilesViewModel : ObservableObject
     /// <inheritdoc cref="HasNoDuplicates" />
     public bool HasNoLargeFiles => HasScannedLargeFiles && LargeFiles.Count == 0;
 
+    /// <summary>
+    /// Set when a scan found more than the page will show, so the count on screen never quietly
+    /// disagrees with the total in the summary.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsShowingSomeOfTotal))]
+    public partial string? ShowingSomeOfTotal { get; set; }
+
+    public bool IsShowingSomeOfTotal => !string.IsNullOrEmpty(ShowingSomeOfTotal);
+
     [ObservableProperty]
     public partial string UsageBreadcrumb { get; set; } = string.Empty;
 
@@ -126,6 +136,19 @@ public sealed partial class FilesViewModel : ObservableObject
     public partial int ForgottenAfterDays { get; set; } = 180;
 
     public bool HasStatusMessage => !string.IsNullOrEmpty(StatusMessage);
+
+    /// <summary>
+    /// How many rows the page puts on screen. The scan is complete either way — this caps only what
+    /// gets realized as UI. Past a few hundred rows the list is not something anyone works through,
+    /// while building it is what stops the window responding on a folder with tens of thousands of
+    /// files.
+    /// </summary>
+    public const int MaximumDisplayedResults = 500;
+
+    /// <summary>Says so plainly when the page is showing fewer rows than the scan found.</summary>
+    private string? Notice(int total) => total > MaximumDisplayedResults
+        ? _localization.GetString("FilesShowingLargestFormat", MaximumDisplayedResults, total)
+        : null;
 
     private FileScanScope BuildScope() => new()
     {
@@ -162,10 +185,14 @@ public sealed partial class FilesViewModel : ObservableObject
             DetachDuplicateHandlers();
             DuplicateGroups.Clear();
 
-            foreach (var group in result.Groups)
+            // Capped: the groups arrive biggest-first, and realizing tens of thousands of rows is
+            // what makes the window stop responding. The scan itself is complete either way.
+            foreach (var group in result.Groups.Take(MaximumDisplayedResults))
             {
                 DuplicateGroups.Add(BuildGroupDisplay(group));
             }
+
+            ShowingSomeOfTotal = Notice(result.Groups.Count);
 
             SummaryText = _localization.GetString(
                 "FilesDuplicateSummaryFormat",
@@ -212,7 +239,8 @@ public sealed partial class FilesViewModel : ObservableObject
             DetachLargeFileHandlers();
             LargeFiles.Clear();
 
-            foreach (var result in results)
+            // Capped for the same reason; the finder returns them biggest-first.
+            foreach (var result in results.Take(MaximumDisplayedResults))
             {
                 var display = new LargeFileDisplay(
                     result,
@@ -228,6 +256,8 @@ public sealed partial class FilesViewModel : ObservableObject
                 "FilesLargeSummaryFormat",
                 results.Count,
                 ByteSize.Format(results.Sum(result => result.SizeBytes)));
+
+            ShowingSomeOfTotal = Notice(results.Count);
 
             HasScannedLargeFiles = true;
 

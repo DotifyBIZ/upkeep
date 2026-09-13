@@ -76,5 +76,5 @@ Don't invent a convention to fill a gap. Name what's missing, propose the smalle
   - **Startup & performance:** startup items through the same `StartupApproved` values Task Manager writes, logon tasks through `schtasks`, service start types through the helper, visual effects and power plan through `IPerformanceSettings`.
   - **Drivers & updates:** drivers read from `Win32_PnPSignedDriver` (never `pnputil` — localized output), a read-only WUA search in the helper, install handed to Windows Update and rollback to Device Manager (ADR-0009). Pause and deferral are helper-side HKLM writes, journaled and revertable; deferral controls are hidden on Home, which ignores the policy keys.
   - **History & Settings:** every session listed, one-click revert of a whole session, and the settings page.
-  - **Tests:** 521 Core, 168 App; Core branch coverage 86.5% against the 80% floor.
+  - **Tests:** 521 Core, 172 App; Core branch coverage 86.5% against the 80% floor.
 - **Not built yet:** nothing in Phase 1 — all eight nav sections are wired to pages. Phase 2 (privacy/browser cleaning, secure shredder, winget manifest) is deliberately deferred (ADR-0008).
