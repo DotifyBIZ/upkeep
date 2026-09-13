@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
+    <!-- CI restores the whole solution with -p:RuntimeIdentifier=win-x64, which Upkeep.App needs
+         for its self-contained Windows App SDK build. Declaring the RID here too keeps this
+         project's lock file identical whether or not that flag is passed, so a plain local build
+         cannot silently strip the win-x64 entries and turn CI red. -->
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>

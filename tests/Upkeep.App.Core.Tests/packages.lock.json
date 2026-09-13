@@ -132,6 +132,16 @@
           "System.Management": "[10.0.12, )"
         }
       }
+    },
+    "net9.0-windows10.0.22000/win-x64": {
+      "System.Management": {
+        "type": "Transitive",
+        "resolved": "10.0.12",
+        "contentHash": "ApUsYmsNG8aPiMxsO6ROGZnqJwSZY8zeMlAQcuQg+ilPFUcIyBUC0BL8qA6wmPLNVsvL4nyhUrhhxh6qn0cx0Q==",
+        "dependencies": {
+          "System.CodeDom": "10.0.12"
+        }
+      }
     }
   }
 }
