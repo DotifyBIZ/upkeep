@@ -376,4 +376,28 @@ public class DriversViewModelTests : IDisposable
         var sessions = await _journal.ListAsync(CancellationToken.None);
         return sessions.Count == 0 ? [] : sessions[0].Entries;
     }
+
+    [Fact]
+    public async Task EndSessionAsync_ClosesTheSessionSoHistoryDoesNotCallItUnfinished()
+    {
+        // An open session is how a run cut short by a crash shows up; a visit that ended normally
+        // must not look like one.
+        var viewModel = await LoadedAsync();
+        await viewModel.PauseUpdatesAsync(CancellationToken.None);
+        await viewModel.EndSessionAsync(CancellationToken.None);
+
+        var session = Assert.Single(await _journal.ListAsync(CancellationToken.None));
+
+        Assert.NotNull(session.CompletedAt);
+    }
+
+    [Fact]
+    public async Task EndSessionAsync_NothingWasChanged_StartsNoSessionAtAll()
+    {
+        // Looking at the page is not a session.
+        var viewModel = await LoadedAsync();
+        await viewModel.EndSessionAsync(CancellationToken.None);
+
+        Assert.Empty(await _journal.ListAsync(CancellationToken.None));
+    }
 }

@@ -256,6 +256,21 @@ public sealed partial class DriversViewModel : ObservableObject
                     WindowsUpdatePolicy.ClampQualityDeferralDays(QualityDeferralDays))),
             cancellationToken);
 
+    /// <summary>
+    /// Closes the session so History shows one finished session for this visit. A session left
+    /// open reads as one that was cut short, which is a different thing entirely.
+    /// </summary>
+    public async Task EndSessionAsync(CancellationToken cancellationToken)
+    {
+        if (_session is null)
+        {
+            return;
+        }
+
+        await _journal.SaveAsync(_session with { CompletedAt = DateTimeOffset.UtcNow }, cancellationToken);
+        _session = null;
+    }
+
     [RelayCommand]
     public void OpenWindowsUpdate() => Open(WindowsUiLauncher.WindowsUpdate);
 

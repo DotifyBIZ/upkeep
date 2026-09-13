@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using Upkeep.App.Core.Logging;
 using Upkeep.App.ViewModels;
 
@@ -34,6 +35,24 @@ public sealed partial class DriversPage : Page
         catch (Exception ex)
         {
             await App.Services.GetRequiredService<IAppLogger>().LogErrorAsync("The Drivers page failed to load.", ex);
+        }
+    }
+
+    /// <summary>
+    /// Closes the session on the way out, so History shows one finished session for this visit
+    /// rather than an open one that never completed.
+    /// </summary>
+    protected override async void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+
+        try
+        {
+            await ViewModel.EndSessionAsync(CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            await App.Services.GetRequiredService<IAppLogger>().LogErrorAsync("Closing the drivers session failed.", ex);
         }
     }
 
