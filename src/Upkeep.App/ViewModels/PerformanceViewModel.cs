@@ -169,11 +169,17 @@ public sealed partial class PerformanceViewModel : ObservableObject
             return;
         }
 
-        await JournalAsync(
-            new SystemSettingChangedEntry(PerformanceSettingIds.PowerPlan, previous?.Id.ToString() ?? string.Empty, plan.Id.ToString()),
-            cancellationToken);
+        var entry = new SystemSettingChangedEntry(
+            PerformanceSettingIds.PowerPlan,
+            previous?.Id.ToString() ?? string.Empty,
+            plan.Id.ToString());
 
-        if (_settings.SetActivePowerPlan(plan.Id, out string? failure))
+        int entryIndex = await JournalAsync(entry, cancellationToken);
+
+        bool succeeded = _settings.SetActivePowerPlan(plan.Id, out string? failure);
+        await StampAsync(entryIndex, entry, succeeded, failure, cancellationToken);
+
+        if (succeeded)
         {
             RefreshActivePlan(plan);
             StatusMessage = null;
@@ -206,12 +212,15 @@ public sealed partial class PerformanceViewModel : ObservableObject
         var target = IndexingEnabled ? ServiceStartType.AutomaticDelayed : ServiceStartType.Disabled;
         var previous = IndexingEnabled ? ServiceStartType.Disabled : ServiceStartType.AutomaticDelayed;
 
-        await JournalAsync(
-            new ServiceStartTypeChangedEntry(SearchServiceName, previous.ToString(), target.ToString()),
-            cancellationToken);
+        var entry = new ServiceStartTypeChangedEntry(SearchServiceName, previous.ToString(), target.ToString());
+        int entryIndex = await JournalAsync(entry, cancellationToken);
 
         var response = await _elevation.SendAsync(new SetServiceStartTypeRequest(SearchServiceName, target), cancellationToken);
-        if (response is ServiceChangeResponse { Success: true })
+        bool succeeded = response is ServiceChangeResponse { Success: true };
+
+        await StampAsync(entryIndex, entry, succeeded, (response as ServiceChangeResponse)?.Detail, cancellationToken);
+
+        if (succeeded)
         {
             StatusMessage = null;
             return;
@@ -235,11 +244,12 @@ public sealed partial class PerformanceViewModel : ObservableObject
 
         try
         {
-            await JournalAsync(
-                new SystemSettingChangedEntry(settingId, (!enabled).ToString(), enabled.ToString()),
-                cancellationToken);
+            var entry = new SystemSettingChangedEntry(settingId, (!enabled).ToString(), enabled.ToString());
+            int entryIndex = await JournalAsync(entry, cancellationToken);
 
             string? failure = apply(enabled);
+            await StampAsync(entryIndex, entry, failure is null, failure, cancellationToken);
+
             if (failure is null)
             {
                 StatusMessage = null;
@@ -258,10 +268,38 @@ public sealed partial class PerformanceViewModel : ObservableObject
         }
     }
 
-    private async Task JournalAsync(SessionEntry entry, CancellationToken cancellationToken)
+    /// <summary>
+    /// Writes the entry before the change and hands back where it landed, so how the change went
+    /// can be stamped onto it afterwards (ADR-0006).
+    /// </summary>
+    private async Task<int> JournalAsync(SessionEntry entry, CancellationToken cancellationToken)
     {
         _session ??= await _journal.StartAsync(SessionKind.Startup, cancellationToken);
         _session = await _journal.AppendAsync(_session, entry, cancellationToken);
+        return _session.Entries.Count - 1;
+    }
+
+    /// <summary>
+    /// Records how the change actually went. A revert skips any entry that never completed, so
+    /// this is what makes a setting revertable at all rather than only recorded.
+    /// </summary>
+    private async Task StampAsync(
+        int entryIndex,
+        SessionEntry entry,
+        bool succeeded,
+        string? failure,
+        CancellationToken cancellationToken)
+    {
+        if (_session is null)
+        {
+            return;
+        }
+
+        _session = await _journal.UpdateEntryAsync(
+            _session,
+            entryIndex,
+            entry with { Completed = succeeded, FailureDetail = failure },
+            cancellationToken);
     }
 
     private async Task<bool> ReadIndexingEnabledAsync(CancellationToken cancellationToken)

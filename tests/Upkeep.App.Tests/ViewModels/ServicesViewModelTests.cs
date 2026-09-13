@@ -237,9 +237,11 @@ public class ServicesViewModelTests : IDisposable
         Assert.True(viewModel.Items[0].IsEnabled);
         Assert.Contains("ServicesChangeRefusedFormat", viewModel.StatusMessage, StringComparison.Ordinal);
 
+        // A change that never happened must not read as one History could put back, and a revert
+        // skips exactly the entries that never completed.
         var session = Assert.Single(await _journal.ListAsync(CancellationToken.None));
         var entry = Assert.IsType<ServiceStartTypeChangedEntry>(Assert.Single(session.Entries));
-        Assert.Equal(entry.PreviousStartType, entry.NewStartType);
+        Assert.False(entry.Completed);
     }
 
     [Fact]
@@ -288,5 +290,21 @@ public class ServicesViewModelTests : IDisposable
         Assert.Equal(4, viewModel.Legend.Count);
         Assert.Contains(viewModel.Legend, entry => entry.Name == "ServicesTierLocked");
         Assert.Contains(viewModel.Legend, entry => entry.Description == "ServicesTierLockedDescription");
+    }
+
+    [Fact]
+    public async Task ApplyAsync_Succeeded_MarksTheEntryCompletedSoItCanBePutBack()
+    {
+        // A revert skips entries that never completed, so an unstamped entry is a change History
+        // records and can never undo.
+        _scanner.Services.Add(Curated());
+        var viewModel = await LoadedAsync();
+
+        viewModel.Items[0].IsEnabled = false;
+        await viewModel.ApplyAsync(viewModel.Items[0], CancellationToken.None);
+
+        var session = Assert.Single(await _journal.ListAsync(CancellationToken.None));
+
+        Assert.True(Assert.Single(session.Entries).Completed);
     }
 }

@@ -282,4 +282,74 @@ public class PerformanceViewModelTests : IDisposable
         var session = Assert.Single(await _journal.ListAsync(CancellationToken.None));
         Assert.NotNull(session.CompletedAt);
     }
+
+    [Fact]
+    public async Task ApplyAnimationsAsync_Succeeded_MarksTheEntryCompletedSoItCanBePutBack()
+    {
+        // A revert skips entries that never completed, so an unstamped entry is a change History
+        // records and can never undo.
+        var viewModel = await LoadedAsync();
+
+        viewModel.AnimationsEnabled = false;
+        await viewModel.ApplyAnimationsAsync(CancellationToken.None);
+
+        var session = Assert.Single(await _journal.ListAsync(CancellationToken.None));
+
+        Assert.True(Assert.Single(session.Entries).Completed);
+    }
+
+    [Fact]
+    public async Task ApplyAnimationsAsync_WindowsRefused_LeavesTheEntryUnfinished()
+    {
+        _settings.Succeeds = false;
+        var viewModel = await LoadedAsync();
+
+        viewModel.AnimationsEnabled = false;
+        await viewModel.ApplyAnimationsAsync(CancellationToken.None);
+
+        var session = Assert.Single(await _journal.ListAsync(CancellationToken.None));
+
+        Assert.False(Assert.Single(session.Entries).Completed);
+    }
+
+    [Fact]
+    public async Task ApplyPowerPlanAsync_Succeeded_MarksTheEntryCompleted()
+    {
+        GiveTwoPowerPlans();
+        var viewModel = await LoadedAsync();
+
+        viewModel.SelectedPowerPlan = viewModel.PowerPlans.First(plan => plan.Id == HighPerformanceId);
+        await viewModel.ApplyPowerPlanAsync(CancellationToken.None);
+
+        var session = Assert.Single(await _journal.ListAsync(CancellationToken.None));
+
+        Assert.True(Assert.Single(session.Entries).Completed);
+    }
+
+    [Fact]
+    public async Task ApplyIndexingAsync_Succeeded_MarksTheEntryCompleted()
+    {
+        var viewModel = await LoadedAsync();
+
+        viewModel.IndexingEnabled = true;
+        await viewModel.ApplyIndexingAsync(CancellationToken.None);
+
+        var session = Assert.Single(await _journal.ListAsync(CancellationToken.None));
+
+        Assert.True(Assert.Single(session.Entries).Completed);
+    }
+
+    [Fact]
+    public async Task ApplyIndexingAsync_WindowsRefused_LeavesTheEntryUnfinished()
+    {
+        _elevation.ServiceChangeSucceeds = false;
+        var viewModel = await LoadedAsync();
+
+        viewModel.IndexingEnabled = true;
+        await viewModel.ApplyIndexingAsync(CancellationToken.None);
+
+        var session = Assert.Single(await _journal.ListAsync(CancellationToken.None));
+
+        Assert.False(Assert.Single(session.Entries).Completed);
+    }
 }

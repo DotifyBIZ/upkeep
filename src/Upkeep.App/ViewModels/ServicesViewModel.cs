@@ -160,19 +160,21 @@ public sealed partial class ServicesViewModel : ObservableObject
             int entryIndex = _session.Entries.Count - 1;
 
             var response = await _elevation.SendAsync(new SetServiceStartTypeRequest(display.Name, target), cancellationToken);
-            if (response is ServiceChangeResponse { Success: true })
+            bool succeeded = response is ServiceChangeResponse { Success: true };
+
+            // Stamped either way: an entry that never completed is skipped by a revert, which is
+            // what stops a change that did not happen from reading as one History could put back.
+            _session = await _journal.UpdateEntryAsync(
+                _session,
+                entryIndex,
+                entry with { Completed = succeeded, FailureDetail = (response as ServiceChangeResponse)?.Detail },
+                cancellationToken);
+
+            if (succeeded)
             {
                 StatusMessage = null;
                 return;
             }
-
-            // The entry describes a change that never happened, so it must not read as one History
-            // could put back.
-            _session = await _journal.UpdateEntryAsync(
-                _session,
-                entryIndex,
-                entry with { NewStartType = display.Item.StartType },
-                cancellationToken);
 
             RevertSwitch(display);
             StatusMessage = _localization.GetString("ServicesChangeRefusedFormat", display.DisplayName);
