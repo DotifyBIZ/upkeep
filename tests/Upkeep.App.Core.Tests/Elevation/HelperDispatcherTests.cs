@@ -1,7 +1,9 @@
 using Upkeep.App.Core.Cleanup;
+using Upkeep.App.Core.Drivers;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Logging;
 using Upkeep.App.Core.Safety;
+using Upkeep.App.Core.Updates;
 using Upkeep.App.Core.Tests.Fakes;
 
 namespace Upkeep.App.Core.Tests.Elevation;
@@ -129,5 +131,76 @@ public class HelperDispatcherTests : IDisposable
             CancellationToken.None);
 
         Assert.Equal(42, response.RequestId);
+    }
+
+    [Fact]
+    public async Task SearchDriverUpdatesRequest_ReturnsWhatWindowsUpdateOffered()
+    {
+        _operations.DriverSearch = new DriverUpdateSearchResult(
+            true,
+            [new DriverUpdate("Realtek Audio 6.0.9508.1", "Realtek High Definition Audio")]);
+
+        var response = await CreateDispatcher().DispatchAsync(
+            new SearchDriverUpdatesRequest { RequestId = 11 },
+            CancellationToken.None);
+
+        var search = Assert.IsType<DriverUpdateSearchResponse>(response);
+        Assert.True(search.Succeeded);
+        Assert.Equal("Realtek Audio 6.0.9508.1", Assert.Single(search.Updates).Title);
+        Assert.Equal(11, response.RequestId);
+        Assert.Equal("search-drivers", Assert.Single(_operations.Calls));
+    }
+
+    [Fact]
+    public async Task SearchDriverUpdatesRequest_WindowsUpdateCouldNotBeAsked_IsAnAnswerNotAnError()
+    {
+        // A machine with the service off, or on a managed network, is a normal case.
+        _operations.DriverSearch = DriverUpdateSearchResult.Unavailable;
+
+        var response = await CreateDispatcher().DispatchAsync(new SearchDriverUpdatesRequest(), CancellationToken.None);
+
+        var search = Assert.IsType<DriverUpdateSearchResponse>(response);
+        Assert.False(search.Succeeded);
+        Assert.Empty(search.Updates);
+    }
+
+    [Fact]
+    public async Task SetUpdatePauseRequest_PassesTheDaysThroughAndReportsHowThingsStand()
+    {
+        _operations.UpdateChange = new WindowsUpdateChangeResult(
+            true,
+            new WindowsUpdateState(DateTimeOffset.UtcNow.AddDays(7), 0, 0),
+            null);
+
+        var response = await CreateDispatcher().DispatchAsync(
+            new SetUpdatePauseRequest(7) { RequestId = 5 },
+            CancellationToken.None);
+
+        var state = Assert.IsType<WindowsUpdateStateResponse>(response);
+        Assert.True(state.Success);
+        Assert.True(state.State.IsPaused);
+        Assert.Equal(5, response.RequestId);
+        Assert.Equal("pause:7", Assert.Single(_operations.Calls));
+    }
+
+    [Fact]
+    public async Task SetUpdateDeferralRequest_PassesBothPeriodsThrough()
+    {
+        var response = await CreateDispatcher().DispatchAsync(new SetUpdateDeferralRequest(180, 14), CancellationToken.None);
+
+        Assert.IsType<WindowsUpdateStateResponse>(response);
+        Assert.Equal("defer:180:14", Assert.Single(_operations.Calls));
+    }
+
+    [Fact]
+    public async Task SetUpdatePauseRequest_WindowsRefused_SaysSoRatherThanClaimingSuccess()
+    {
+        _operations.UpdateChange = new WindowsUpdateChangeResult(false, WindowsUpdateState.NotConfigured, "Access is denied.");
+
+        var response = await CreateDispatcher().DispatchAsync(new SetUpdatePauseRequest(7), CancellationToken.None);
+
+        var state = Assert.IsType<WindowsUpdateStateResponse>(response);
+        Assert.False(state.Success);
+        Assert.Equal("Access is denied.", state.FailureDetail);
     }
 }

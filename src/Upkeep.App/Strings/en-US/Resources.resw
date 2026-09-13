@@ -883,4 +883,99 @@
   <data name="SettingsOpenReleaseButton.Content">
     <value>See what's new</value>
   </data>
+
+  <!-- Drivers and updates -->
+  <data name="DriversTitle.Text">
+    <value>Drivers &amp; updates</value>
+  </data>
+  <data name="DriversSubtitle.Text">
+    <value>What this PC is running, what Windows has newer, and how updates are scheduled.</value>
+  </data>
+  <data name="DriversTabDrivers.Text">
+    <value>Drivers</value>
+  </data>
+  <data name="DriversTabUpdates.Text">
+    <value>Windows Update</value>
+  </data>
+  <data name="DriversScanButton.Content">
+    <value>Check for driver updates</value>
+  </data>
+  <data name="DriversColumnDevice.Text">
+    <value>Device</value>
+  </data>
+  <data name="DriversColumnVersion.Text">
+    <value>Installed version</value>
+  </data>
+  <data name="DriversColumnStatus.Text">
+    <value>Status</value>
+  </data>
+  <data name="DriversStatusUpToDate">
+    <value>Up to date</value>
+  </data>
+  <data name="DriversStatusUpdateAvailable">
+    <value>Update available</value>
+  </data>
+  <data name="DriversStatusUnknown">
+    <value>Not checked</value>
+  </data>
+  <data name="DriversEmptyMessage.Text">
+    <value>No drivers to show.</value>
+  </data>
+  <data name="DriversInstallButton.Content">
+    <value>Install in Windows Update</value>
+  </data>
+  <data name="DriversInstallNote.Text">
+    <value>Windows installs driver updates itself, and knows how to finish the job after a restart. Upkeep finds them and hands over.</value>
+  </data>
+  <data name="DriversRollbackButton.Content">
+    <value>Roll back in Device Manager</value>
+  </data>
+  <data name="DriversRollbackNote.Text">
+    <value>Windows keeps the previous driver package and owns the rollback. Upkeep opens Device Manager rather than doing it a second way.</value>
+  </data>
+  <data name="DriversSearchFailed">
+    <value>Windows Update couldn't be searched, so only the installed versions are shown.</value>
+  </data>
+  <data name="DriversSearchedFormat">
+    <value>{0} driver updates available.</value>
+  </data>
+  <data name="UpdatesPauseHeader.Text">
+    <value>Pause updates</value>
+  </data>
+  <data name="UpdatesPauseLabel.Text">
+    <value>Pause updates for</value>
+  </data>
+  <data name="UpdatesPauseButton.Content">
+    <value>Pause</value>
+  </data>
+  <data name="UpdatesPauseNote.Text">
+    <value>Windows resumes on its own when the pause ends, and needs to catch up before it can pause again.</value>
+  </data>
+  <data name="UpdatesPausedUntilFormat">
+    <value>Paused until {0}</value>
+  </data>
+  <data name="UpdatesResumeButton.Content">
+    <value>Resume now</value>
+  </data>
+  <data name="UpdatesDeferHeader.Text">
+    <value>Deferral</value>
+  </data>
+  <data name="UpdatesDeferFeatureLabel.Text">
+    <value>Hold feature updates for</value>
+  </data>
+  <data name="UpdatesDeferQualityLabel.Text">
+    <value>Hold quality updates for</value>
+  </data>
+  <data name="UpdatesDeferNote.Text">
+    <value>Applies to this PC's update policy. Security updates still arrive on Microsoft's schedule.</value>
+  </data>
+  <data name="UpdatesDeferApplyButton.Content">
+    <value>Apply</value>
+  </data>
+  <data name="UpdatesOpenSettingsButton.Content">
+    <value>Open Windows Update</value>
+  </data>
+  <data name="UpdatesChangeRefused">
+    <value>Windows would not apply that change.</value>
+  </data>
 </root>

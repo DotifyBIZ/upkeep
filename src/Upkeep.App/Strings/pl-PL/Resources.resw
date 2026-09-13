@@ -883,4 +883,99 @@
   <data name="SettingsOpenReleaseButton.Content">
     <value>Zobacz nowości</value>
   </data>
+
+  <!-- Sterowniki i aktualizacje -->
+  <data name="DriversTitle.Text">
+    <value>Sterowniki i aktualizacje</value>
+  </data>
+  <data name="DriversSubtitle.Text">
+    <value>Co działa na tym komputerze, co nowszego ma system Windows i jak zaplanowane są aktualizacje.</value>
+  </data>
+  <data name="DriversTabDrivers.Text">
+    <value>Sterowniki</value>
+  </data>
+  <data name="DriversTabUpdates.Text">
+    <value>Windows Update</value>
+  </data>
+  <data name="DriversScanButton.Content">
+    <value>Sprawdź aktualizacje sterowników</value>
+  </data>
+  <data name="DriversColumnDevice.Text">
+    <value>Urządzenie</value>
+  </data>
+  <data name="DriversColumnVersion.Text">
+    <value>Zainstalowana wersja</value>
+  </data>
+  <data name="DriversColumnStatus.Text">
+    <value>Stan</value>
+  </data>
+  <data name="DriversStatusUpToDate">
+    <value>Aktualny</value>
+  </data>
+  <data name="DriversStatusUpdateAvailable">
+    <value>Dostępna aktualizacja</value>
+  </data>
+  <data name="DriversStatusUnknown">
+    <value>Niesprawdzone</value>
+  </data>
+  <data name="DriversEmptyMessage.Text">
+    <value>Brak sterowników do pokazania.</value>
+  </data>
+  <data name="DriversInstallButton.Content">
+    <value>Zainstaluj w Windows Update</value>
+  </data>
+  <data name="DriversInstallNote.Text">
+    <value>System Windows sam instaluje aktualizacje sterowników i potrafi dokończyć pracę po ponownym uruchomieniu. Upkeep je znajduje i przekazuje dalej.</value>
+  </data>
+  <data name="DriversRollbackButton.Content">
+    <value>Przywróć w Menedżerze urządzeń</value>
+  </data>
+  <data name="DriversRollbackNote.Text">
+    <value>System Windows przechowuje poprzedni pakiet sterownika i odpowiada za przywracanie. Upkeep otwiera Menedżera urządzeń, zamiast robić to po swojemu.</value>
+  </data>
+  <data name="DriversSearchFailed">
+    <value>Nie udało się przeszukać usługi Windows Update, więc pokazane są tylko zainstalowane wersje.</value>
+  </data>
+  <data name="DriversSearchedFormat">
+    <value>Dostępne aktualizacje sterowników: {0}.</value>
+  </data>
+  <data name="UpdatesPauseHeader.Text">
+    <value>Wstrzymanie aktualizacji</value>
+  </data>
+  <data name="UpdatesPauseLabel.Text">
+    <value>Wstrzymaj aktualizacje na</value>
+  </data>
+  <data name="UpdatesPauseButton.Content">
+    <value>Wstrzymaj</value>
+  </data>
+  <data name="UpdatesPauseNote.Text">
+    <value>System Windows wznowi je sam po upływie tego czasu i musi nadrobić zaległości, zanim wstrzymasz je ponownie.</value>
+  </data>
+  <data name="UpdatesPausedUntilFormat">
+    <value>Wstrzymane do {0}</value>
+  </data>
+  <data name="UpdatesResumeButton.Content">
+    <value>Wznów teraz</value>
+  </data>
+  <data name="UpdatesDeferHeader.Text">
+    <value>Odroczenie</value>
+  </data>
+  <data name="UpdatesDeferFeatureLabel.Text">
+    <value>Wstrzymaj aktualizacje funkcji na</value>
+  </data>
+  <data name="UpdatesDeferQualityLabel.Text">
+    <value>Wstrzymaj aktualizacje jakości na</value>
+  </data>
+  <data name="UpdatesDeferNote.Text">
+    <value>Dotyczy zasad aktualizacji tego komputera. Aktualizacje zabezpieczeń nadal pojawiają się zgodnie z harmonogramem firmy Microsoft.</value>
+  </data>
+  <data name="UpdatesDeferApplyButton.Content">
+    <value>Zastosuj</value>
+  </data>
+  <data name="UpdatesOpenSettingsButton.Content">
+    <value>Otwórz Windows Update</value>
+  </data>
+  <data name="UpdatesChangeRefused">
+    <value>System Windows nie zastosował tej zmiany.</value>
+  </data>
 </root>

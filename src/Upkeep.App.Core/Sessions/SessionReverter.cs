@@ -6,6 +6,7 @@ using Upkeep.App.Core.Platform;
 using Upkeep.App.Core.Quarantine;
 using Upkeep.App.Core.Services;
 using Upkeep.App.Core.Startup;
+using Upkeep.App.Core.Updates;
 
 namespace Upkeep.App.Core.Sessions;
 
@@ -50,6 +51,7 @@ public sealed class SessionReverter : ISessionReverter
     private readonly IPerformanceSettings _performance;
     private readonly ISessionJournal _journal;
     private readonly IAppLogger _logger;
+    private readonly TimeProvider _timeProvider;
 
     public SessionReverter(
         IQuarantineStore quarantine,
@@ -59,7 +61,8 @@ public sealed class SessionReverter : ISessionReverter
         IStartupItemToggler startupToggler,
         IPerformanceSettings performance,
         ISessionJournal journal,
-        IAppLogger logger)
+        IAppLogger logger,
+        TimeProvider? timeProvider = null)
     {
         _quarantine = quarantine;
         _backups = backups;
@@ -69,6 +72,7 @@ public sealed class SessionReverter : ISessionReverter
         _performance = performance;
         _journal = journal;
         _logger = logger;
+        _timeProvider = timeProvider ?? TimeProvider.System;
     }
 
     public async Task<(SessionManifest Session, RevertOutcome Outcome)> RevertAsync(
@@ -123,7 +127,7 @@ public sealed class SessionReverter : ISessionReverter
                     break;
 
                 case SystemSettingChangedEntry setting:
-                    success = RestoreSystemSetting(setting);
+                    success = await RestoreSystemSettingAsync(setting, cancellationToken);
                     break;
 
                 default:
@@ -232,10 +236,10 @@ public sealed class SessionReverter : ISessionReverter
     }
 
     /// <summary>
-    /// Puts one Windows setting back. The ids are the ones the Performance tab writes; anything
-    /// else is refused rather than guessed at.
+    /// Puts one Windows setting back. The ids are the ones the Performance and Drivers tabs write;
+    /// anything else is refused rather than guessed at.
     /// </summary>
-    private bool RestoreSystemSetting(SystemSettingChangedEntry entry)
+    private async Task<bool> RestoreSystemSettingAsync(SystemSettingChangedEntry entry, CancellationToken cancellationToken)
     {
         switch (entry.SettingId)
         {
@@ -251,11 +255,48 @@ public sealed class SessionReverter : ISessionReverter
                 return Guid.TryParse(entry.PreviousValue, out Guid planId)
                     && _performance.SetActivePowerPlan(planId, out _);
 
+            case UpdateSettingIds.Pause:
+                return await RestoreUpdatePauseAsync(entry, cancellationToken);
+
+            case UpdateSettingIds.Deferral:
+                return WindowsUpdatePolicy.TryParseDeferral(entry.PreviousValue, out int featureDays, out int qualityDays)
+                    && await SendUpdateChangeAsync(new SetUpdateDeferralRequest(featureDays, qualityDays), cancellationToken);
+
             default:
                 return false;
         }
     }
+
+    /// <summary>
+    /// Puts a Windows Update pause back. The entry records when the old pause was due to end, so
+    /// what comes back is the days it had left — rounded up to whole days, because that is the
+    /// resolution the helper request has. A pause that had already lapsed comes back as a resume.
+    /// </summary>
+    private Task<bool> RestoreUpdatePauseAsync(SystemSettingChangedEntry entry, CancellationToken cancellationToken)
+    {
+        var expiry = WindowsUpdatePolicy.ParseTime(entry.PreviousValue);
+        int days = WindowsUpdatePolicy.PauseDaysRemaining(expiry, _timeProvider.GetUtcNow());
+
+        return SendUpdateChangeAsync(new SetUpdatePauseRequest(days), cancellationToken);
+    }
+
+    /// <summary>
+    /// Back through the helper, which is the only thing on this machine that may write these keys
+    /// (ADR-0005). A revert is not a reason to bypass the boundary.
+    /// </summary>
+    private async Task<bool> SendUpdateChangeAsync(HelperRequest request, CancellationToken cancellationToken)
+    {
+        var availability = await _elevation.EnsureAvailableAsync(cancellationToken);
+        if (!availability.IsAvailable)
+        {
+            return false;
+        }
+
+        var response = await _elevation.SendAsync(request, cancellationToken);
+        return response is WindowsUpdateStateResponse { Success: true };
+    }
 }
+
 
 /// <summary>
 /// The setting ids written into <see cref="SystemSettingChangedEntry"/>. They are on-disk data, so
@@ -268,4 +309,15 @@ public static class PerformanceSettingIds
     public const string Transparency = "visual-effects-transparency";
 
     public const string PowerPlan = "power-plan";
+}
+
+/// <summary>
+/// The setting ids the Drivers tab writes. Windows Update's schedule is machine-wide, so putting
+/// one back goes through the elevated helper rather than straight at the registry.
+/// </summary>
+public static class UpdateSettingIds
+{
+    public const string Pause = "windows-update-pause";
+
+    public const string Deferral = "windows-update-deferral";
 }

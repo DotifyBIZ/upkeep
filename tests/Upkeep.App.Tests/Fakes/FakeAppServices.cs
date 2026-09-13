@@ -1,7 +1,10 @@
 using Upkeep.App.Core.Abstractions;
 using Upkeep.App.Core.Cleanup;
+using Upkeep.App.Core.Drivers;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Logging;
+using Upkeep.App.Core.Platform;
+using Upkeep.App.Core.Updates;
 
 namespace Upkeep.App.Tests.Fakes;
 
@@ -49,6 +52,15 @@ public sealed class FakeElevationService : IElevationService
 
     public string? ServiceChangeFailureCode { get; set; } = "windows_refused";
 
+    /// <summary>Whether Windows Update could be searched at all.</summary>
+    public bool DriverSearchSucceeded { get; set; } = true;
+
+    public List<DriverUpdate> DriverUpdates { get; } = [];
+
+    public bool UpdateChangeSucceeds { get; set; } = true;
+
+    public WindowsUpdateState UpdateState { get; set; } = WindowsUpdateState.NotConfigured;
+
     public bool IsElevated => Availability.IsAvailable;
 
     public void SetSystemScan(JunkCategoryScan scan) => _systemScans[scan.CategoryId] = scan;
@@ -67,6 +79,9 @@ public sealed class FakeElevationService : IElevationService
             SetServiceStartTypeRequest => ServiceChangeSucceeds
                 ? new ServiceChangeResponse(true, null, null)
                 : new ServiceChangeResponse(false, ServiceChangeFailureCode, null),
+            SearchDriverUpdatesRequest => new DriverUpdateSearchResponse(DriverSearchSucceeded, DriverUpdates),
+            SetUpdatePauseRequest or SetUpdateDeferralRequest =>
+                new WindowsUpdateStateResponse(UpdateChangeSucceeds, UpdateState, UpdateChangeSucceeds ? null : "refused"),
             _ => new HelperOkResponse(),
         };
 
@@ -111,4 +126,65 @@ public sealed class FakeAppLogger : IAppLogger
         Lines.Add($"INFO {message}");
         return Task.CompletedTask;
     }
+}
+
+
+/// <summary>
+/// Answers the registry reads a view model makes to show what Windows is currently set to.
+/// <para>
+/// Reads are all a page does: writing the machine hive belongs to the elevated helper (ADR-0005),
+/// so every write here reports a refusal rather than pretending to have succeeded.
+/// </para>
+/// </summary>
+public sealed class FakeRegistryReader : IRegistryProbe
+{
+    private const string Refusal = "the shell does not write the registry in tests";
+
+    /// <summary>String values, keyed by key path and value name.</summary>
+    public Dictionary<(string KeyPath, string ValueName), string> Strings { get; } = [];
+
+    /// <summary>DWORD values, keyed the same way.</summary>
+    public Dictionary<(string KeyPath, string ValueName), int> Integers { get; } = [];
+
+    public string? GetStringValue(RegistryHiveName hive, string keyPath, string valueName) =>
+        Strings.GetValueOrDefault((keyPath, valueName));
+
+    public int? GetInt32Value(RegistryHiveName hive, string keyPath, string valueName) =>
+        Integers.TryGetValue((keyPath, valueName), out int value) ? value : null;
+
+    public bool KeyExists(RegistryHiveName hive, string keyPath) => false;
+
+    public IReadOnlyList<string> GetSubKeyNames(RegistryHiveName hive, string keyPath) => [];
+
+    public IReadOnlyList<string> GetValueNames(RegistryHiveName hive, string keyPath) => [];
+
+    public byte[]? GetBinaryValue(RegistryHiveName hive, string keyPath, string valueName) => null;
+
+    public IReadOnlyList<RegistryValueSnapshot> GetValues(RegistryHiveName hive, string keyPath) => [];
+
+    public bool CreateCurrentUserKey(string keyPath, out string? failure) => Refuse(out failure);
+
+    public bool SetCurrentUserValue(string keyPath, RegistryValueSnapshot value, out string? failure) => Refuse(out failure);
+
+    public bool SetCurrentUserBinaryValue(string keyPath, string valueName, byte[] value, out string? failure) => Refuse(out failure);
+
+    public bool DeleteCurrentUserValue(string keyPath, string valueName, out string? failure) => Refuse(out failure);
+
+    public bool DeleteCurrentUserKeyTree(string keyPath, out string? failure) => Refuse(out failure);
+
+    private static bool Refuse(out string? failure)
+    {
+        failure = Refusal;
+        return false;
+    }
+}
+
+/// <summary>A clock that does not move, so "paused until" and "days left" are deterministic.</summary>
+public sealed class FixedTimeProvider : TimeProvider
+{
+    private readonly DateTimeOffset _utcNow;
+
+    public FixedTimeProvider(DateTimeOffset utcNow) => _utcNow = utcNow;
+
+    public override DateTimeOffset GetUtcNow() => _utcNow;
 }

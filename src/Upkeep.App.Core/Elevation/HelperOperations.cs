@@ -1,7 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using Upkeep.App.Core.Cleanup;
+using Upkeep.App.Core.Drivers;
 using Upkeep.App.Core.Safety;
 using Upkeep.App.Core.Services;
+using Upkeep.App.Core.Updates;
 
 namespace Upkeep.App.Core.Elevation;
 
@@ -26,6 +28,15 @@ public interface IHelperOperations
     /// is willing to change.
     /// </summary>
     Task<ServiceChangeResult> SetServiceStartTypeAsync(string serviceName, ServiceStartType startType, CancellationToken cancellationToken);
+
+    /// <summary>Asks Windows Update which drivers have something newer. Never installs (ADR-0009).</summary>
+    DriverUpdateSearchResult SearchDriverUpdates(CancellationToken cancellationToken);
+
+    /// <summary>Pauses Windows Update, or ends the pause when days is zero.</summary>
+    WindowsUpdateChangeResult SetUpdatePause(int days);
+
+    /// <summary>Sets how long feature and quality updates are held back.</summary>
+    WindowsUpdateChangeResult SetUpdateDeferral(int featureDays, int qualityDays);
 }
 
 /// <summary>
@@ -40,6 +51,8 @@ public sealed class WindowsHelperOperations : IHelperOperations
     private readonly SystemJunkCleaner _cleaner;
     private readonly IRestorePointService _restorePoints;
     private readonly ServiceConfigurator _serviceConfigurator;
+    private readonly IDriverUpdateSearch _driverSearch;
+    private readonly IWindowsUpdateSettings _updateSettings;
     private readonly string? _shellUserProfilePath;
 
     public WindowsHelperOperations(
@@ -47,12 +60,16 @@ public sealed class WindowsHelperOperations : IHelperOperations
         SystemJunkCleaner cleaner,
         IRestorePointService restorePoints,
         ServiceConfigurator serviceConfigurator,
+        IDriverUpdateSearch driverSearch,
+        IWindowsUpdateSettings updateSettings,
         string? shellUserProfilePath)
     {
         _scanner = scanner;
         _cleaner = cleaner;
         _restorePoints = restorePoints;
         _serviceConfigurator = serviceConfigurator;
+        _driverSearch = driverSearch;
+        _updateSettings = updateSettings;
         _shellUserProfilePath = shellUserProfilePath;
     }
 
@@ -67,4 +84,23 @@ public sealed class WindowsHelperOperations : IHelperOperations
 
     public Task<ServiceChangeResult> SetServiceStartTypeAsync(string serviceName, ServiceStartType startType, CancellationToken cancellationToken) =>
         _serviceConfigurator.SetStartTypeAsync(serviceName, startType, cancellationToken);
+
+    public DriverUpdateSearchResult SearchDriverUpdates(CancellationToken cancellationToken) =>
+        _driverSearch.Search(cancellationToken);
+
+    public WindowsUpdateChangeResult SetUpdatePause(int days)
+    {
+        // Zero days means the user ended the pause rather than shortening it.
+        bool succeeded = days <= 0
+            ? _updateSettings.ResumeNow(out string? failure)
+            : _updateSettings.Pause(days, out failure);
+
+        return new WindowsUpdateChangeResult(succeeded, _updateSettings.Read(), failure);
+    }
+
+    public WindowsUpdateChangeResult SetUpdateDeferral(int featureDays, int qualityDays)
+    {
+        bool succeeded = _updateSettings.SetDeferral(featureDays, qualityDays, out string? failure);
+        return new WindowsUpdateChangeResult(succeeded, _updateSettings.Read(), failure);
+    }
 }

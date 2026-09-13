@@ -41,6 +41,9 @@ public interface IRegistryProbe
     /// <summary>A binary value, or null when it is missing or of another type.</summary>
     byte[]? GetBinaryValue(RegistryHiveName hive, string keyPath, string valueName);
 
+    /// <summary>A DWORD value, or null when it is missing or of another type.</summary>
+    int? GetInt32Value(RegistryHiveName hive, string keyPath, string valueName);
+
     /// <summary>Every value directly under a key, with enough of each to put it back.</summary>
     IReadOnlyList<RegistryValueSnapshot> GetValues(RegistryHiveName hive, string keyPath);
 
@@ -126,6 +129,19 @@ public sealed class RegistryProbe : IRegistryProbe
         {
             using var key = Root(hive).OpenSubKey(keyPath);
             return key?.GetValue(valueName) as byte[];
+        }
+        catch (Exception ex) when (ex is System.Security.SecurityException or UnauthorizedAccessException or IOException)
+        {
+            return null;
+        }
+    }
+
+    public int? GetInt32Value(RegistryHiveName hive, string keyPath, string valueName)
+    {
+        try
+        {
+            using var key = Root(hive).OpenSubKey(keyPath);
+            return key?.GetValue(valueName) as int?;
         }
         catch (Exception ex) when (ex is System.Security.SecurityException or UnauthorizedAccessException or IOException)
         {

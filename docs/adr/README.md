@@ -14,3 +14,4 @@ This directory records significant architectural decisions for Upkeep — the "w
 | [0006](0006-safety-model.md) | The safety model — preview, tiered removal, restore point, session journal | Accepted |
 | [0007](0007-windows-platform-code-in-core.md) | Windows platform code lives in Core, not behind interfaces in the shell | Accepted |
 | [0008](0008-deferred-privacy-cleaner-and-shredder.md) | Privacy cleaner and secure file shredder — considered, deferred | Accepted |
+| [0009](0009-driver-updates-search-in-app-install-in-windows.md) | Search for driver updates in app, install them in Windows | Accepted |

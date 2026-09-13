@@ -6,6 +6,7 @@ using Upkeep.App.Core.Quarantine;
 using Upkeep.App.Core.Services;
 using Upkeep.App.Core.Sessions;
 using Upkeep.App.Core.Startup;
+using Upkeep.App.Core.Updates;
 using Upkeep.App.Core.Tests.Fakes;
 
 namespace Upkeep.App.Core.Tests.Sessions;
@@ -47,6 +48,8 @@ public class SessionReverterTests : IDisposable
         }
     }
 
+    private static readonly DateTimeOffset Now = new(2026, 9, 13, 8, 0, 0, TimeSpan.Zero);
+
     private SessionReverter CreateReverter() => new(
         new QuarantineStore(_paths),
         new RegistryKeyBackupService(_registry),
@@ -55,7 +58,8 @@ public class SessionReverterTests : IDisposable
         _startupToggler,
         _performance,
         _journal,
-        _logger);
+        _logger,
+        new FixedTimeProvider(Now));
 
     private static SessionManifest Session(params SessionEntry[] entries) => new()
     {
@@ -320,5 +324,116 @@ public class SessionReverterTests : IDisposable
         (var reverted, _) = await CreateReverter().RevertAsync(session, CancellationToken.None);
 
         Assert.NotNull(reverted.RevertedAt);
+    }
+
+    [Fact]
+    public async Task RevertAsync_PauseThatStillHadTimeLeft_PausesAgainForTheDaysRemaining()
+    {
+        // The entry records when the old pause was due to end; what goes back is what it had left.
+        var session = Session(new SystemSettingChangedEntry(
+            UpdateSettingIds.Pause,
+            WindowsUpdatePolicy.FormatTime(Now.AddDays(9)),
+            WindowsUpdatePolicy.FormatTime(Now.AddDays(30)))
+        { Completed = true });
+
+        _elevation.EnqueueResponse(new WindowsUpdateStateResponse(true, WindowsUpdateState.NotConfigured, null));
+
+        (_, var outcome) = await CreateReverter().RevertAsync(session, CancellationToken.None);
+
+        Assert.Equal(1, outcome.RevertedCount);
+        Assert.Equal(9, Assert.IsType<SetUpdatePauseRequest>(Assert.Single(_elevation.SentRequests)).Days);
+    }
+
+    [Fact]
+    public async Task RevertAsync_UpdatesWereNotPausedBefore_ResumesRatherThanPausing()
+    {
+        var session = Session(new SystemSettingChangedEntry(
+            UpdateSettingIds.Pause,
+            string.Empty,
+            WindowsUpdatePolicy.FormatTime(Now.AddDays(7)))
+        { Completed = true });
+
+        _elevation.EnqueueResponse(new WindowsUpdateStateResponse(true, WindowsUpdateState.NotConfigured, null));
+
+        (_, var outcome) = await CreateReverter().RevertAsync(session, CancellationToken.None);
+
+        Assert.Equal(1, outcome.RevertedCount);
+        Assert.Equal(0, Assert.IsType<SetUpdatePauseRequest>(Assert.Single(_elevation.SentRequests)).Days);
+    }
+
+    [Fact]
+    public async Task RevertAsync_PauseHadAlreadyLapsed_ResumesRatherThanStartingANewOne()
+    {
+        // A pause whose time passed while the session sat in History must not come back to life.
+        var session = Session(new SystemSettingChangedEntry(
+            UpdateSettingIds.Pause,
+            WindowsUpdatePolicy.FormatTime(Now.AddDays(-2)),
+            string.Empty)
+        { Completed = true });
+
+        _elevation.EnqueueResponse(new WindowsUpdateStateResponse(true, WindowsUpdateState.NotConfigured, null));
+
+        (_, var outcome) = await CreateReverter().RevertAsync(session, CancellationToken.None);
+
+        Assert.Equal(1, outcome.RevertedCount);
+        Assert.Equal(0, Assert.IsType<SetUpdatePauseRequest>(Assert.Single(_elevation.SentRequests)).Days);
+    }
+
+    [Fact]
+    public async Task RevertAsync_Deferral_PutsBothPeriodsBack()
+    {
+        var session = Session(new SystemSettingChangedEntry(
+            UpdateSettingIds.Deferral,
+            WindowsUpdatePolicy.FormatDeferral(180, 7),
+            WindowsUpdatePolicy.FormatDeferral(0, 0))
+        { Completed = true });
+
+        _elevation.EnqueueResponse(new WindowsUpdateStateResponse(true, WindowsUpdateState.NotConfigured, null));
+
+        (_, var outcome) = await CreateReverter().RevertAsync(session, CancellationToken.None);
+
+        Assert.Equal(1, outcome.RevertedCount);
+
+        var request = Assert.IsType<SetUpdateDeferralRequest>(Assert.Single(_elevation.SentRequests));
+        Assert.Equal(180, request.FeatureDays);
+        Assert.Equal(7, request.QualityDays);
+    }
+
+    [Fact]
+    public async Task RevertAsync_DeferralRecordedInAShapeThisBuildCannotRead_IsRefusedNotGuessed()
+    {
+        var session = Session(new SystemSettingChangedEntry(UpdateSettingIds.Deferral, "180", "0/0") { Completed = true });
+
+        (_, var outcome) = await CreateReverter().RevertAsync(session, CancellationToken.None);
+
+        Assert.Equal(0, outcome.RevertedCount);
+        Assert.Equal(1, outcome.FailedCount);
+        Assert.Empty(_elevation.SentRequests);
+    }
+
+    [Fact]
+    public async Task RevertAsync_HelperRefusesTheScheduleChange_CountsAsFailedNotReverted()
+    {
+        var session = Session(new SystemSettingChangedEntry(UpdateSettingIds.Deferral, "180/7", "0/0") { Completed = true });
+
+        _elevation.EnqueueResponse(new WindowsUpdateStateResponse(false, WindowsUpdateState.NotConfigured, "refused"));
+
+        (_, var outcome) = await CreateReverter().RevertAsync(session, CancellationToken.None);
+
+        Assert.Equal(0, outcome.RevertedCount);
+        Assert.Equal(1, outcome.FailedCount);
+    }
+
+    [Fact]
+    public async Task RevertAsync_ElevationDeclined_LeavesTheScheduleAlone()
+    {
+        // Without the helper there is no way to write these keys, and no way to pretend otherwise.
+        var session = Session(new SystemSettingChangedEntry(UpdateSettingIds.Pause, string.Empty, "irrelevant") { Completed = true });
+        _elevation.Availability = new ElevationResult(ElevationStatus.Declined);
+
+        (_, var outcome) = await CreateReverter().RevertAsync(session, CancellationToken.None);
+
+        Assert.Equal(1, outcome.FailedCount);
+        Assert.Empty(_elevation.SentRequests);
     }
 }

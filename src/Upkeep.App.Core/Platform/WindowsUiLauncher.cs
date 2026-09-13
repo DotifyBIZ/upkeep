@@ -28,6 +28,12 @@ public sealed class WindowsUiLauncher : IWindowsUiLauncher
     /// <summary>Settings &gt; System &gt; Power &amp; battery, where the power mode lives on modern PCs.</summary>
     public const string PowerSettings = "ms-settings:powersleep";
 
+    /// <summary>Settings > System > Windows Update, where driver updates are actually installed.</summary>
+    public const string WindowsUpdate = "ms-settings:windowsupdate";
+
+    /// <summary>Device Manager, which owns driver rollback and keeps the previous package.</summary>
+    public const string DeviceManager = "devmgmt.msc";
+
     /// <summary>The Indexing Options control panel, which is still the only place to pick locations.</summary>
     public const string IndexingOptionsCommand = "control.exe";
 

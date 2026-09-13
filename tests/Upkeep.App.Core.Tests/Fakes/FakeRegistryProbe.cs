@@ -54,6 +54,9 @@ public sealed class FakeRegistryProbe : IRegistryProbe
     public byte[]? GetBinaryValue(RegistryHiveName hive, string keyPath, string valueName) =>
         _values.TryGetValue(Value(hive, keyPath, valueName), out object? value) ? value as byte[] : null;
 
+    public int? GetInt32Value(RegistryHiveName hive, string keyPath, string valueName) =>
+        _values.TryGetValue(Value(hive, keyPath, valueName), out object? value) ? value as int? : null;
+
     public IReadOnlyList<RegistryValueSnapshot> GetValues(RegistryHiveName hive, string keyPath)
     {
         string prefix = Key(hive, keyPath) + "!";

@@ -57,6 +57,33 @@ public sealed class HelperDispatcher
                         };
                     }
 
+                case SearchDriverUpdatesRequest:
+                    {
+                        var result = _operations.SearchDriverUpdates(cancellationToken);
+                        return new DriverUpdateSearchResponse(result.Succeeded, result.Updates)
+                        {
+                            RequestId = request.RequestId,
+                        };
+                    }
+
+                case SetUpdatePauseRequest pause:
+                    {
+                        var result = _operations.SetUpdatePause(pause.Days);
+                        return new WindowsUpdateStateResponse(result.Success, result.State, result.FailureDetail)
+                        {
+                            RequestId = request.RequestId,
+                        };
+                    }
+
+                case SetUpdateDeferralRequest defer:
+                    {
+                        var result = _operations.SetUpdateDeferral(defer.FeatureDays, defer.QualityDays);
+                        return new WindowsUpdateStateResponse(result.Success, result.State, result.FailureDetail)
+                        {
+                            RequestId = request.RequestId,
+                        };
+                    }
+
                 case CreateRestorePointRequest restorePoint:
                     {
                         var result = await _operations.CreateRestorePointAsync(restorePoint.Description, cancellationToken);

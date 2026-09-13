@@ -18,6 +18,9 @@ namespace Upkeep.App.Core.Elevation;
 [JsonDerivedType(typeof(CleanJunkCategoryRequest), "clean-junk")]
 [JsonDerivedType(typeof(CreateRestorePointRequest), "create-restore-point")]
 [JsonDerivedType(typeof(SetServiceStartTypeRequest), "set-service-start-type")]
+[JsonDerivedType(typeof(SearchDriverUpdatesRequest), "search-driver-updates")]
+[JsonDerivedType(typeof(SetUpdatePauseRequest), "set-update-pause")]
+[JsonDerivedType(typeof(SetUpdateDeferralRequest), "set-update-deferral")]
 public abstract record HelperRequest
 {
     /// <summary>Correlates a response with its request; the shell sends one request at a time.</summary>
@@ -61,6 +64,24 @@ public sealed record CreateRestorePointRequest(string Description) : HelperReque
 public sealed record SetServiceStartTypeRequest(string ServiceName, Services.ServiceStartType StartType) : HelperRequest;
 
 /// <summary>
+/// Asks Windows Update which drivers have something newer. Read-only: the helper never downloads
+/// or installs one, because installing is handed to Windows itself (ADR-0009).
+/// </summary>
+public sealed record SearchDriverUpdatesRequest : HelperRequest;
+
+/// <summary>
+/// Pauses Windows Update for a number of days, or ends the pause when Days is zero. Clamped
+/// helper-side to what Windows actually honours.
+/// </summary>
+public sealed record SetUpdatePauseRequest(int Days) : HelperRequest;
+
+/// <summary>
+/// Sets how long feature and quality updates are held back. Written whatever the edition says —
+/// Home ignores these keys, so the page hides the controls rather than the helper refusing them.
+/// </summary>
+public sealed record SetUpdateDeferralRequest(int FeatureDays, int QualityDays) : HelperRequest;
+
+/// <summary>
 /// Result of one helper operation. Failures cross the pipe as an error code the shell can
 /// localize — never as a raw exception or a stack trace.
 /// </summary>
@@ -71,6 +92,8 @@ public sealed record SetServiceStartTypeRequest(string ServiceName, Services.Ser
 [JsonDerivedType(typeof(JunkCleanResponse), "junk-clean")]
 [JsonDerivedType(typeof(RestorePointResponse), "restore-point")]
 [JsonDerivedType(typeof(ServiceChangeResponse), "service-change")]
+[JsonDerivedType(typeof(DriverUpdateSearchResponse), "driver-update-search")]
+[JsonDerivedType(typeof(WindowsUpdateStateResponse), "windows-update-state")]
 public abstract record HelperResponse
 {
     public int RequestId { get; init; }
@@ -89,6 +112,12 @@ public sealed record RestorePointResponse(Safety.RestorePointStatus Status, stri
 
 /// <summary>Whether a service's start type was changed, and why not when it wasn't.</summary>
 public sealed record ServiceChangeResponse(bool Success, string? FailureCode, string? Detail) : HelperResponse;
+
+/// <summary>What Windows Update is offering in the way of drivers, or that it could not be asked.</summary>
+public sealed record DriverUpdateSearchResponse(bool Succeeded, IReadOnlyList<Drivers.DriverUpdate> Updates) : HelperResponse;
+
+/// <summary>How Windows Update is scheduled, after whatever change was just made.</summary>
+public sealed record WindowsUpdateStateResponse(bool Success, Updates.WindowsUpdateState State, string? FailureDetail) : HelperResponse;
 
 /// <summary>
 /// A failed operation. <paramref name="Code"/> is one of <see cref="HelperErrorCodes"/> — a stable

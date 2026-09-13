@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Upkeep.App.Core.Abstractions;
 using Upkeep.App.Core.Apps;
 using Upkeep.App.Core.Cleanup;
+using Upkeep.App.Core.Drivers;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Files;
 using Upkeep.App.Core.Logging;
@@ -111,6 +112,10 @@ public partial class App : Application
         services.AddSingleton<IServiceScanner, ServiceScanner>();
         services.AddSingleton<IPerformanceSettings, PerformanceSettings>();
         services.AddSingleton<IWindowsUiLauncher, WindowsUiLauncher>();
+        services.AddSingleton<IDriverScanner, DriverScanner>();
+
+        // Read once: the edition cannot change while the app is running.
+        services.AddSingleton(provider => new WindowsEditionProbe(provider.GetRequiredService<IRegistryProbe>()).Read());
 
         // View models are transient: a fresh instance per navigation.
         services.AddTransient<HomeViewModel>();
@@ -122,6 +127,7 @@ public partial class App : Application
         services.AddTransient<PerformanceViewModel>();
         services.AddTransient<HistoryViewModel>();
         services.AddTransient<SettingsViewModel>();
+        services.AddTransient<DriversViewModel>();
 
         return services.BuildServiceProvider();
     }

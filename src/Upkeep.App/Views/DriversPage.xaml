@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="Upkeep.App.Views.DriversPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:Upkeep.App.ViewModels"
+    mc:Ignorable="d"
+    Background="{StaticResource Gray50Brush}">
+
+    <Grid Padding="32,24" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Spacing="4">
+            <TextBlock x:Uid="DriversTitle" Style="{StaticResource PageTitleTextStyle}" />
+            <TextBlock x:Uid="DriversSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
+        </StackPanel>
+
+        <SelectorBar x:Name="Tabs" Grid.Row="1" Margin="-12,4,0,0" SelectionChanged="Tabs_SelectionChanged">
+            <SelectorBarItem x:Uid="DriversTabDrivers" Tag="Drivers" IsSelected="True" />
+            <SelectorBarItem x:Uid="DriversTabUpdates" Tag="Updates" />
+        </SelectorBar>
+
+        <InfoBar
+            Grid.Row="2"
+            IsOpen="{x:Bind ViewModel.HasStatusMessage, Mode=OneWay}"
+            Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+            Severity="Warning"
+            IsClosable="False" />
+
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <Grid>
+
+                <!--  Drivers  -->
+                <StackPanel x:Name="DriversPanel" Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Button x:Uid="DriversScanButton" Click="CheckForUpdates_Click" />
+                        <ProgressRing IsActive="{x:Bind ViewModel.IsSearching, Mode=OneWay}" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Bind ViewModel.SearchSummary, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="520" />
+                    </StackPanel>
+
+                    <Border Style="{StaticResource CardBorderStyle}" Padding="0">
+                        <StackPanel>
+                            <Grid Padding="20,12" ColumnSpacing="16" Background="{StaticResource Gray50Brush}" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" x:Uid="DriversColumnDevice" Style="{StaticResource CaptionTextStyle}" />
+                                <TextBlock Grid.Column="1" x:Uid="DriversColumnVersion" Style="{StaticResource CaptionTextStyle}" Width="220" />
+                                <TextBlock Grid.Column="2" x:Uid="DriversColumnStatus" Style="{StaticResource CaptionTextStyle}" Width="160" />
+                            </Grid>
+
+                            <TextBlock
+                                x:Uid="DriversEmptyMessage"
+                                Style="{StaticResource CaptionTextStyle}"
+                                Margin="20,16"
+                                Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" />
+
+                            <ItemsControl ItemsSource="{x:Bind ViewModel.Drivers}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="viewmodels:DriverDisplay">
+                                        <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind DeviceName}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{x:Bind Subtitle}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                Text="{x:Bind VersionDisplay}"
+                                                Style="{StaticResource BodyTextStyle}"
+                                                FontSize="13"
+                                                Width="220"
+                                                VerticalAlignment="Center"
+                                                TextWrapping="Wrap" />
+
+                                            <TextBlock
+                                                Grid.Column="2"
+                                                Text="{x:Bind StatusDisplay, Mode=OneWay}"
+                                                Style="{StaticResource CaptionTextStyle}"
+                                                Width="160"
+                                                VerticalAlignment="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel Spacing="4">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Button x:Uid="DriversInstallButton" Command="{x:Bind ViewModel.OpenWindowsUpdateCommand}" />
+                            <Button x:Uid="DriversRollbackButton" Command="{x:Bind ViewModel.OpenDeviceManagerCommand}" />
+                        </StackPanel>
+                        <TextBlock x:Uid="DriversInstallNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="720" HorizontalAlignment="Left" />
+                        <TextBlock x:Uid="DriversRollbackNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="720" HorizontalAlignment="Left" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!--  Windows Update  -->
+                <StackPanel x:Name="UpdatesPanel" Spacing="16" Visibility="Collapsed" MaxWidth="720" HorizontalAlignment="Left">
+                    <Border Style="{StaticResource CardBorderStyle}">
+                        <StackPanel Spacing="12">
+                            <TextBlock x:Uid="UpdatesPauseHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock x:Uid="UpdatesPauseLabel" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" />
+                                <NumberBox
+                                    x:Name="PauseDaysBox"
+                                    Minimum="1"
+                                    Maximum="35"
+                                    SpinButtonPlacementMode="Compact"
+                                    Value="{x:Bind ViewModel.PauseDays, Mode=TwoWay}"
+                                    Width="140" />
+                                <Button x:Uid="UpdatesPauseButton" Click="Pause_Click" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Spacing="12" Visibility="{x:Bind ViewModel.IsPaused, Mode=OneWay}">
+                                <TextBlock Text="{x:Bind ViewModel.PausedUntilDisplay, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" />
+                                <Button x:Uid="UpdatesResumeButton" Click="Resume_Click" />
+                            </StackPanel>
+
+                            <TextBlock x:Uid="UpdatesPauseNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border x:Name="DeferralCard" Style="{StaticResource CardBorderStyle}">
+                        <StackPanel Spacing="12">
+                            <TextBlock x:Uid="UpdatesDeferHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock x:Uid="UpdatesDeferFeatureLabel" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" />
+                                <NumberBox
+                                    Minimum="0"
+                                    Maximum="365"
+                                    SpinButtonPlacementMode="Compact"
+                                    Value="{x:Bind ViewModel.FeatureDeferralDays, Mode=TwoWay}"
+                                    Width="140" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock x:Uid="UpdatesDeferQualityLabel" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" />
+                                <NumberBox
+                                    Minimum="0"
+                                    Maximum="30"
+                                    SpinButtonPlacementMode="Compact"
+                                    Value="{x:Bind ViewModel.QualityDeferralDays, Mode=TwoWay}"
+                                    Width="140" />
+                            </StackPanel>
+
+                            <TextBlock x:Uid="UpdatesDeferNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+
+                            <Button x:Uid="UpdatesDeferApplyButton" Click="ApplyDeferral_Click" HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </Border>
+
+                    <Button x:Uid="UpdatesOpenSettingsButton" Command="{x:Bind ViewModel.OpenWindowsUpdateCommand}" HorizontalAlignment="Left" Margin="0,0,0,16" />
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

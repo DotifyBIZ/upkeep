@@ -5,10 +5,12 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text.Json;
 using Upkeep.App.Core.Cleanup;
+using Upkeep.App.Core.Drivers;
 using Upkeep.App.Core.Logging;
 using Upkeep.App.Core.Platform;
 using Upkeep.App.Core.Safety;
 using Upkeep.App.Core.Services;
+using Upkeep.App.Core.Updates;
 
 namespace Upkeep.App.Core.Elevation;
 
@@ -135,11 +137,16 @@ public static class HelperHost
 
         var serviceConfigurator = new ServiceConfigurator(new ServiceScanner(new RegistryProbe()), toolRunner, paths, logger);
 
+        // HKLM writes live only here: the shell has no way to make one (ADR-0005).
+        var updateSettings = new WindowsUpdateSettings(new MachineRegistryWriter());
+
         var operations = new WindowsHelperOperations(
             scanner,
             cleaner,
             restorePoints,
             serviceConfigurator,
+            new DriverUpdateSearch(),
+            updateSettings,
             UserProfileResolver.TryGetProfilePath(shellUser));
 
         return new HelperDispatcher(operations, logger);
