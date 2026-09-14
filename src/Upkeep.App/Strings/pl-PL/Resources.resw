@@ -735,6 +735,15 @@
   <data name="PerformanceIndexingName">
     <value>Indeksowanie wyszukiwania</value>
   </data>
+  <data name="ServicesColumnName.Text">
+    <value>Nazwa</value>
+  </data>
+  <data name="ServicesColumnLabel.Text">
+    <value>Etykieta</value>
+  </data>
+  <data name="ServicesColumnEnabled.Text">
+    <value>Włączone</value>
+  </data>
   <data name="ServicesEmptyMessage.Text">
     <value>Żadna usługa nie pasuje do tego filtra.</value>
   </data>

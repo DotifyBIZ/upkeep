@@ -735,6 +735,15 @@
   <data name="PerformanceIndexingName">
     <value>Search indexing</value>
   </data>
+  <data name="ServicesColumnName.Text">
+    <value>Name</value>
+  </data>
+  <data name="ServicesColumnLabel.Text">
+    <value>Label</value>
+  </data>
+  <data name="ServicesColumnEnabled.Text">
+    <value>Enabled</value>
+  </data>
   <data name="ServicesEmptyMessage.Text">
     <value>No services match this filter.</value>
   </data>

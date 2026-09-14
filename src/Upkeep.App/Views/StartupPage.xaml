@@ -125,6 +125,17 @@
 
                     <Border Style="{StaticResource CardBorderStyle}" Padding="0">
                         <StackPanel>
+                            <Grid Padding="20,12" ColumnSpacing="16" Background="{StaticResource Gray50Brush}" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" x:Uid="ServicesColumnName" Style="{StaticResource CaptionTextStyle}" />
+                                <TextBlock Grid.Column="1" x:Uid="ServicesColumnLabel" Style="{StaticResource CaptionTextStyle}" Width="140" />
+                                <TextBlock Grid.Column="2" x:Uid="ServicesColumnEnabled" Style="{StaticResource CaptionTextStyle}" Width="110" />
+                            </Grid>
+
                             <TextBlock
                                 x:Uid="ServicesEmptyMessage"
                                 Style="{StaticResource CaptionTextStyle}"
