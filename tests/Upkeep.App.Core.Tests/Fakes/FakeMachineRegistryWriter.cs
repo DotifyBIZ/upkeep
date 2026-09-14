@@ -13,6 +13,13 @@ public sealed class FakeMachineRegistryWriter : IMachineRegistryWriter
     /// <summary>Key paths a test made unwritable, to exercise the failure paths.</summary>
     public HashSet<string> Unwritable { get; } = new(StringComparer.OrdinalIgnoreCase);
 
+    /// <summary>
+    /// Single values a test made unwritable, as <c>keyPath!valueName</c>. A setting here is two
+    /// registry values under one key, so failing the whole key cannot reach the case that matters:
+    /// the first write landing and the second not.
+    /// </summary>
+    public HashSet<string> UnwritableValues { get; } = new(StringComparer.OrdinalIgnoreCase);
+
     public List<string> DeletedValues { get; } = [];
 
     public string? GetString(string keyPath, string valueName) =>
@@ -29,7 +36,7 @@ public sealed class FakeMachineRegistryWriter : IMachineRegistryWriter
 
     public bool DeleteValue(string keyPath, string valueName, out string? failure)
     {
-        if (Unwritable.Contains(keyPath))
+        if (Unwritable.Contains(keyPath) || UnwritableValues.Contains(Key(keyPath, valueName)))
         {
             failure = "Access is denied.";
             return false;
@@ -43,7 +50,7 @@ public sealed class FakeMachineRegistryWriter : IMachineRegistryWriter
 
     private bool Write(string keyPath, string valueName, object value, out string? failure)
     {
-        if (Unwritable.Contains(keyPath))
+        if (Unwritable.Contains(keyPath) || UnwritableValues.Contains(Key(keyPath, valueName)))
         {
             failure = "Access is denied.";
             return false;

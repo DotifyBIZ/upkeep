@@ -128,4 +128,56 @@ public class WindowsUpdateSettingsTests
         Assert.False(CreateSettings().SetDeferral(30, 7, out string? failure));
         Assert.NotNull(failure);
     }
+
+    [Fact]
+    public void Pause_ExpiryWriteFails_LeavesNoHalfPauseBehind()
+    {
+        // Two values, no way to write them together. The start value alone would sit in the hive
+        // forever describing a pause that never began.
+        _registry.UnwritableValues.Add($"{WindowsUpdatePolicy.PauseKeyPath}!{WindowsUpdatePolicy.PauseExpiryValueName}");
+
+        Assert.False(CreateSettings().Pause(7, out string? failure));
+
+        Assert.NotNull(failure);
+        Assert.Null(_registry.GetString(WindowsUpdatePolicy.PauseKeyPath, WindowsUpdatePolicy.PauseStartValueName));
+        Assert.False(CreateSettings().Read().IsPaused);
+    }
+
+    [Fact]
+    public void ResumeNow_StartDeleteFails_StillEndsThePause()
+    {
+        // Expiry goes first precisely so this case leaves updates running rather than half paused.
+        GivePauseExpiry(Now.AddDays(7));
+        _registry.SetString(WindowsUpdatePolicy.PauseKeyPath, WindowsUpdatePolicy.PauseStartValueName, WindowsUpdatePolicy.FormatTime(Now), out _);
+        _registry.UnwritableValues.Add($"{WindowsUpdatePolicy.PauseKeyPath}!{WindowsUpdatePolicy.PauseStartValueName}");
+
+        Assert.False(CreateSettings().ResumeNow(out string? failure));
+
+        Assert.NotNull(failure);
+        Assert.False(CreateSettings().Read().IsPaused);
+    }
+
+    [Fact]
+    public void SetDeferral_QualityWriteFails_PutsTheFeatureDeferralBack()
+    {
+        CreateSettings().SetDeferral(30, 7, out _);
+        _registry.UnwritableValues.Add($"{WindowsUpdatePolicy.DeferralKeyPath}!{WindowsUpdatePolicy.QualityDeferValueName}");
+
+        Assert.False(CreateSettings().SetDeferral(180, 14, out string? failure));
+
+        Assert.NotNull(failure);
+        Assert.Equal(30, _registry.GetInt32(WindowsUpdatePolicy.DeferralKeyPath, WindowsUpdatePolicy.FeatureDeferValueName));
+    }
+
+    [Fact]
+    public void SetDeferral_QualityWriteFailsWithNothingConfiguredBefore_RemovesTheFeatureValue()
+    {
+        // Restoring "whatever was there" has to include restoring the absence of a value, or a
+        // failed change quietly leaves a deferral where the machine had none.
+        _registry.UnwritableValues.Add($"{WindowsUpdatePolicy.DeferralKeyPath}!{WindowsUpdatePolicy.QualityDeferValueName}");
+
+        Assert.False(CreateSettings().SetDeferral(180, 14, out _));
+
+        Assert.Null(_registry.GetInt32(WindowsUpdatePolicy.DeferralKeyPath, WindowsUpdatePolicy.FeatureDeferValueName));
+    }
 }
