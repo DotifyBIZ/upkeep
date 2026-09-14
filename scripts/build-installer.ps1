@@ -53,6 +53,10 @@ if (-not (Test-Path $installerPath)) {
 
 # ADR-0002 commits to publishing a checksum alongside the unsigned installer.
 $hash = (Get-FileHash -Path $installerPath -Algorithm SHA256).Hash.ToLowerInvariant()
-"$hash  $(Split-Path $installerPath -Leaf)" | Out-File -FilePath "$installerPath.sha256" -Encoding utf8 -NoNewline
+# ASCII, not utf8: a hex digest and an installer filename contain nothing else, and Windows
+# PowerShell's -Encoding utf8 writes a byte order mark that makes `sha256sum -c` reject the file.
+# CI runs this under pwsh, which would not, but a script that claims to run the same way locally
+# should actually do so.
+"$hash  $(Split-Path $installerPath -Leaf)" | Out-File -FilePath "$installerPath.sha256" -Encoding ascii -NoNewline
 
 Write-Host "Installer built: $installerPath"
