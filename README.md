@@ -60,7 +60,9 @@ These compose; they aren't alternatives.
 
 ## Status
 
-Early. Actively developed in the open — see [CHANGELOG.md](CHANGELOG.md) (generated from commit history) for what's actually out.
+Phase 1 is complete. Everything described above ships in v1 — all five areas, the full safety model, and both languages. [CHANGELOG.md](CHANGELOG.md), generated from commit history, is what actually changed in each release.
+
+The installer is unsigned and installs per-user, so expect a SmartScreen warning the first time you run it; see [Installing](#installing).
 
 Backed by a real automated test suite, with branch coverage on the platform-independent engine enforced at an 80% floor in CI.
 
