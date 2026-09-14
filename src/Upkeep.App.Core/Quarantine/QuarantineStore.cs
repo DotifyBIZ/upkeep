@@ -57,7 +57,10 @@ public sealed class QuarantineStore : IQuarantineStore
         try
         {
             string destination = BuildDestinationPath(path, sessionId);
-            Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+            if (Path.GetDirectoryName(destination) is string destinationFolder)
+            {
+                Directory.CreateDirectory(destinationFolder);
+            }
 
             // Same volume, so this is a rename: instant, and it never leaves a half-copied file
             // behind on a disk that just ran out of space.
@@ -159,7 +162,10 @@ public sealed class QuarantineStore : IQuarantineStore
 
     private static string BuildRestoredAlongsidePath(string originalPath)
     {
-        string directory = Path.GetDirectoryName(originalPath)!;
+        // A file's original path always has a folder. If it somehow does not, the manifest is
+        // malformed and there is nowhere to put the file back — say that, rather than guess.
+        string directory = Path.GetDirectoryName(originalPath)
+            ?? throw new ArgumentException("A quarantined file's original path names no folder to restore it into.", nameof(originalPath));
         string name = Path.GetFileNameWithoutExtension(originalPath);
         string extension = Path.GetExtension(originalPath);
 

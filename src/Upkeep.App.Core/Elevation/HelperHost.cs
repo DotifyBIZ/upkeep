@@ -80,9 +80,15 @@ public static class HelperHost
 
             var shellUser = NativeProcessIdentity.GetProcessUserSid(startup.ParentProcessId);
 
+            // This ACL is the pipe's entire security boundary, so it is built from identities that
+            // are known to exist, not asserted to. An elevated process without a user SID is not a
+            // case to paper over with a suppression — it is a case to refuse to open the pipe at all.
+            var helperUser = WindowsIdentity.GetCurrent().User
+                ?? throw new InvalidOperationException("The elevated helper has no user SID to grant itself the pipe with.");
+
             var pipeSecurity = new PipeSecurity();
             pipeSecurity.AddAccessRule(new PipeAccessRule(shellUser, PipeAccessRights.ReadWrite | PipeAccessRights.Synchronize, AccessControlType.Allow));
-            pipeSecurity.AddAccessRule(new PipeAccessRule(WindowsIdentity.GetCurrent().User!, PipeAccessRights.FullControl, AccessControlType.Allow));
+            pipeSecurity.AddAccessRule(new PipeAccessRule(helperUser, PipeAccessRights.FullControl, AccessControlType.Allow));
 
             // FirstPipeInstance + a single instance: if the name is already taken, creation fails
             // rather than silently joining something else's pipe.
@@ -213,6 +219,8 @@ public static class HelperHost
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
+            // Nothing left to try: this is the failure path, there is no UI to raise it in, and
+            // the shell is about to see the pipe close whether or not the line got written.
         }
 
         return 1;

@@ -90,6 +90,9 @@ public sealed class WindowsToolRunner : IWindowsToolRunner
         }
         catch (Exception ex) when (ex is InvalidOperationException or NotSupportedException or System.ComponentModel.Win32Exception)
         {
+            // Every one of these means the process is already beyond killing — it exited between
+            // the check and the call, or Windows will not let us. The caller is returning a
+            // timeout either way, which is the failure the user actually needs to see.
         }
     }
 }

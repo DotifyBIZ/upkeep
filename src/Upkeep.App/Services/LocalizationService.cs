@@ -77,13 +77,19 @@ public sealed class LocalizationService : ILocalizationService
         }
 
         var document = XDocument.Load(stream);
-        return document.Root?
-            .Elements("data")
-            .Where(element => element.Attribute("name") is not null)
-            .ToFrozenDictionary(
-                element => element.Attribute("name")!.Value,
-                element => element.Element("value")?.Value ?? string.Empty,
-                StringComparer.Ordinal)
-            ?? FrozenDictionary<string, string>.Empty;
+        var strings = new Dictionary<string, string>(StringComparer.Ordinal);
+
+        // A data element without a name is not a translation, it is a malformed file. Pattern
+        // matching the attribute out carries the non-null through, where a Where clause only
+        // asserts it.
+        foreach (var element in document.Root?.Elements("data") ?? [])
+        {
+            if (element.Attribute("name") is { Value: string name })
+            {
+                strings.Add(name, element.Element("value")?.Value ?? string.Empty);
+            }
+        }
+
+        return strings.ToFrozenDictionary(StringComparer.Ordinal);
     }
 }

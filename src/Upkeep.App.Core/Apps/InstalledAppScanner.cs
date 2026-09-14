@@ -68,7 +68,11 @@ public sealed class InstalledAppScanner : IInstalledAppScanner
                 }
 
                 var entry = ReadEntry(key, keyName);
-                if (!UninstallEntryParser.IsUserVisibleApp(entry))
+
+                // IsUserVisibleApp already rejects an entry with no display name, but that is a
+                // fact about a method the compiler cannot see into. Naming it here is what makes
+                // the assignment below safe rather than merely true.
+                if (!UninstallEntryParser.IsUserVisibleApp(entry) || entry.DisplayName is not string displayName)
                 {
                     continue;
                 }
@@ -83,7 +87,7 @@ public sealed class InstalledAppScanner : IInstalledAppScanner
                 apps.Add(new InstalledApp
                 {
                     Id = keyName,
-                    DisplayName = entry.DisplayName!,
+                    DisplayName = displayName,
                     Publisher = entry.Publisher,
                     Version = entry.DisplayVersion,
                     InstallLocation = entry.InstallLocation,

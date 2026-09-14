@@ -195,7 +195,12 @@ public sealed class LeftoverRemover : ILeftoverRemover
 
         try
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(backupPath)!);
+            // Null here means the path is already a volume root, which exists by definition —
+            // there is nothing to create, not something to assert away.
+            if (Path.GetDirectoryName(backupPath) is string backupFolder)
+            {
+                Directory.CreateDirectory(backupFolder);
+            }
 
             // Captured with its values and everything under it, not just its subkey names: a
             // backup that cannot put the key back would make the entry's reversible claim untrue.

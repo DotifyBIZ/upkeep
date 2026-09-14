@@ -28,30 +28,44 @@ namespace Upkeep.App;
 /// </summary>
 public partial class App : Application
 {
-    /// <summary>The main application window. Used for dialogs, pickers and interop.</summary>
-    public static Window Window { get; private set; } = null!;
+    private static Window? _window;
+    private static Microsoft.UI.Dispatching.DispatcherQueue? _dispatcherQueue;
+    private static IServiceProvider? _services;
+
+    /// <summary>
+    /// The main application window. Used for dialogs, pickers and interop.
+    /// <para>
+    /// Set in <see cref="OnLaunched"/>, which is the first thing the framework calls, so in
+    /// practice this is never read before it exists. The throw is what "never" looks like when it
+    /// happens anyway: a named mistake instead of a null reference three frames deeper.
+    /// </para>
+    /// </summary>
+    public static Window Window =>
+        _window ?? throw new InvalidOperationException("The main window does not exist until OnLaunched has run.");
 
     /// <summary>The UI thread dispatcher, for marshalling work back from background scans.</summary>
-    public static Microsoft.UI.Dispatching.DispatcherQueue DispatcherQueue { get; private set; } = null!;
+    public static Microsoft.UI.Dispatching.DispatcherQueue DispatcherQueue =>
+        _dispatcherQueue ?? throw new InvalidOperationException("The dispatcher does not exist until OnLaunched has run.");
 
     /// <summary>The native window handle (HWND), for WinRT interop that needs InitializeWithWindow.</summary>
     public static nint WindowHandle => WinRT.Interop.WindowNative.GetWindowHandle(Window);
 
     /// <summary>Resolves services and view models — registered once in <see cref="ConfigureServices"/>.</summary>
-    public static IServiceProvider Services { get; private set; } = null!;
+    public static IServiceProvider Services =>
+        _services ?? throw new InvalidOperationException("Services are not registered until the App constructor has run.");
 
     public App()
     {
         InitializeComponent();
-        Services = ConfigureServices();
+        _services = ConfigureServices();
         UnhandledException += OnUnhandledException;
     }
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        DispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
-        Window = new MainWindow();
-        Window.Activate();
+        _dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+        _window = new MainWindow();
+        _window.Activate();
     }
 
     private static ServiceProvider ConfigureServices()
@@ -68,9 +82,15 @@ public partial class App : Application
         services.AddSingleton<ILocalizationService>(_ => new LocalizationService(StartupLanguage.Resolve()));
 
         // One elevated helper per session (docs/adr/0005-elevated-helper-named-pipe.md) — the same
-        // executable, re-launched with a switch, so the path is this process's own.
+        // executable, re-launched with a switch, so the path is this process's own. Windows only
+        // withholds that path for a process that no longer has an image on disk, which this one
+        // plainly does — but "plainly" is not a null check, and the alternative is a crash at the
+        // first elevation prompt rather than a named failure at startup.
+        string executablePath = Environment.ProcessPath
+            ?? throw new InvalidOperationException("Windows did not report a path for the running executable.");
+
         services.AddSingleton<IElevationService>(provider => new ElevatedHelperClient(
-            Environment.ProcessPath!,
+            executablePath,
             provider.GetRequiredService<IAppLogger>()));
 
         services.AddHttpClient();
@@ -145,6 +165,9 @@ public partial class App : Application
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
+            // Deliberately swallowed, and one of the few places that is right: the
+            // crash file is a courtesy, and a handler that throws while handling a crash replaces
+            // the real exception with its own. The app logger below is the second attempt.
         }
 
         try
@@ -156,6 +179,8 @@ public partial class App : Application
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
+            // Same reasoning, and nothing left to try: the crash file above was the fallback, and
+            // the container may already be gone by the time an unhandled exception reaches here.
         }
     }
 }

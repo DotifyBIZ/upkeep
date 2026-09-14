@@ -92,6 +92,10 @@ public sealed class DiskUsageScanner : IDiskUsageScanner
                 }
                 catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                 {
+                    // A file that cannot be read cannot be sized, and one unreadable file in a
+                    // folder of thousands is not a reason to fail the scan. It is left out of the
+                    // total rather than counted as zero, so the number shown stays true to what
+                    // was actually measured.
                 }
             }
 

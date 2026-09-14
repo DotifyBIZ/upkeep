@@ -241,10 +241,9 @@ public sealed partial class SettingsViewModel : ObservableObject
             ?? typeof(SettingsViewModel).Assembly.GetName().Version?.ToString();
 
         // Strip the "+abc1234" source-revision suffix the SDK appends.
-        int plus = version?.IndexOf('+', StringComparison.Ordinal) ?? -1;
-        if (plus > 0)
+        if (version is not null && version.IndexOf('+', StringComparison.Ordinal) is int plus && plus > 0)
         {
-            version = version![..plus];
+            version = version[..plus];
         }
 
         return string.IsNullOrWhiteSpace(version) || version.StartsWith("0.0.0", StringComparison.Ordinal)

@@ -103,9 +103,20 @@ public sealed class ElevatedHelperClient : IElevationService, IDisposable
         await _gate.WaitAsync(cancellationToken);
         try
         {
+            // EnsureAvailableAsync connected the pipe above, but it did so before this method
+            // waited on the gate — and Disconnect can run in between. Reading the field once into
+            // a local is both the null check and the guarantee that both frames use one stream.
+            if (_pipe is not NamedPipeClientStream pipe)
+            {
+                return new HelperErrorResponse(HelperErrorCodes.WindowsRefused, "The elevated helper is not connected.")
+                {
+                    RequestId = request.RequestId,
+                };
+            }
+
             var addressed = request with { RequestId = Interlocked.Increment(ref _nextRequestId) };
-            await PipeFraming.WriteFrameAsync(_pipe!, addressed, cancellationToken);
-            var response = await PipeFraming.ReadFrameAsync<HelperResponse>(_pipe!, cancellationToken);
+            await PipeFraming.WriteFrameAsync(pipe, addressed, cancellationToken);
+            var response = await PipeFraming.ReadFrameAsync<HelperResponse>(pipe, cancellationToken);
 
             return response ?? new HelperErrorResponse(HelperErrorCodes.WindowsRefused, "The elevated helper closed the connection.")
             {

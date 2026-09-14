@@ -66,7 +66,10 @@ public sealed class FileAppSettingsService : IAppSettingsService
 
         try
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
+            if (Path.GetDirectoryName(_filePath) is string settingsFolder)
+            {
+                Directory.CreateDirectory(settingsFolder);
+            }
             await using var stream = File.Create(_filePath);
             await JsonSerializer.SerializeAsync(stream, settings, cancellationToken: cancellationToken);
         }
