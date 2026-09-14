@@ -58,6 +58,13 @@ public sealed partial class StartupPage : Page
         {
             await App.Services.GetRequiredService<IAppLogger>().LogErrorAsync("The Startup page failed to load.", ex);
         }
+        finally
+        {
+            // A load that failed put its reason in StatusMessage, and the banner is refreshed by
+            // hand rather than by notification. Without this, the one message worth reading is the
+            // one message never shown.
+            RefreshStatus();
+        }
     }
 
     /// <summary>
