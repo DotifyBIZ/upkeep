@@ -104,6 +104,9 @@
   <data name="HomeUpdateActionButton.Content">
     <value>Zobacz wydanie</value>
   </data>
+  <data name="HomeNextActionButton.Content">
+    <value>Przejrzyj pliki</value>
+  </data>
 
   <!-- Start, teksty budowane w kodzie -->
   <data name="HomeGreetingMorning">
@@ -120,6 +123,30 @@
   </data>
   <data name="HomeUpdateAvailableFormat">
     <value>Dostępny jest Upkeep {0}.</value>
+  </data>
+  <data name="HomeHealthGoodHeadline">
+    <value>Wygląda dobrze</value>
+  </data>
+  <data name="HomeHealthAttentionHeadline">
+    <value>Czas na porządki</value>
+  </data>
+  <data name="HomeHealthGoodFormat">
+    <value>Ostatnio czyszczono {0}.</value>
+  </data>
+  <data name="HomeHealthGoodWithFreedFormat">
+    <value>Ostatnio czyszczono {0} — zwolniono {1}.</value>
+  </data>
+  <data name="HomeHealthNeverCleanedDetail">
+    <value>Nie wykonano jeszcze czyszczenia.</value>
+  </data>
+  <data name="HomeHealthStaleFormat">
+    <value>Ostatnie czyszczenie: {0}.</value>
+  </data>
+  <data name="HomeNextActionLowDiskTitleFormat">
+    <value>Dysk {0} jest zapełniony w {1}%</value>
+  </data>
+  <data name="HomeNextActionLowDiskDetail">
+    <value>Warto sprawdzić duże pliki i duplikaty.</value>
   </data>
   <data name="DriveFreeOfTotalFormat">
     <value>{0} wolne z {1}</value>

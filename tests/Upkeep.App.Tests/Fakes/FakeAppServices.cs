@@ -4,6 +4,7 @@ using Upkeep.App.Core.Drivers;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Logging;
 using Upkeep.App.Core.Platform;
+using Upkeep.App.Core.Storage;
 using Upkeep.App.Core.Updates;
 
 namespace Upkeep.App.Tests.Fakes;
@@ -187,4 +188,16 @@ public sealed class FixedTimeProvider : TimeProvider
     public FixedTimeProvider(DateTimeOffset utcNow) => _utcNow = utcNow;
 
     public override DateTimeOffset GetUtcNow() => _utcNow;
+}
+
+/// <summary>Reports whatever drives a test put in it, without touching a real disk.</summary>
+public sealed class FakeDriveScanner : IDriveScanner
+{
+    public List<DriveSnapshot> Drives { get; } = [];
+
+    public long? FreeBytes { get; set; }
+
+    public IReadOnlyList<DriveSnapshot> GetFixedDrives() => Drives;
+
+    public long? GetFreeBytes(string path) => FreeBytes;
 }

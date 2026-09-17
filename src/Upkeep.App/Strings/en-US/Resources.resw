@@ -104,6 +104,9 @@
   <data name="HomeUpdateActionButton.Content">
     <value>View release</value>
   </data>
+  <data name="HomeNextActionButton.Content">
+    <value>Review files</value>
+  </data>
 
   <!-- Home, built in code -->
   <data name="HomeGreetingMorning">
@@ -120,6 +123,30 @@
   </data>
   <data name="HomeUpdateAvailableFormat">
     <value>Upkeep {0} is available.</value>
+  </data>
+  <data name="HomeHealthGoodHeadline">
+    <value>Looking good</value>
+  </data>
+  <data name="HomeHealthAttentionHeadline">
+    <value>Time for a cleanup</value>
+  </data>
+  <data name="HomeHealthGoodFormat">
+    <value>Last cleaned {0}.</value>
+  </data>
+  <data name="HomeHealthGoodWithFreedFormat">
+    <value>Last cleaned {0} — freed {1}.</value>
+  </data>
+  <data name="HomeHealthNeverCleanedDetail">
+    <value>You haven't run a cleanup scan yet.</value>
+  </data>
+  <data name="HomeHealthStaleFormat">
+    <value>Your last cleanup was on {0}.</value>
+  </data>
+  <data name="HomeNextActionLowDiskTitleFormat">
+    <value>{0} is {1}% full</value>
+  </data>
+  <data name="HomeNextActionLowDiskDetail">
+    <value>Large and duplicate files might be worth a look.</value>
   </data>
   <data name="DriveFreeOfTotalFormat">
     <value>{0} free of {1}</value>

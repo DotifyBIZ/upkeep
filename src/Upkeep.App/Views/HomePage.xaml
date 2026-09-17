@@ -9,81 +9,173 @@
     mc:Ignorable="d"
     Background="{StaticResource Gray50Brush}">
 
-    <Grid Padding="32,24" RowSpacing="0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <!--  HorizontalScrollBarVisibility must be explicit: without it a ScrollViewer can measure its
+          content at unconstrained width, which sizes this page's "*" column past the real
+          viewport and pushes the scan button off the visible window entirely.  -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" HorizontalScrollMode="Disabled">
+        <Grid Padding="32,24" RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <InfoBar
-            Grid.Row="0"
-            Margin="0,0,0,16"
-            IsOpen="{x:Bind ViewModel.HasUpdateAvailable, Mode=OneWay}"
-            Message="{x:Bind ViewModel.UpdateBannerMessage, Mode=OneWay}"
-            Severity="Informational">
-            <InfoBar.ActionButton>
-                <Button x:Uid="HomeUpdateActionButton" Command="{x:Bind ViewModel.OpenReleaseCommand}" />
-            </InfoBar.ActionButton>
-        </InfoBar>
+            <InfoBar
+                Grid.Row="0"
+                Margin="0,0,0,16"
+                IsOpen="{x:Bind ViewModel.HasUpdateAvailable, Mode=OneWay}"
+                Message="{x:Bind ViewModel.UpdateBannerMessage, Mode=OneWay}"
+                Severity="Informational">
+                <InfoBar.ActionButton>
+                    <Button x:Uid="HomeUpdateActionButton" Command="{x:Bind ViewModel.OpenReleaseCommand}" />
+                </InfoBar.ActionButton>
+            </InfoBar>
 
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0">
-                <TextBlock Style="{StaticResource PageTitleTextStyle}" Text="{x:Bind ViewModel.GreetingDisplay, Mode=OneWay}" />
-                <TextBlock x:Uid="HomeSubtitle" Style="{StaticResource PageSubtitleTextStyle}" Margin="0,4,0,0" MaxWidth="520" HorizontalAlignment="Left" />
+                <StackPanel Grid.Column="0">
+                    <TextBlock Style="{StaticResource PageTitleTextStyle}" Text="{x:Bind ViewModel.GreetingDisplay, Mode=OneWay}" />
+                    <TextBlock x:Uid="HomeSubtitle" Style="{StaticResource PageSubtitleTextStyle}" Margin="0,4,0,0" MaxWidth="520" HorizontalAlignment="Left" />
+                </StackPanel>
+
+                <Button
+                    Grid.Column="1"
+                    VerticalAlignment="Top"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    Click="ScanThisPc_Click">
+                    <Button.Resources>
+                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
+                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
+                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
+                        <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
+                        <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="{StaticResource Primary700Color}" />
+                        <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="{StaticResource Primary700Color}" />
+                    </Button.Resources>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xE721;" FontSize="14" Foreground="White" />
+                        <TextBlock x:Uid="HomeScanButtonLabel" Foreground="White" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <!--  Health status: last completed cleanup only, read from the journal already on disk
+                  — never a fresh scan, so this costs Home nothing extra to show.  -->
+            <Border
+                Grid.Row="2"
+                Margin="0,24,0,0"
+                Padding="20,18"
+                CornerRadius="16"
+                Background="{StaticResource SuccessSurfaceBrush}"
+                Visibility="{x:Bind ViewModel.IsHealthGood, Mode=OneWay}">
+                <StackPanel Orientation="Horizontal" Spacing="16">
+                    <FontIcon Glyph="&#xE73E;" FontSize="18" Foreground="{StaticResource SuccessTextBrush}" VerticalAlignment="Top" />
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="{x:Bind ViewModel.HealthHeadline, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource SuccessTextBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.HealthDetail, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" Foreground="{StaticResource Gray700Brush}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <Border
+                Grid.Row="2"
+                Margin="0,24,0,0"
+                Padding="20,18"
+                CornerRadius="16"
+                Background="{StaticResource WarningSurfaceBrush}"
+                Visibility="{x:Bind ViewModel.IsHealthAttention, Mode=OneWay}">
+                <StackPanel Orientation="Horizontal" Spacing="16">
+                    <FontIcon Glyph="&#xE7BA;" FontSize="18" Foreground="{StaticResource WarningTextBrush}" VerticalAlignment="Top" />
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="{x:Bind ViewModel.HealthHeadline, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource WarningTextBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.HealthDetail, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" Foreground="{StaticResource Gray700Brush}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!--  A concrete, honest nudge — only shown when a real drive is actually low.  -->
+            <Border
+                Grid.Row="3"
+                Margin="0,12,0,0"
+                Padding="18,14"
+                CornerRadius="16"
+                BorderThickness="1"
+                BorderBrush="{StaticResource Gray200Brush}"
+                Background="White"
+                Visibility="{x:Bind ViewModel.HasNextAction, Mode=OneWay}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="{x:Bind ViewModel.NextActionTitle, Mode=OneWay}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" />
+                        <TextBlock x:Uid="HomeNextActionLowDiskDetail" Style="{StaticResource CaptionTextStyle}" />
+                    </StackPanel>
+                    <Button Grid.Column="1" x:Uid="HomeNextActionButton" VerticalAlignment="Center" Click="NextAction_Click" />
+                </Grid>
+            </Border>
+
+            <StackPanel Grid.Row="4" Margin="0,32,0,0" Spacing="14">
+                <TextBlock x:Uid="HomeDrivesHeader" Style="{StaticResource SectionLabelTextStyle}" />
+                <ItemsControl ItemsSource="{x:Bind ViewModel.Drives}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="8" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="viewmodels:DriveDisplay">
+                            <Border Style="{StaticResource CardBorderStyle}" Padding="20" Width="320">
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeBase}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
+                                    <ProgressBar Value="{x:Bind UsedFraction}" Maximum="1" Height="6" CornerRadius="3" Foreground="{StaticResource Secondary600Brush}" Background="{StaticResource Gray200Brush}" />
+                                    <TextBlock Text="{x:Bind SpaceSummary}" Style="{StaticResource CaptionTextStyle}" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
 
-            <Button
-                Grid.Column="1"
-                VerticalAlignment="Top"
-                Style="{StaticResource PrimaryButtonStyle}"
-                Click="ScanThisPc_Click">
-                <Button.Resources>
-                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
-                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
-                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
-                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
-                    <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="{StaticResource Primary700Color}" />
-                    <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="{StaticResource Primary700Color}" />
-                </Button.Resources>
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <FontIcon Glyph="&#xE721;" FontSize="14" Foreground="White" />
-                    <TextBlock x:Uid="HomeScanButtonLabel" Foreground="White" FontWeight="SemiBold" />
-                </StackPanel>
-            </Button>
+            <StackPanel Grid.Row="5" Margin="0,32,0,0" Spacing="14">
+                <TextBlock x:Uid="HomeRecentSessionsHeader" Style="{StaticResource SectionLabelTextStyle}" />
+                <TextBlock
+                    x:Uid="HomeNoSessionsMessage"
+                    Style="{StaticResource CaptionTextStyle}"
+                    MaxWidth="520"
+                    HorizontalAlignment="Left"
+                    Visibility="{x:Bind ViewModel.HasNoRecentActivity, Mode=OneWay}" />
+
+                <ItemsControl ItemsSource="{x:Bind ViewModel.RecentActivity}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="viewmodels:HistorySessionDisplay">
+                            <Border Style="{StaticResource CardBorderStyle}" Padding="18,14" Margin="0,0,0,8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Spacing="2">
+                                        <TextBlock FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis">
+                                            <Run Text="{x:Bind KindLabel}" />
+                                            <Run Text=" — " />
+                                            <Run Text="{x:Bind ChangesDisplay}" />
+                                        </TextBlock>
+                                        <TextBlock Text="{x:Bind FreedDisplay}" Style="{StaticResource CaptionTextStyle}" Visibility="{x:Bind HasFreedDisplay}" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1" Text="{x:Bind WhenDisplay}" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </Grid>
-
-        <StackPanel Grid.Row="2" Margin="0,32,0,0" Spacing="14">
-            <TextBlock x:Uid="HomeDrivesHeader" Style="{StaticResource SectionLabelTextStyle}" />
-            <ItemsControl ItemsSource="{x:Bind ViewModel.Drives}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="8" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="viewmodels:DriveDisplay">
-                        <Border Style="{StaticResource CardBorderStyle}" Padding="20" Width="320">
-                            <StackPanel Spacing="10">
-                                <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeBase}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
-                                <ProgressBar Value="{x:Bind UsedFraction}" Maximum="1" Height="6" CornerRadius="3" Foreground="{StaticResource Secondary600Brush}" Background="{StaticResource Gray200Brush}" />
-                                <TextBlock Text="{x:Bind SpaceSummary}" Style="{StaticResource CaptionTextStyle}" />
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </StackPanel>
-
-        <StackPanel Grid.Row="3" Margin="0,32,0,0" Spacing="14">
-            <TextBlock x:Uid="HomeRecentSessionsHeader" Style="{StaticResource SectionLabelTextStyle}" />
-            <TextBlock x:Uid="HomeNoSessionsMessage" Style="{StaticResource CaptionTextStyle}" MaxWidth="520" HorizontalAlignment="Left" />
-        </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </Page>
