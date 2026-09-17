@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Upkeep.App.Core.Abstractions;
 using Upkeep.App.Core.Settings;
 using Upkeep.App.Tests.Fakes;
@@ -12,9 +13,10 @@ public class SettingsViewModelTests
     private readonly FakeQuarantineStore _quarantine = new();
     private readonly FakeWindowsUiLauncher _launcher = new();
     private readonly FakeAppLogger _logger = new();
+    private readonly WeakReferenceMessenger _messenger = new();
 
     private SettingsViewModel CreateViewModel(string? productVersion = "1.2.3") =>
-        new(_settings, _updates, _quarantine, _launcher, new FakeLocalizationService(), _logger, productVersion);
+        new(_settings, _updates, _quarantine, _launcher, new FakeLocalizationService(), _logger, _messenger, productVersion);
 
     private async Task<SettingsViewModel> LoadedAsync(string? productVersion = "1.2.3")
     {

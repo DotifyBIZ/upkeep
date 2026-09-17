@@ -918,6 +918,42 @@
   <data name="SettingsLogEmpty">
     <value>Nic jeszcze nie zapisano w dzienniku.</value>
   </data>
+  <data name="WelcomePrivacyTitle">
+    <value>Wszystko zostaje na tym komputerze</value>
+  </data>
+  <data name="WelcomePrivacyBody">
+    <value>Bez konta, bez serwera, bez telemetrii. Upkeep odczytuje i zmienia tylko ten komputer — nic poza nim.</value>
+  </data>
+  <data name="WelcomePreviewTitle">
+    <value>Nic nie dzieje się bez podglądu</value>
+  </data>
+  <data name="WelcomePreviewBody">
+    <value>Każde skanowanie pokazuje dokładnie, czego dotknie, zanim cokolwiek się wydarzy. Pliki, które możesz chcieć odzyskać, trafiają do kwarantanny, a nie od razu do usunięcia.</value>
+  </data>
+  <data name="WelcomeRevertTitle">
+    <value>Jedno kliknięcie cofa całą sesję</value>
+  </data>
+  <data name="WelcomeRevertBody">
+    <value>Elementy autostartu, usługi, klucze rejestru, pliki w kwarantannie — Historia potrafi przywrócić to wszystko.</value>
+  </data>
+  <data name="WelcomeNextButton">
+    <value>Dalej</value>
+  </data>
+  <data name="WelcomeFinishButton">
+    <value>Zaczynajmy</value>
+  </data>
+  <data name="WelcomeDialog.CloseButtonText">
+    <value>Pomiń</value>
+  </data>
+  <data name="SettingsWelcomeHeader.Text">
+    <value>Przewodnik powitalny</value>
+  </data>
+  <data name="SettingsWelcomeNote.Text">
+    <value>Trzy ekrany pokazywane przy pierwszym uruchomieniu Upkeep.</value>
+  </data>
+  <data name="SettingsWelcomeButton.Content">
+    <value>Pokaż przewodnik</value>
+  </data>
   <data name="SettingsCouldNotOpen">
     <value>Nie udało się otworzyć tego folderu.</value>
   </data>

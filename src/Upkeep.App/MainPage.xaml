@@ -129,5 +129,44 @@
                 </ListView>
             </Grid>
         </ContentDialog>
+
+        <!--  The first-run tour. Replayable from Settings, which sends a ShowWelcomeMessage here.  -->
+        <ContentDialog
+            x:Name="WelcomeDialog"
+            x:Uid="WelcomeDialog"
+            RequestedTheme="Light"
+            PrimaryButtonText="{x:Bind WelcomeViewModel.NextLabel, Mode=OneWay}"
+            PrimaryButtonClick="WelcomeDialog_PrimaryButtonClick"
+            Closed="WelcomeDialog_Closed">
+            <StackPanel MaxWidth="380" Spacing="12">
+                <Border
+                    Width="52"
+                    Height="52"
+                    CornerRadius="12"
+                    Background="{StaticResource Primary50Brush}"
+                    HorizontalAlignment="Left">
+                    <FontIcon
+                        Glyph="{x:Bind WelcomeViewModel.Current.Glyph, Mode=OneWay}"
+                        FontSize="24"
+                        Foreground="{StaticResource Primary600Brush}" />
+                </Border>
+
+                <TextBlock
+                    Text="{x:Bind WelcomeViewModel.Current.Title, Mode=OneWay}"
+                    Style="{StaticResource PageTitleTextStyle}"
+                    FontSize="18"
+                    TextWrapping="Wrap" />
+
+                <TextBlock
+                    Text="{x:Bind WelcomeViewModel.Current.Body, Mode=OneWay}"
+                    Style="{StaticResource BodyTextStyle}"
+                    TextWrapping="Wrap" />
+
+                <PipsPager
+                    NumberOfPages="{x:Bind WelcomeViewModel.Steps.Count}"
+                    SelectedPageIndex="{x:Bind WelcomeViewModel.StepIndex, Mode=TwoWay}"
+                    HorizontalAlignment="Left" />
+            </StackPanel>
+        </ContentDialog>
     </Grid>
 </Page>

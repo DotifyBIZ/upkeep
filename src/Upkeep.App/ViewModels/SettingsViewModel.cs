@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Upkeep.App.Core.Abstractions;
 using Upkeep.App.Core.Formatting;
 using Upkeep.App.Core.Logging;
@@ -43,6 +44,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     private readonly IWindowsUiLauncher _launcher;
     private readonly ILocalizationService _localization;
     private readonly IAppLogger _logger;
+    private readonly IMessenger _messenger;
 
     private AppSettings _current = new();
     private string? _releaseUrl;
@@ -55,6 +57,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         IWindowsUiLauncher launcher,
         ILocalizationService localization,
         IAppLogger logger,
+        IMessenger messenger,
         string? productVersion = null)
     {
         _settings = settings;
@@ -63,6 +66,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         _launcher = launcher;
         _localization = localization;
         _logger = logger;
+        _messenger = messenger;
 
         Languages =
         [
@@ -228,6 +232,11 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     [RelayCommand]
     public void OpenLogsFolder() => Open(_logger.LogDirectory);
+
+    /// <summary>Plays the welcome tour again. The dialog belongs to the shell, so this asks for it
+    /// rather than owning one of its own.</summary>
+    [RelayCommand]
+    public void ReplayWelcomeTour() => _messenger.Send(new ShowWelcomeMessage());
 
     [RelayCommand]
     public void OpenProjectPage() => Open(ProjectUrl);

@@ -918,6 +918,42 @@
   <data name="SettingsLogEmpty">
     <value>Nothing has been logged yet.</value>
   </data>
+  <data name="WelcomePrivacyTitle">
+    <value>Everything stays on this PC</value>
+  </data>
+  <data name="WelcomePrivacyBody">
+    <value>No account, no server, no telemetry. Upkeep reads and changes this machine and nothing else — ever.</value>
+  </data>
+  <data name="WelcomePreviewTitle">
+    <value>Nothing happens without a preview</value>
+  </data>
+  <data name="WelcomePreviewBody">
+    <value>Every scan shows exactly what it would touch before anything runs. Files you might want back go to quarantine, not straight to delete.</value>
+  </data>
+  <data name="WelcomeRevertTitle">
+    <value>One click undoes a whole session</value>
+  </data>
+  <data name="WelcomeRevertBody">
+    <value>Startup items, services, registry keys, quarantined files — History can put all of it back.</value>
+  </data>
+  <data name="WelcomeNextButton">
+    <value>Next</value>
+  </data>
+  <data name="WelcomeFinishButton">
+    <value>Get started</value>
+  </data>
+  <data name="WelcomeDialog.CloseButtonText">
+    <value>Skip</value>
+  </data>
+  <data name="SettingsWelcomeHeader.Text">
+    <value>Welcome tour</value>
+  </data>
+  <data name="SettingsWelcomeNote.Text">
+    <value>The three screens shown the first time Upkeep runs.</value>
+  </data>
+  <data name="SettingsWelcomeButton.Content">
+    <value>Show the tour</value>
+  </data>
   <data name="SettingsCouldNotOpen">
     <value>That folder could not be opened.</value>
   </data>

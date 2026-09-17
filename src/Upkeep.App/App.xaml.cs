@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Upkeep.App.Core.Abstractions;
@@ -81,6 +82,10 @@ public partial class App : Application
         // answer rather than resolving it again.
         services.AddSingleton<ILocalizationService>(_ => new LocalizationService(StartupLanguage.Resolve()));
 
+        // How a page inside the frame asks the shell for something only the window can do — so far,
+        // playing the welcome tour.
+        services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
+
         // One elevated helper per session (docs/adr/0005-elevated-helper-named-pipe.md) — the same
         // executable, re-launched with a switch, so the path is this process's own. Windows only
         // withholds that path for a process that no longer has an image on disk, which this one
@@ -151,6 +156,7 @@ public partial class App : Application
 
         // Shell-level, not per-page: one palette lives for the whole run, same as the nav rail it stands in for.
         services.AddSingleton<CommandPaletteViewModel>();
+        services.AddSingleton<WelcomeViewModel>();
 
         return services.BuildServiceProvider();
     }

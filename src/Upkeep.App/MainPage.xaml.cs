@@ -1,8 +1,10 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
+using Upkeep.App.Core.Logging;
 using Upkeep.App.ViewModels;
 using Upkeep.App.Views;
 using Windows.System;
@@ -14,12 +16,20 @@ public sealed partial class MainPage : Page
     public MainPage()
     {
         PaletteViewModel = App.Services.GetRequiredService<CommandPaletteViewModel>();
+        WelcomeViewModel = App.Services.GetRequiredService<WelcomeViewModel>();
         InitializeComponent();
         ContentFrame.Navigated += ContentFrame_Navigated;
         ContentFrame.Navigate(typeof(HomePage));
+
+        // Settings asks for the tour from inside the frame; the dialog belongs to the window.
+        WeakReferenceMessenger.Default.Register<MainPage, ShowWelcomeMessage>(this, (page, _) => page.ShowWelcome());
+
+        Loaded += MainPage_Loaded;
     }
 
     public CommandPaletteViewModel PaletteViewModel { get; }
+
+    public WelcomeViewModel WelcomeViewModel { get; }
 
     private static Type PageFor(string tag) => tag switch
     {
@@ -103,6 +113,55 @@ public sealed partial class MainPage : Page
                 CommandPaletteDialog.Hide();
                 e.Handled = true;
                 break;
+        }
+    }
+
+    private async void MainPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (await WelcomeViewModel.ShouldShowOnLaunchAsync(CancellationToken.None))
+            {
+                ShowWelcome();
+            }
+        }
+        catch (Exception ex)
+        {
+            await App.Services.GetRequiredService<IAppLogger>().LogErrorAsync("Deciding whether to show the welcome tour failed.", ex);
+        }
+    }
+
+    private void ShowWelcome()
+    {
+        WelcomeViewModel.Reset();
+        WelcomeDialog.XamlRoot = XamlRoot;
+
+        // Not awaited for the same reason the palette isn't: ShowAsync only resolves on close.
+        _ = WelcomeDialog.ShowAsync();
+    }
+
+    // "Next" on anything but the last screen advances instead of closing, which is what cancelling
+    // the click does — the dialog's own primary button is the tour's forward control.
+    private void WelcomeDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if (!WelcomeViewModel.IsLastStep)
+        {
+            args.Cancel = true;
+            WelcomeViewModel.Next();
+        }
+    }
+
+    // Closed rather than the button handlers: skipping, finishing and pressing Escape all mean the
+    // same thing — this machine's owner has seen it and shouldn't be shown it again.
+    private async void WelcomeDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
+    {
+        try
+        {
+            await WelcomeViewModel.MarkSeenAsync(CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            await App.Services.GetRequiredService<IAppLogger>().LogErrorAsync("Recording that the welcome tour was seen failed.", ex);
         }
     }
 

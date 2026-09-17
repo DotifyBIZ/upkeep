@@ -106,6 +106,15 @@
                     </StackPanel>
                 </Border>
 
+                <!--  Welcome tour  -->
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <StackPanel Spacing="8">
+                        <TextBlock x:Uid="SettingsWelcomeHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                        <TextBlock x:Uid="SettingsWelcomeNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                        <Button x:Uid="SettingsWelcomeButton" Command="{x:Bind ViewModel.ReplayWelcomeTourCommand}" HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+
                 <!--  Logs  -->
                 <Border Style="{StaticResource CardBorderStyle}">
                     <StackPanel Spacing="8">
