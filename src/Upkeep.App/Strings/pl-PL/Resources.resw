@@ -960,6 +960,51 @@
   <data name="ShellToastViewButton.Content">
     <value>Pokaż w Historii</value>
   </data>
+  <data name="JunkCategoryCustomRulesName">
+    <value>Twoje własne reguły</value>
+  </data>
+  <data name="JunkCategoryCustomRulesDescription">
+    <value>Pliki pasujące do dodanych reguł, przenoszone do kwarantanny</value>
+  </data>
+  <data name="CleanupCustomRules.Header">
+    <value>Reguły własne</value>
+  </data>
+  <data name="CleanupCustomRulesNote.Text">
+    <value>Dodaj folder albo folder i wzorzec, na przykład *.cache. Dopasowania pojawiają się w podglądzie powyżej i trafiają do kwarantanny, nigdy nie są usuwane od razu — folder w Twoim folderze użytkownika albo dowolne miejsce na innym dysku.</value>
+  </data>
+  <data name="CleanupCustomRuleInput.PlaceholderText">
+    <value>D:\Renders\*.cache</value>
+  </data>
+  <data name="CleanupCustomRuleAddButton.Content">
+    <value>Dodaj regułę</value>
+  </data>
+  <data name="CleanupCustomRuleRemoveButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip">
+    <value>Usuń tę regułę</value>
+  </data>
+  <data name="CleanupConfirmQuarantined">
+    <value>Pliki dopasowane przez Twoje reguły trafiają do kwarantanny, a Historia potrafi je przywrócić.</value>
+  </data>
+  <data name="CustomRuleProblemEmpty">
+    <value>Najpierw wpisz folder lub wzorzec.</value>
+  </data>
+  <data name="CustomRuleProblemWildcardInFolder">
+    <value>Znak * lub ? może być w nazwie pliku, ale nie w ścieżce folderu.</value>
+  </data>
+  <data name="CustomRuleProblemNotAbsolute">
+    <value>Podaj pełną ścieżkę albo wzorzec taki jak *.bak dla Twojego folderu użytkownika.</value>
+  </data>
+  <data name="CustomRuleProblemFolderMissing">
+    <value>Tego folderu tam nie ma.</value>
+  </data>
+  <data name="CustomRuleProblemOutsideAllowedArea">
+    <value>Reguły mogą obejmować tylko Twój folder użytkownika albo inny dysk — nie Windows, nie inne konta i nie pliki samego Upkeep.</value>
+  </data>
+  <data name="CustomRuleProblemTooBroad">
+    <value>To dopasowałoby każdy plik na dysku. Zawęź regułę folderem lub wzorcem.</value>
+  </data>
+  <data name="CustomRuleProblemDuplicate">
+    <value>Ta reguła już jest na liście.</value>
+  </data>
   <data name="SettingsCouldNotOpen">
     <value>Nie udało się otworzyć tego folderu.</value>
   </data>

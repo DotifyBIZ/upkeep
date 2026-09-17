@@ -19,6 +19,70 @@ public sealed class FakeJunkScanner : IJunkScanner
 
     public Task<JunkCategoryScan> ScanCategoryAsync(JunkCategoryId categoryId, CancellationToken cancellationToken = default) =>
         Task.FromResult(UserScans.FirstOrDefault(scan => scan.CategoryId == categoryId) ?? JunkCategoryScan.Empty(categoryId));
+
+    /// <summary>What the custom rules are said to match, whatever the rules themselves are.</summary>
+    public JunkCategoryScan CustomRuleScan { get; set; } = JunkCategoryScan.Empty(JunkCategoryId.CustomRules);
+
+    public List<IReadOnlyList<CustomCleanupRule>> CustomRuleScans { get; } = [];
+
+    public Task<JunkCategoryScan> ScanCustomRulesAsync(IReadOnlyList<CustomCleanupRule> rules, CancellationToken cancellationToken = default)
+    {
+        CustomRuleScans.Add(rules);
+        return Task.FromResult(CustomRuleScan);
+    }
+}
+
+/// <summary>Points the well-known locations at a throwaway tree, so a rule can be validated
+/// against folders a test made rather than the machine running it.</summary>
+public sealed class FakeWellKnownPaths : IWellKnownPaths, IDisposable
+{
+    private readonly string _root = Path.Combine(Path.GetTempPath(), $"upkeep-app-paths-{Guid.NewGuid():N}");
+
+    public FakeWellKnownPaths()
+    {
+        UserTemp = CreateUnder("Temp");
+        LocalAppData = CreateUnder("LocalAppData");
+        RoamingAppData = CreateUnder("AppData");
+        ProgramData = CreateUnder("ProgramData");
+        WindowsDirectory = CreateUnder("Windows");
+        UserProfilesRoot = CreateUnder("Users");
+        UserProfile = CreateUnder(Path.Combine("Users", "tester"));
+        SystemDriveRoot = _root;
+    }
+
+    public string UserTemp { get; }
+
+    public string LocalAppData { get; }
+
+    public string RoamingAppData { get; }
+
+    public string ProgramData { get; }
+
+    public string WindowsDirectory { get; }
+
+    public string SystemDriveRoot { get; }
+
+    public string UserProfilesRoot { get; }
+
+    public string UserProfile { get; }
+
+    public string CreateUnder(string relativePath)
+    {
+        string full = Path.Combine(_root, relativePath);
+        Directory.CreateDirectory(full);
+        return full;
+    }
+
+    public void Dispose()
+    {
+        try
+        {
+            Directory.Delete(_root, recursive: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or DirectoryNotFoundException)
+        {
+        }
+    }
 }
 
 /// <summary>Records the plan it was given and returns a canned outcome.</summary>

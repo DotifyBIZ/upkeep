@@ -8,7 +8,9 @@ using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Formatting;
 using Upkeep.App.Core.Logging;
+using Upkeep.App.Core.Platform;
 using Upkeep.App.Core.Safety;
+using Upkeep.App.Core.Settings;
 
 namespace Upkeep.App.ViewModels;
 
@@ -28,6 +30,8 @@ public sealed partial class CleanupViewModel : ObservableObject
     private readonly ILocalizationService _localization;
     private readonly IAppLogger _logger;
     private readonly IMessenger _messenger;
+    private readonly IAppSettingsService _settings;
+    private readonly IWellKnownPaths _paths;
 
     public CleanupViewModel(
         IJunkScanner scanner,
@@ -35,7 +39,9 @@ public sealed partial class CleanupViewModel : ObservableObject
         IElevationService elevation,
         ILocalizationService localization,
         IAppLogger logger,
-        IMessenger messenger)
+        IMessenger messenger,
+        IAppSettingsService settings,
+        IWellKnownPaths paths)
     {
         _scanner = scanner;
         _executor = executor;
@@ -43,6 +49,8 @@ public sealed partial class CleanupViewModel : ObservableObject
         _localization = localization;
         _logger = logger;
         _messenger = messenger;
+        _settings = settings;
+        _paths = paths;
         Categories.CollectionChanged += (_, _) => RefreshSelectionSummary();
     }
 
@@ -53,6 +61,19 @@ public sealed partial class CleanupViewModel : ObservableObject
     public ObservableCollection<CleanupCategoryDisplay> UserCategories { get; } = [];
 
     public ObservableCollection<CleanupCategoryDisplay> SystemCategories { get; } = [];
+
+    /// <summary>The user's own rules, as they typed them. Empty for almost everyone.</summary>
+    public ObservableCollection<string> CustomRules { get; } = [];
+
+    [ObservableProperty]
+    public partial string NewRule { get; set; } = string.Empty;
+
+    /// <summary>Why the last rule wasn't accepted, or null when it was.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasRuleProblem))]
+    public partial string? RuleProblem { get; set; }
+
+    public bool HasRuleProblem => !string.IsNullOrEmpty(RuleProblem);
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowScanPrompt))]
@@ -146,6 +167,8 @@ public sealed partial class CleanupViewModel : ObservableObject
                 Add(scan);
             }
 
+            await ScanCustomRulesAsync(cancellationToken);
+
             // Machine-wide categories appear straight away, so the user can see what exists before
             // deciding whether to grant anything — they just have no size until they ask.
             foreach (var category in JunkCatalog.ForScope(JunkScope.System))
@@ -237,6 +260,103 @@ public sealed partial class CleanupViewModel : ObservableObject
     {
         ShowResults = false;
         await ScanAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Accepts a rule the user typed, or says why it can't be. A rule decides what gets
+    /// quarantined, so what it points at is checked here (<see cref="CustomCleanupRule"/>) and not
+    /// left for the scan to discover.
+    /// </summary>
+    [RelayCommand]
+    public async Task AddRuleAsync(CancellationToken cancellationToken)
+    {
+        if (!CustomCleanupRule.TryParse(NewRule, _paths, out var rule, out var problem))
+        {
+            RuleProblem = _localization.GetString($"CustomRuleProblem{problem}");
+            return;
+        }
+
+        if (CustomRules.Contains(rule.Display, StringComparer.OrdinalIgnoreCase))
+        {
+            RuleProblem = _localization.GetString($"CustomRuleProblem{CustomRuleProblem.Duplicate}");
+            return;
+        }
+
+        CustomRules.Add(rule.Display);
+        NewRule = string.Empty;
+        RuleProblem = null;
+
+        await SaveRulesAsync(cancellationToken);
+    }
+
+    [RelayCommand]
+    public async Task RemoveRuleAsync(string? rule)
+    {
+        if (rule is null || !CustomRules.Remove(rule))
+        {
+            return;
+        }
+
+        RuleProblem = null;
+        await SaveRulesAsync(CancellationToken.None);
+    }
+
+    /// <summary>Reads the saved rules and measures what they match, as its own category in the
+    /// preview. Categories with nothing in them are dropped from the plan anyway, so a user with
+    /// no rules never sees the row at all.</summary>
+    private async Task ScanCustomRulesAsync(CancellationToken cancellationToken)
+    {
+        var settings = await _settings.LoadAsync(cancellationToken);
+        var rules = CustomCleanupRule.ParseAll(settings.CustomCleanupRules, _paths);
+
+        CustomRules.Clear();
+        foreach (var rule in rules)
+        {
+            CustomRules.Add(rule.Display);
+        }
+
+        if (rules.Count == 0)
+        {
+            return;
+        }
+
+        Add(await _scanner.ScanCustomRulesAsync(rules, cancellationToken));
+    }
+
+    private async Task SaveRulesAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var settings = await _settings.LoadAsync(cancellationToken);
+            settings.CustomCleanupRules = [.. CustomRules];
+            await _settings.SaveAsync(settings, cancellationToken);
+
+            // The preview has to agree with the rules it was built from, so what the new rule
+            // matches is measured now rather than at the next scan.
+            if (HasScanned)
+            {
+                var rules = CustomCleanupRule.ParseAll(CustomRules, _paths);
+                var scan = rules.Count == 0
+                    ? JunkCategoryScan.Empty(JunkCategoryId.CustomRules)
+                    : await _scanner.ScanCustomRulesAsync(rules, cancellationToken);
+
+                if (Categories.Any(category => category.CategoryId == JunkCategoryId.CustomRules))
+                {
+                    Replace(scan);
+                }
+                else
+                {
+                    Add(scan);
+                }
+
+                RefreshSelectionSummary();
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            await _logger.LogErrorAsync("Saving the custom cleanup rules failed.", ex, cancellationToken);
+            StatusMessage = ex.Message;
+        }
     }
 
     private void ShowOutcome(CleanupOutcome outcome)

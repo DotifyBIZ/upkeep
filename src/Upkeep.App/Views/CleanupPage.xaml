@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="Upkeep.App.Views.CleanupPage"
+    x:Name="Root"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -151,6 +152,63 @@
                             <ItemsControl ItemsSource="{x:Bind ViewModel.SystemCategories}" ItemTemplate="{StaticResource CategoryRowTemplate}" />
                         </StackPanel>
                     </Border>
+
+                    <!--
+                        Collapsed by default: almost nobody needs their own rules, and the people who
+                        do know to look. What a rule matches is quarantined, never deleted, and shows
+                        up in the preview above like every other category.
+                    -->
+                    <Expander
+                        x:Uid="CleanupCustomRules"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        Visibility="{x:Bind ViewModel.HasScanned, Mode=OneWay}">
+                        <StackPanel Spacing="12">
+                            <TextBlock x:Uid="CleanupCustomRulesNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="560" HorizontalAlignment="Left" />
+
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox
+                                    x:Uid="CleanupCustomRuleInput"
+                                    Text="{x:Bind ViewModel.NewRule, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    KeyDown="CustomRule_KeyDown" />
+                                <Button
+                                    Grid.Column="1"
+                                    x:Uid="CleanupCustomRuleAddButton"
+                                    Command="{x:Bind ViewModel.AddRuleCommand}" />
+                            </Grid>
+
+                            <InfoBar
+                                IsOpen="{x:Bind ViewModel.HasRuleProblem, Mode=OneWay}"
+                                Message="{x:Bind ViewModel.RuleProblem, Mode=OneWay}"
+                                Severity="Warning"
+                                IsClosable="False" />
+
+                            <ItemsControl ItemsSource="{x:Bind ViewModel.CustomRules}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="x:String">
+                                        <Grid ColumnSpacing="8" Margin="0,2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{x:Bind}" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                            <Button
+                                                Grid.Column="1"
+                                                x:Uid="CleanupCustomRuleRemoveButton"
+                                                Command="{Binding ElementName=Root, Path=ViewModel.RemoveRuleCommand}"
+                                                CommandParameter="{x:Bind}">
+                                                <FontIcon Glyph="&#xE711;" FontSize="12" />
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Expander>
                 </StackPanel>
             </ScrollViewer>
 

@@ -960,6 +960,51 @@
   <data name="ShellToastViewButton.Content">
     <value>View in History</value>
   </data>
+  <data name="JunkCategoryCustomRulesName">
+    <value>Your own rules</value>
+  </data>
+  <data name="JunkCategoryCustomRulesDescription">
+    <value>Files matching the rules you added, moved to quarantine</value>
+  </data>
+  <data name="CleanupCustomRules.Header">
+    <value>Custom rules</value>
+  </data>
+  <data name="CleanupCustomRulesNote.Text">
+    <value>Add a folder, or a folder and a pattern like *.cache. Matches are listed in the preview above and moved to quarantine, never deleted outright — a folder inside your user folder, or anywhere on another drive.</value>
+  </data>
+  <data name="CleanupCustomRuleInput.PlaceholderText">
+    <value>D:\Renders\*.cache</value>
+  </data>
+  <data name="CleanupCustomRuleAddButton.Content">
+    <value>Add rule</value>
+  </data>
+  <data name="CleanupCustomRuleRemoveButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip">
+    <value>Remove this rule</value>
+  </data>
+  <data name="CleanupConfirmQuarantined">
+    <value>Files matched by your own rules move to quarantine, and History can put them back.</value>
+  </data>
+  <data name="CustomRuleProblemEmpty">
+    <value>Type a folder or a pattern first.</value>
+  </data>
+  <data name="CustomRuleProblemWildcardInFolder">
+    <value>A * or ? belongs in the file name, not in the folder path.</value>
+  </data>
+  <data name="CustomRuleProblemNotAbsolute">
+    <value>Use a full path, or a pattern like *.bak for your own user folder.</value>
+  </data>
+  <data name="CustomRuleProblemFolderMissing">
+    <value>That folder isn't there.</value>
+  </data>
+  <data name="CustomRuleProblemOutsideAllowedArea">
+    <value>Rules can only cover your own user folder or another drive — not Windows, other accounts, or Upkeep's own files.</value>
+  </data>
+  <data name="CustomRuleProblemTooBroad">
+    <value>That would match every file on the drive. Narrow it down with a folder or a pattern.</value>
+  </data>
+  <data name="CustomRuleProblemDuplicate">
+    <value>That rule is already in the list.</value>
+  </data>
   <data name="SettingsCouldNotOpen">
     <value>That folder could not be opened.</value>
   </data>

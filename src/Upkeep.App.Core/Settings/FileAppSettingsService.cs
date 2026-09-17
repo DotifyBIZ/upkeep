@@ -10,6 +10,10 @@ namespace Upkeep.App.Core.Settings;
 /// </summary>
 public sealed class FileAppSettingsService : IAppSettingsService
 {
+    /// <summary>As many custom cleanup rules as anyone has a reason for. Each one is a folder walk
+    /// on every scan, and a hand-edited file with thousands of them would be a scan that never ends.</summary>
+    public const int MaximumCustomRules = 50;
+
     private readonly string _filePath;
 
     [ExcludeFromCodeCoverage(Justification = "Resolves a well-known Windows folder; the injectable constructor below is covered.")]
@@ -90,6 +94,16 @@ public sealed class FileAppSettingsService : IAppSettingsService
         {
             settings.LanguageOverride = string.Empty;
         }
+
+        // Structural only — whether a rule points somewhere Upkeep is willing to touch is decided
+        // by CustomCleanupRule, which knows where the profile and the system drive are.
+        settings.CustomCleanupRules = settings.CustomCleanupRules is null
+            ? []
+            : [.. settings.CustomCleanupRules
+                .Where(rule => !string.IsNullOrWhiteSpace(rule))
+                .Select(rule => rule.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Take(MaximumCustomRules)];
 
         return settings;
     }

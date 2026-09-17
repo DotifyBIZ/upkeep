@@ -39,6 +39,11 @@ public static class JunkCatalog
         new(JunkCategoryId.WindowsUpdateCleanup, JunkScope.System, RemovalKind.Irreversible, SelectedByDefault: true),
         new(JunkCategoryId.DeliveryOptimization, JunkScope.System, RemovalKind.Deleted, SelectedByDefault: true),
         new(JunkCategoryId.SystemCrashDumps, JunkScope.System, RemovalKind.Deleted, SelectedByDefault: true),
+
+        // The user's own rules (see CustomCleanupRule). Quarantined rather than deleted: these are
+        // the user's files, not a cache Upkeep knows how to recognise, and off by default because
+        // a rule written weeks ago should be a deliberate choice each run, not a standing one.
+        new(JunkCategoryId.CustomRules, JunkScope.User, RemovalKind.Quarantined, SelectedByDefault: false),
     ];
 
     public static JunkCategory Get(JunkCategoryId id) =>

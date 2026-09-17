@@ -2,20 +2,29 @@ using CommunityToolkit.Mvvm.Messaging;
 using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Safety;
+using Upkeep.App.Core.Settings;
 using Upkeep.App.Tests.Fakes;
 using Upkeep.App.ViewModels;
 
 namespace Upkeep.App.Tests.ViewModels;
 
-public class CleanupViewModelTests
+public class CleanupViewModelTests : IDisposable
 {
     private readonly FakeJunkScanner _scanner = new();
     private readonly FakeCleanupExecutor _executor = new();
     private readonly FakeElevationService _elevation = new();
     private readonly WeakReferenceMessenger _messenger = new();
+    private readonly FakeAppSettingsService _settings = new();
+    private readonly FakeWellKnownPaths _paths = new();
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        _paths.Dispose();
+    }
 
     private CleanupViewModel CreateViewModel() =>
-        new(_scanner, _executor, _elevation, new FakeLocalizationService(), new FakeAppLogger(), _messenger);
+        new(_scanner, _executor, _elevation, new FakeLocalizationService(), new FakeAppLogger(), _messenger, _settings, _paths);
 
     private static JunkCategoryScan ScanWith(JunkCategoryId id, long bytes, int items = 1) =>
         new(id, [.. Enumerable.Range(0, items).Select(index => new JunkItem($@"C:\temp\{id}-{index}", bytes / Math.Max(items, 1)))]);
@@ -252,6 +261,134 @@ public class CleanupViewModelTests
         Assert.NotNull(received);
         Assert.Equal(viewModel.FreedDisplay, received.FreedSummary);
         GC.KeepAlive(recipient);
+    }
+
+    [Fact]
+    public async Task AddRuleAsync_ValidRule_IsSavedAndListed()
+    {
+        string folder = _paths.CreateUnder(Path.Combine("Users", "tester", "Renders"));
+        var viewModel = CreateViewModel();
+        viewModel.NewRule = Path.Combine(folder, "*.cache");
+
+        await viewModel.AddRuleAsync(CancellationToken.None);
+
+        Assert.Equal(Path.Combine(folder, "*.cache"), Assert.Single(viewModel.CustomRules));
+        Assert.Equal(string.Empty, viewModel.NewRule);
+        Assert.False(viewModel.HasRuleProblem);
+        Assert.Equal([Path.Combine(folder, "*.cache")], Assert.Single(_settings.Saves).CustomCleanupRules);
+    }
+
+    [Fact]
+    public async Task AddRuleAsync_RuleAimedAtWindows_IsRefusedAndNotSaved()
+    {
+        // The safety rule that matters most here: a wildcard loose in Windows is not a cleanup.
+        var viewModel = CreateViewModel();
+        viewModel.NewRule = Path.Combine(_paths.WindowsDirectory, "*.dll");
+
+        await viewModel.AddRuleAsync(CancellationToken.None);
+
+        Assert.Empty(viewModel.CustomRules);
+        Assert.Empty(_settings.Saves);
+        Assert.Equal("CustomRuleProblemOutsideAllowedArea", viewModel.RuleProblem);
+    }
+
+    [Fact]
+    public async Task AddRuleAsync_SameRuleTwice_IsRefusedTheSecondTime()
+    {
+        string folder = _paths.CreateUnder(Path.Combine("Users", "tester", "Renders"));
+        var viewModel = CreateViewModel();
+
+        viewModel.NewRule = Path.Combine(folder, "*.cache");
+        await viewModel.AddRuleAsync(CancellationToken.None);
+        viewModel.NewRule = Path.Combine(folder, "*.cache");
+        await viewModel.AddRuleAsync(CancellationToken.None);
+
+        Assert.Single(viewModel.CustomRules);
+        Assert.Equal("CustomRuleProblemDuplicate", viewModel.RuleProblem);
+    }
+
+    [Fact]
+    public async Task RemoveRuleAsync_TakesItOutAndSaves()
+    {
+        string folder = _paths.CreateUnder(Path.Combine("Users", "tester", "Renders"));
+        var viewModel = CreateViewModel();
+        viewModel.NewRule = Path.Combine(folder, "*.cache");
+        await viewModel.AddRuleAsync(CancellationToken.None);
+
+        await viewModel.RemoveRuleAsync(Path.Combine(folder, "*.cache"));
+
+        Assert.Empty(viewModel.CustomRules);
+        Assert.Empty(_settings.Settings.CustomCleanupRules);
+    }
+
+    [Fact]
+    public async Task ScanAsync_NoRules_DoesNotShowTheCategoryAtAll()
+    {
+        var viewModel = CreateViewModel();
+
+        await viewModel.ScanAsync(CancellationToken.None);
+
+        Assert.DoesNotContain(viewModel.Categories, category => category.CategoryId == JunkCategoryId.CustomRules);
+        Assert.Empty(_scanner.CustomRuleScans);
+    }
+
+    [Fact]
+    public async Task ScanAsync_SavedRules_AreScannedAndPreviewedLikeAnyOtherCategory()
+    {
+        string folder = _paths.CreateUnder(Path.Combine("Users", "tester", "Renders"));
+        _settings.Settings = new AppSettings { CustomCleanupRules = [Path.Combine(folder, "*.cache")] };
+        _scanner.CustomRuleScan = ScanWith(JunkCategoryId.CustomRules, 4096);
+
+        var viewModel = CreateViewModel();
+        await viewModel.ScanAsync(CancellationToken.None);
+
+        var category = Assert.Single(viewModel.Categories, category => category.CategoryId == JunkCategoryId.CustomRules);
+        Assert.Equal(4096, category.TotalBytes);
+        Assert.Equal(folder, Assert.Single(Assert.Single(_scanner.CustomRuleScans)).Root);
+    }
+
+    [Fact]
+    public async Task ScanAsync_RuleSavedForAFolderThatWentAway_IsDroppedRatherThanShown()
+    {
+        _settings.Settings = new AppSettings { CustomCleanupRules = [@"C:\NoSuchFolderAnywhere\*.cache"] };
+
+        var viewModel = CreateViewModel();
+        await viewModel.ScanAsync(CancellationToken.None);
+
+        Assert.Empty(viewModel.CustomRules);
+        Assert.Empty(_scanner.CustomRuleScans);
+    }
+
+    [Fact]
+    public async Task AddRuleAsync_AfterAScan_MeasuresTheNewRuleStraightAway()
+    {
+        // The preview has to agree with the rules it was built from.
+        string folder = _paths.CreateUnder(Path.Combine("Users", "tester", "Renders"));
+        var viewModel = CreateViewModel();
+        await viewModel.ScanAsync(CancellationToken.None);
+
+        _scanner.CustomRuleScan = ScanWith(JunkCategoryId.CustomRules, 1024);
+        viewModel.NewRule = Path.Combine(folder, "*.cache");
+        await viewModel.AddRuleAsync(CancellationToken.None);
+
+        var category = Assert.Single(viewModel.Categories, category => category.CategoryId == JunkCategoryId.CustomRules);
+        Assert.Equal(1024, category.TotalBytes);
+    }
+
+    [Fact]
+    public async Task AddRuleAsync_CustomRulesAreNotSelectedByDefault()
+    {
+        // A rule written weeks ago should be a deliberate choice each run, not a standing one.
+        string folder = _paths.CreateUnder(Path.Combine("Users", "tester", "Renders"));
+        _settings.Settings = new AppSettings { CustomCleanupRules = [Path.Combine(folder, "*.cache")] };
+        _scanner.CustomRuleScan = ScanWith(JunkCategoryId.CustomRules, 4096);
+
+        var viewModel = CreateViewModel();
+        await viewModel.ScanAsync(CancellationToken.None);
+
+        var category = Assert.Single(viewModel.Categories, category => category.CategoryId == JunkCategoryId.CustomRules);
+        Assert.False(category.IsSelected);
+        Assert.DoesNotContain(viewModel.BuildPlan().Categories, planned => planned.Scan.CategoryId == JunkCategoryId.CustomRules);
     }
 
     [Fact]

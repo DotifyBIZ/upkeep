@@ -50,6 +50,26 @@ public sealed partial class CleanupPage : Page
         }
     }
 
+    // Typing a rule and pressing Enter is what anyone does with a box and an Add button next to it.
+    private async void CustomRule_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+    {
+        if (e.Key != Windows.System.VirtualKey.Enter)
+        {
+            return;
+        }
+
+        e.Handled = true;
+
+        try
+        {
+            await ViewModel.AddRuleAsync(CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            await App.Services.GetRequiredService<IAppLogger>().LogErrorAsync("Adding a custom cleanup rule failed.", ex);
+        }
+    }
+
     /// <summary>
     /// Says exactly what is about to happen — the UAC prompt, the restore point, and the fact that
     /// some of it can't be undone — before anything happens.
@@ -71,6 +91,13 @@ public sealed partial class CleanupPage : Page
         lines.Children.Add(BuildLine(
             "",
             _localization.GetString(plan.HasIrreversibleWork ? "CleanupConfirmIrreversible" : "CleanupConfirmDeleted")));
+
+        // Custom rules match the user's own files, which go to quarantine rather than being
+        // deleted — the opposite promise from the line above, so it gets said rather than implied.
+        if (plan.HasQuarantinedWork)
+        {
+            lines.Children.Add(BuildLine("", _localization.GetString("CleanupConfirmQuarantined")));
+        }
 
         var dialog = new ContentDialog
         {

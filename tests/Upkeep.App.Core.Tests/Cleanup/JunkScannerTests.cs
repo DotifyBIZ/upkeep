@@ -33,8 +33,13 @@ public class JunkScannerTests : IDisposable
     {
         var scans = await CreateScanner().ScanUserCategoriesAsync(CancellationToken.None);
 
-        Assert.Equal(JunkCatalog.ForScope(JunkScope.User).Count(), scans.Count);
+        // Custom rules are user-scope but come from settings, so they are scanned separately —
+        // this call has no way of knowing what the rules are.
+        var expected = JunkCatalog.ForScope(JunkScope.User).Where(category => category.Id != JunkCategoryId.CustomRules);
+
+        Assert.Equal(expected.Count(), scans.Count);
         Assert.All(scans, scan => Assert.Equal(JunkScope.User, JunkCatalog.Get(scan.CategoryId).Scope));
+        Assert.DoesNotContain(scans, scan => scan.CategoryId == JunkCategoryId.CustomRules);
     }
 
     [Fact]
@@ -181,5 +186,74 @@ public class JunkScannerTests : IDisposable
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
             () => CreateScanner().ScanUserCategoriesAsync(cancelled.Token));
+    }
+
+    [Fact]
+    public async Task ScanCustomRulesAsync_NoRules_FindsNothing()
+    {
+        var scan = await CreateScanner().ScanCustomRulesAsync([], CancellationToken.None);
+
+        Assert.True(scan.IsEmpty);
+        Assert.Equal(JunkCategoryId.CustomRules, scan.CategoryId);
+    }
+
+    [Fact]
+    public async Task ScanCustomRulesAsync_MatchesThePatternAndLeavesEverythingElse()
+    {
+        string folder = _paths.CreateUnder(Path.Combine("Users", "tester", "Renders"));
+        FakeWellKnownPaths.WriteFile(Path.Combine(folder, "scene.cache"), 100);
+        FakeWellKnownPaths.WriteFile(Path.Combine(folder, "scene.blend"), 900);
+
+        var scan = await CreateScanner().ScanCustomRulesAsync([new CustomCleanupRule(folder, "*.cache")], CancellationToken.None);
+
+        Assert.Equal(100, scan.TotalBytes);
+        Assert.Equal("scene.cache", Path.GetFileName(Assert.Single(scan.Items).Path));
+    }
+
+    [Fact]
+    public async Task ScanCustomRulesAsync_LooksInSubfoldersToo()
+    {
+        string folder = _paths.CreateUnder(Path.Combine("Users", "tester", "Renders"));
+        FakeWellKnownPaths.WriteFile(Path.Combine(folder, "nested", "deep", "scene.cache"), 50);
+
+        var scan = await CreateScanner().ScanCustomRulesAsync([new CustomCleanupRule(folder, "*.cache")], CancellationToken.None);
+
+        Assert.Equal(50, scan.TotalBytes);
+    }
+
+    [Fact]
+    public async Task ScanCustomRulesAsync_TwoRulesOverTheSameFile_CountItOnce()
+    {
+        // "*.cache" and "scene.*" over one folder is an easy pair to write, and counting the file
+        // twice would promise twice the space in the preview.
+        string folder = _paths.CreateUnder(Path.Combine("Users", "tester", "Renders"));
+        FakeWellKnownPaths.WriteFile(Path.Combine(folder, "scene.cache"), 200);
+
+        var scan = await CreateScanner().ScanCustomRulesAsync(
+            [new CustomCleanupRule(folder, "*.cache"), new CustomCleanupRule(folder, "scene.*")],
+            CancellationToken.None);
+
+        Assert.Single(scan.Items);
+        Assert.Equal(200, scan.TotalBytes);
+    }
+
+    [Fact]
+    public async Task ScanCustomRulesAsync_FolderThatWentAway_IsAnEmptyResultNotAFailure()
+    {
+        var missing = new CustomCleanupRule(Path.Combine(_paths.UserProfile, "Gone"), "*.tmp");
+
+        var scan = await CreateScanner().ScanCustomRulesAsync([missing], CancellationToken.None);
+
+        Assert.True(scan.IsEmpty);
+    }
+
+    [Fact]
+    public async Task ScanCustomRulesAsync_ListsEachRuleSoThePreviewCanShowWhatItLookedAt()
+    {
+        string folder = _paths.CreateUnder(Path.Combine("Users", "tester", "Renders"));
+
+        var scan = await CreateScanner().ScanCustomRulesAsync([new CustomCleanupRule(folder, "*.cache")], CancellationToken.None);
+
+        Assert.Equal(Path.Combine(folder, "*.cache"), Assert.Single(scan.Details));
     }
 }
