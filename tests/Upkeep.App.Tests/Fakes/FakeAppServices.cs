@@ -110,6 +110,12 @@ public sealed class FakeAppLogger : IAppLogger
 
     public string LogDirectory => Path.Combine(Path.GetTempPath(), "upkeep-fake-logs");
 
+    /// <summary>What ReadRecentAsync hands back — set by tests that care about the log viewer.</summary>
+    public List<string> RecentLines { get; } = [];
+
+    public Task<IReadOnlyList<string>> ReadRecentAsync(int maxLines, CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<string>>([.. RecentLines.TakeLast(maxLines)]);
+
     public Task LogErrorAsync(string message, Exception? exception = null, CancellationToken cancellationToken = default)
     {
         Lines.Add($"ERROR {message}");

@@ -912,6 +912,12 @@
   <data name="SettingsOpenLogsButton.Content">
     <value>Otwórz folder dzienników</value>
   </data>
+  <data name="SettingsLogViewer.Header">
+    <value>Pokaż ostatnie wpisy dziennika</value>
+  </data>
+  <data name="SettingsLogEmpty">
+    <value>Nic jeszcze nie zapisano w dzienniku.</value>
+  </data>
   <data name="SettingsCouldNotOpen">
     <value>Nie udało się otworzyć tego folderu.</value>
   </data>

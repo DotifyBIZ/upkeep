@@ -10,6 +10,13 @@ public interface IAppLogger
     /// <summary>The folder the log files live in — surfaced in Settings so a user can find them.</summary>
     string LogDirectory { get; }
 
+    /// <summary>
+    /// The tail of the most recent log file, oldest line first, so Settings can show what was
+    /// logged without sending the user to Explorer and a text editor. Returns an empty list when
+    /// nothing has been logged or the file can't be read.
+    /// </summary>
+    Task<IReadOnlyList<string>> ReadRecentAsync(int maxLines, CancellationToken cancellationToken = default);
+
     Task LogErrorAsync(string message, Exception? exception = null, CancellationToken cancellationToken = default);
 
     Task LogWarningAsync(string message, CancellationToken cancellationToken = default);

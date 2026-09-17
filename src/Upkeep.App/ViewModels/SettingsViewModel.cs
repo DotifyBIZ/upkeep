@@ -33,6 +33,10 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     public const int MaximumRetentionDays = 90;
 
+    /// <summary>How much of the log the viewer shows. Enough to cover the run that just went
+    /// wrong; the full files are one button away for anything older.</summary>
+    public const int LogLinesShown = 200;
+
     private readonly IAppSettingsService _settings;
     private readonly IUpdateCheckService _updates;
     private readonly IQuarantineStore _quarantine;
@@ -98,6 +102,10 @@ public sealed partial class SettingsViewModel : ObservableObject
     /// <summary>True once a check found a newer release, so the page can offer to open it.</summary>
     [ObservableProperty]
     public partial bool HasRelease { get; set; }
+
+    /// <summary>The tail of the diagnostic log, as one block of text.</summary>
+    [ObservableProperty]
+    public partial string LogLines { get; set; } = string.Empty;
 
     public bool HasStatusMessage => !string.IsNullOrEmpty(StatusMessage);
 
@@ -202,6 +210,20 @@ public sealed partial class SettingsViewModel : ObservableObject
 
         RefreshQuarantineSize();
         StatusMessage = _localization.GetString("SettingsQuarantineEmptiedFormat", ByteSize.Format(freed));
+    }
+
+    /// <summary>
+    /// Fills <see cref="LogLines"/> from the diagnostic log. Called when the user opens the log
+    /// section rather than on page load: reading the file has no reason to happen for the people
+    /// who never look at it.
+    /// </summary>
+    public async Task LoadLogAsync(CancellationToken cancellationToken)
+    {
+        var lines = await _logger.ReadRecentAsync(LogLinesShown, cancellationToken);
+
+        LogLines = lines.Count == 0
+            ? _localization.GetString("SettingsLogEmpty")
+            : string.Join(Environment.NewLine, lines);
     }
 
     [RelayCommand]

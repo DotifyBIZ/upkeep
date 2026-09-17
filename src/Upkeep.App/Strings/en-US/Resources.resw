@@ -912,6 +912,12 @@
   <data name="SettingsOpenLogsButton.Content">
     <value>Open logs folder</value>
   </data>
+  <data name="SettingsLogViewer.Header">
+    <value>Show recent log entries</value>
+  </data>
+  <data name="SettingsLogEmpty">
+    <value>Nothing has been logged yet.</value>
+  </data>
   <data name="SettingsCouldNotOpen">
     <value>That folder could not be opened.</value>
   </data>

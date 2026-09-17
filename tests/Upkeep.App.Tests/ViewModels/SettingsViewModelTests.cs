@@ -11,9 +11,10 @@ public class SettingsViewModelTests
     private readonly FakeUpdateCheckService _updates = new();
     private readonly FakeQuarantineStore _quarantine = new();
     private readonly FakeWindowsUiLauncher _launcher = new();
+    private readonly FakeAppLogger _logger = new();
 
     private SettingsViewModel CreateViewModel(string? productVersion = "1.2.3") =>
-        new(_settings, _updates, _quarantine, _launcher, new FakeLocalizationService(), new FakeAppLogger(), productVersion);
+        new(_settings, _updates, _quarantine, _launcher, new FakeLocalizationService(), _logger, productVersion);
 
     private async Task<SettingsViewModel> LoadedAsync(string? productVersion = "1.2.3")
     {
@@ -258,5 +259,26 @@ public class SettingsViewModelTests
     {
         Assert.Contains("1.4.0", CreateViewModel("1.4.0+abc1234").VersionDisplay, StringComparison.Ordinal);
         Assert.DoesNotContain("abc1234", CreateViewModel("1.4.0+abc1234").VersionDisplay, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task LoadLogAsync_ShowsTheLinesInOrder()
+    {
+        _logger.RecentLines.AddRange(["first line", "second line"]);
+        var viewModel = CreateViewModel();
+
+        await viewModel.LoadLogAsync(CancellationToken.None);
+
+        Assert.Equal($"first line{Environment.NewLine}second line", viewModel.LogLines);
+    }
+
+    [Fact]
+    public async Task LoadLogAsync_NothingLoggedYet_SaysSo()
+    {
+        var viewModel = CreateViewModel();
+
+        await viewModel.LoadLogAsync(CancellationToken.None);
+
+        Assert.Equal("SettingsLogEmpty", viewModel.LogLines);
     }
 }

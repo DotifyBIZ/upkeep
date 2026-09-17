@@ -74,6 +74,18 @@ public sealed partial class SettingsPage : Page
 
     private void EmptyQuarantine_Click(object sender, RoutedEventArgs e) => ViewModel.EmptyQuarantineNow();
 
+    private async void LogViewer_Expanding(Expander sender, ExpanderExpandingEventArgs args)
+    {
+        try
+        {
+            await ViewModel.LoadLogAsync(CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            await App.Services.GetRequiredService<IAppLogger>().LogErrorAsync("Reading the diagnostic log failed.", ex);
+        }
+    }
+
     private async Task SaveAsync()
     {
         try
