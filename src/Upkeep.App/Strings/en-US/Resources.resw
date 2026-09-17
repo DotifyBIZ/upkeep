@@ -85,6 +85,14 @@
     <value>Settings</value>
   </data>
 
+  <!-- Command palette -->
+  <data name="CommandPaletteSearchPlaceholder.PlaceholderText">
+    <value>Search sections…</value>
+  </data>
+  <data name="CommandPaletteEmptyMessage.Text">
+    <value>No matching section.</value>
+  </data>
+
   <!-- Home -->
   <data name="HomeSubtitle.Text">
     <value>Clean it, tune it, keep it — everything runs on this PC, nothing leaves it.</value>

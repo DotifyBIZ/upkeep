@@ -1,7 +1,11 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
+using Upkeep.App.ViewModels;
 using Upkeep.App.Views;
+using Windows.System;
 
 namespace Upkeep.App;
 
@@ -9,10 +13,13 @@ public sealed partial class MainPage : Page
 {
     public MainPage()
     {
+        PaletteViewModel = App.Services.GetRequiredService<CommandPaletteViewModel>();
         InitializeComponent();
         ContentFrame.Navigated += ContentFrame_Navigated;
         ContentFrame.Navigate(typeof(HomePage));
     }
+
+    public CommandPaletteViewModel PaletteViewModel { get; }
 
     private static Type PageFor(string tag) => tag switch
     {
@@ -65,6 +72,52 @@ public sealed partial class MainPage : Page
         {
             ContentFrame.GoBack();
         }
+    }
+
+    private void CommandPaletteAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        args.Handled = true;
+
+        PaletteViewModel.Reset();
+        CommandPaletteDialog.XamlRoot = XamlRoot;
+
+        // Not awaited: ShowAsync doesn't resolve until the dialog closes, and this handler has
+        // nothing left to do once it's open — the fire-and-forget is the point, not an oversight.
+        _ = CommandPaletteDialog.ShowAsync();
+    }
+
+    // Focus has to wait for Opened rather than happen right after ShowAsync is called: the dialog's
+    // content isn't loaded yet at that point, so a Focus() call there silently lands nowhere.
+    private void CommandPaletteDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args) =>
+        CommandPaletteInput.Focus(FocusState.Programmatic);
+
+    private void CommandPaletteInput_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case VirtualKey.Enter:
+                NavigateToAndClosePalette(PaletteViewModel.Results.FirstOrDefault());
+                e.Handled = true;
+                break;
+            case VirtualKey.Escape:
+                CommandPaletteDialog.Hide();
+                e.Handled = true;
+                break;
+        }
+    }
+
+    private void CommandPaletteList_ItemClick(object sender, ItemClickEventArgs e) =>
+        NavigateToAndClosePalette(e.ClickedItem as CommandPaletteItem);
+
+    private void NavigateToAndClosePalette(CommandPaletteItem? item)
+    {
+        if (item is null)
+        {
+            return;
+        }
+
+        CommandPaletteDialog.Hide();
+        Navigate(item.Tag);
     }
 
     // Keeps the rail honest about where the user actually is, including after a GoBack or a

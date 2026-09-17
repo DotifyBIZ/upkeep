@@ -149,6 +149,9 @@ public partial class App : Application
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<DriversViewModel>();
 
+        // Shell-level, not per-page: one palette lives for the whole run, same as the nav rail it stands in for.
+        services.AddSingleton<CommandPaletteViewModel>();
+
         return services.BuildServiceProvider();
     }
 

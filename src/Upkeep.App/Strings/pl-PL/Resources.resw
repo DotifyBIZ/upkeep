@@ -85,6 +85,14 @@
     <value>Ustawienia</value>
   </data>
 
+  <!-- Paleta poleceń -->
+  <data name="CommandPaletteSearchPlaceholder.PlaceholderText">
+    <value>Szukaj sekcji…</value>
+  </data>
+  <data name="CommandPaletteEmptyMessage.Text">
+    <value>Brak pasującej sekcji.</value>
+  </data>
+
   <!-- Start -->
   <data name="HomeSubtitle.Text">
     <value>Oczyść, dostrój, utrzymaj — wszystko działa na tym komputerze i nic go nie opuszcza.</value>

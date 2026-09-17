@@ -5,73 +5,129 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Upkeep.App"
+    xmlns:viewmodels="using:Upkeep.App.ViewModels"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <!--
-        The rail is the only way between sections. Pages reached from inside a section (a results
-        view, a comparison) keep their own Back affordance, and the shell back button below covers
-        the case where the rail's current item is already selected — clicking it again fires
-        ItemInvoked but not SelectionChanged, which is a dead end if only the latter is handled.
-    -->
-    <NavigationView
-        x:Name="Nav"
-        IsBackButtonVisible="Visible"
-        IsBackEnabled="False"
-        IsSettingsVisible="False"
-        SelectionChanged="Nav_SelectionChanged"
-        ItemInvoked="Nav_ItemInvoked"
-        BackRequested="Nav_BackRequested"
-        PaneDisplayMode="Left">
+    <Page.KeyboardAccelerators>
+        <KeyboardAccelerator Key="K" Modifiers="Control" Invoked="CommandPaletteAccelerator_Invoked" />
+    </Page.KeyboardAccelerators>
 
-        <NavigationView.MenuItems>
-            <NavigationViewItem x:Uid="NavHome" Tag="Home" IsSelected="True">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE80F;" />
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-            <NavigationViewItem x:Uid="NavCleanup" Tag="Cleanup">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE75C;" />
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-            <NavigationViewItem x:Uid="NavFiles" Tag="Files">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE8B7;" />
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-            <NavigationViewItem x:Uid="NavApps" Tag="Apps">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE71D;" />
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-            <NavigationViewItem x:Uid="NavStartup" Tag="Startup">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE9D9;" />
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-            <NavigationViewItem x:Uid="NavDrivers" Tag="Drivers">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE895;" />
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-            <NavigationViewItem x:Uid="NavHistory" Tag="History">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE81C;" />
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-            <NavigationViewItem x:Uid="NavSettings" Tag="Settings">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE713;" />
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-        </NavigationView.MenuItems>
+    <!--
+        A wrapping Grid rather than NavigationView directly as Page.Content: the palette dialog
+        needs to be a real sibling in the visual tree, not a Page.Resources entry — x:Bind inside a
+        DataTemplate nested that deep fails to resolve a project-local x:DataType at compile time
+        (WMC0909), a known XAML compiler limitation rather than anything about the type itself.
+    -->
+    <Grid>
+        <!--
+            The rail is the only way between sections. Pages reached from inside a section (a
+            results view, a comparison) keep their own Back affordance, and the shell back button
+            below covers the case where the rail's current item is already selected — clicking it
+            again fires ItemInvoked but not SelectionChanged, a dead end if only the latter is handled.
+        -->
+        <NavigationView
+            x:Name="Nav"
+            IsBackButtonVisible="Visible"
+            IsBackEnabled="False"
+            IsSettingsVisible="False"
+            SelectionChanged="Nav_SelectionChanged"
+            ItemInvoked="Nav_ItemInvoked"
+            BackRequested="Nav_BackRequested"
+            PaneDisplayMode="Left">
+
+            <NavigationView.MenuItems>
+                <NavigationViewItem x:Uid="NavHome" Tag="Home" IsSelected="True">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE80F;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Uid="NavCleanup" Tag="Cleanup">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE75C;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Uid="NavFiles" Tag="Files">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8B7;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Uid="NavApps" Tag="Apps">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE71D;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Uid="NavStartup" Tag="Startup">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE9D9;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Uid="NavDrivers" Tag="Drivers">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE895;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Uid="NavHistory" Tag="History">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE81C;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Uid="NavSettings" Tag="Settings">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE713;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <!--
+                Content pages are solid light cards per docs/design-tokens.md — Mica shows through
+                the title bar and this pane only, never through content. Forcing Light keeps native
+                control foregrounds legible against those explicit white surfaces whatever the
+                system theme is.
+            -->
+            <Frame x:Name="ContentFrame" RequestedTheme="Light" />
+        </NavigationView>
 
         <!--
-            Content pages are solid light cards per docs/design-tokens.md — Mica shows through the
-            title bar and this pane only, never through content. Forcing Light keeps native control
-            foregrounds legible against those explicit white surfaces whatever the system theme is.
+            No Title and no button text: ContentDialog with nothing set for either renders neither,
+            which is what turns the standard modal into a bare search box rather than something
+            needing its own from-scratch Popup and backdrop.
         -->
-        <Frame x:Name="ContentFrame" RequestedTheme="Light" />
-    </NavigationView>
+        <ContentDialog x:Name="CommandPaletteDialog" RequestedTheme="Light" Opened="CommandPaletteDialog_Opened">
+            <Grid MinWidth="440" RowSpacing="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBox
+                    x:Name="CommandPaletteInput"
+                    x:Uid="CommandPaletteSearchPlaceholder"
+                    Text="{x:Bind PaletteViewModel.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    KeyDown="CommandPaletteInput_KeyDown" />
+
+                <TextBlock
+                    Grid.Row="1"
+                    x:Uid="CommandPaletteEmptyMessage"
+                    Style="{StaticResource CaptionTextStyle}"
+                    Margin="4,8"
+                    Visibility="{x:Bind PaletteViewModel.HasNoResults, Mode=OneWay}" />
+
+                <ListView
+                    Grid.Row="1"
+                    x:Name="CommandPaletteList"
+                    ItemsSource="{x:Bind PaletteViewModel.Results, Mode=OneWay}"
+                    SelectionMode="Single"
+                    IsItemClickEnabled="True"
+                    ItemClick="CommandPaletteList_ItemClick"
+                    MaxHeight="320">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="viewmodels:CommandPaletteItem">
+                            <TextBlock Text="{x:Bind Title}" Padding="4" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </ContentDialog>
+    </Grid>
 </Page>
