@@ -954,6 +954,12 @@
   <data name="SettingsWelcomeButton.Content">
     <value>Pokaż przewodnik</value>
   </data>
+  <data name="ShellToastCleanup.Title">
+    <value>Czyszczenie zakończone</value>
+  </data>
+  <data name="ShellToastViewButton.Content">
+    <value>Pokaż w Historii</value>
+  </data>
   <data name="SettingsCouldNotOpen">
     <value>Nie udało się otworzyć tego folderu.</value>
   </data>

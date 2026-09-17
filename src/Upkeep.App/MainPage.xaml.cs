@@ -13,6 +13,8 @@ namespace Upkeep.App;
 
 public sealed partial class MainPage : Page
 {
+    private readonly DispatcherTimer _toastTimer = new() { Interval = TimeSpan.FromSeconds(8) };
+
     public MainPage()
     {
         PaletteViewModel = App.Services.GetRequiredService<CommandPaletteViewModel>();
@@ -23,6 +25,14 @@ public sealed partial class MainPage : Page
 
         // Settings asks for the tour from inside the frame; the dialog belongs to the window.
         WeakReferenceMessenger.Default.Register<MainPage, ShowWelcomeMessage>(this, (page, _) => page.ShowWelcome());
+        WeakReferenceMessenger.Default.Register<MainPage, CleanupFinishedMessage>(this, (page, message) => page.ShowCleanupToast(message));
+
+        // A toast that stays put is a banner; this one leaves on its own, or when it is clicked.
+        _toastTimer.Tick += (_, _) =>
+        {
+            _toastTimer.Stop();
+            ShellToast.IsOpen = false;
+        };
 
         Loaded += MainPage_Loaded;
     }
@@ -129,6 +139,31 @@ public sealed partial class MainPage : Page
         {
             await App.Services.GetRequiredService<IAppLogger>().LogErrorAsync("Deciding whether to show the welcome tour failed.", ex);
         }
+    }
+
+    /// <summary>
+    /// Only for someone who walked away from the run: the Cleanup page shows its own results
+    /// screen, and a toast on top of it would be the same news twice.
+    /// </summary>
+    private void ShowCleanupToast(CleanupFinishedMessage message)
+    {
+        if (ContentFrame.CurrentSourcePageType == typeof(CleanupPage))
+        {
+            return;
+        }
+
+        ShellToast.Message = message.FreedSummary;
+        ShellToast.IsOpen = true;
+
+        _toastTimer.Stop();
+        _toastTimer.Start();
+    }
+
+    private void ShellToastView_Click(object sender, RoutedEventArgs e)
+    {
+        ShellToast.IsOpen = false;
+        _toastTimer.Stop();
+        Navigate("History");
     }
 
     private void ShowWelcome()

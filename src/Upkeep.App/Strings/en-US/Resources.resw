@@ -954,6 +954,12 @@
   <data name="SettingsWelcomeButton.Content">
     <value>Show the tour</value>
   </data>
+  <data name="ShellToastCleanup.Title">
+    <value>Cleanup finished</value>
+  </data>
+  <data name="ShellToastViewButton.Content">
+    <value>View in History</value>
+  </data>
   <data name="SettingsCouldNotOpen">
     <value>That folder could not be opened.</value>
   </data>

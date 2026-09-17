@@ -89,6 +89,25 @@
         </NavigationView>
 
         <!--
+            Sits over the content pane rather than inside a page: the run it reports on can outlive
+            the page that started it. IsOpen is driven from code-behind, which is the only place
+            that knows which page the user is looking at now.
+        -->
+        <InfoBar
+            x:Name="ShellToast"
+            x:Uid="ShellToastCleanup"
+            IsOpen="False"
+            Severity="Success"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            MaxWidth="360"
+            Margin="24">
+            <InfoBar.ActionButton>
+                <Button x:Uid="ShellToastViewButton" Click="ShellToastView_Click" />
+            </InfoBar.ActionButton>
+        </InfoBar>
+
+        <!--
             No Title and no button text: ContentDialog with nothing set for either renders neither,
             which is what turns the standard modal into a bare search box rather than something
             needing its own from-scratch Popup and backdrop.

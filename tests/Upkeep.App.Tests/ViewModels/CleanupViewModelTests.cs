@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Safety;
@@ -11,9 +12,10 @@ public class CleanupViewModelTests
     private readonly FakeJunkScanner _scanner = new();
     private readonly FakeCleanupExecutor _executor = new();
     private readonly FakeElevationService _elevation = new();
+    private readonly WeakReferenceMessenger _messenger = new();
 
     private CleanupViewModel CreateViewModel() =>
-        new(_scanner, _executor, _elevation, new FakeLocalizationService(), new FakeAppLogger());
+        new(_scanner, _executor, _elevation, new FakeLocalizationService(), new FakeAppLogger(), _messenger);
 
     private static JunkCategoryScan ScanWith(JunkCategoryId id, long bytes, int items = 1) =>
         new(id, [.. Enumerable.Range(0, items).Select(index => new JunkItem($@"C:\temp\{id}-{index}", bytes / Math.Max(items, 1)))]);
@@ -230,5 +232,39 @@ public class CleanupViewModelTests
         Assert.True(viewModel.ShowScanPrompt);
         Assert.False(viewModel.CanIncludeSystemItems);
         Assert.False(viewModel.CanClean);
+    }
+
+    [Fact]
+    public async Task CleanAsync_TellsTheShellTheRunFinished()
+    {
+        // The shell decides whether that is worth a toast — a run can outlive the page that
+        // started it, and only the shell knows where the user went.
+        var recipient = new object();
+        CleanupFinishedMessage? received = null;
+        _messenger.Register<CleanupFinishedMessage>(recipient, (_, message) => received = message);
+
+        _scanner.UserScans.Add(ScanWith(JunkCategoryId.UserTemp, 2048));
+        var viewModel = CreateViewModel();
+        await viewModel.ScanAsync(CancellationToken.None);
+
+        await viewModel.CleanAsync(CancellationToken.None);
+
+        Assert.NotNull(received);
+        Assert.Equal(viewModel.FreedDisplay, received.FreedSummary);
+        GC.KeepAlive(recipient);
+    }
+
+    [Fact]
+    public async Task CleanAsync_NothingSelected_SaysNothingToTheShell()
+    {
+        var recipient = new object();
+        bool told = false;
+        _messenger.Register<CleanupFinishedMessage>(recipient, (_, _) => told = true);
+
+        var viewModel = CreateViewModel();
+        await viewModel.CleanAsync(CancellationToken.None);
+
+        Assert.False(told);
+        GC.KeepAlive(recipient);
     }
 }

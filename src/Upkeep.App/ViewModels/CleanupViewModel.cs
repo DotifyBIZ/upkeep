@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Upkeep.App.Core.Abstractions;
 using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Elevation;
@@ -26,19 +27,22 @@ public sealed partial class CleanupViewModel : ObservableObject
     private readonly IElevationService _elevation;
     private readonly ILocalizationService _localization;
     private readonly IAppLogger _logger;
+    private readonly IMessenger _messenger;
 
     public CleanupViewModel(
         IJunkScanner scanner,
         ICleanupExecutor executor,
         IElevationService elevation,
         ILocalizationService localization,
-        IAppLogger logger)
+        IAppLogger logger,
+        IMessenger messenger)
     {
         _scanner = scanner;
         _executor = executor;
         _elevation = elevation;
         _localization = localization;
         _logger = logger;
+        _messenger = messenger;
         Categories.CollectionChanged += (_, _) => RefreshSelectionSummary();
     }
 
@@ -259,6 +263,10 @@ public sealed partial class CleanupViewModel : ObservableObject
 
         StatusMessage = outcome.ElevationDeclined ? _localization.GetString("CommonElevationDeclined") : null;
         ShowResults = true;
+
+        // A run started here can finish while the user is three pages away; the shell decides
+        // whether that is worth a toast, since only it knows where they went.
+        _messenger.Send(new CleanupFinishedMessage(FreedDisplay));
     }
 
     private void Add(JunkCategoryScan scan)
