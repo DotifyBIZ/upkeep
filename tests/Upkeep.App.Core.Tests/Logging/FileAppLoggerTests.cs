@@ -72,4 +72,69 @@ public class FileAppLoggerTests : IDisposable
             File.Delete(path);
         }
     }
+
+    [Fact]
+    public async Task ReadRecentAsync_NoLogsYet_ReturnsEmpty()
+    {
+        using var logger = new FileAppLogger(_directory);
+
+        var lines = await logger.ReadRecentAsync(50);
+
+        Assert.Empty(lines);
+    }
+
+    [Fact]
+    public async Task ReadRecentAsync_ReturnsWhatWasLogged()
+    {
+        using var logger = new FileAppLogger(_directory);
+        await logger.LogInfoAsync("first thing");
+        await logger.LogWarningAsync("second thing");
+
+        var lines = await logger.ReadRecentAsync(50);
+
+        Assert.Equal(2, lines.Count);
+        Assert.Contains("first thing", lines[0], StringComparison.Ordinal);
+        Assert.Contains("second thing", lines[1], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ReadRecentAsync_MoreLinesThanAskedFor_KeepsTheLastOnes()
+    {
+        using var logger = new FileAppLogger(_directory);
+        for (int index = 0; index < 10; index++)
+        {
+            await logger.LogInfoAsync($"line {index}");
+        }
+
+        var lines = await logger.ReadRecentAsync(3);
+
+        Assert.Equal(3, lines.Count);
+        Assert.Contains("line 7", lines[0], StringComparison.Ordinal);
+        Assert.Contains("line 9", lines[2], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ReadRecentAsync_SeveralDaysOfLogs_ReadsTheNewestFile()
+    {
+        // Files roll daily; what a user wants to see is the latest one, not whichever the file
+        // system happens to enumerate first.
+        Directory.CreateDirectory(_directory);
+        await File.WriteAllTextAsync(Path.Combine(_directory, "upkeep-2020-01-01.log"), $"old line{Environment.NewLine}");
+        await File.WriteAllTextAsync(Path.Combine(_directory, "upkeep-2030-01-01.log"), $"new line{Environment.NewLine}");
+
+        using var logger = new FileAppLogger(_directory);
+        var lines = await logger.ReadRecentAsync(50);
+
+        Assert.Equal("new line", Assert.Single(lines));
+    }
+
+    [Fact]
+    public async Task ReadRecentAsync_ZeroOrFewerLines_ReturnsEmpty()
+    {
+        using var logger = new FileAppLogger(_directory);
+        await logger.LogInfoAsync("something happened");
+
+        Assert.Empty(await logger.ReadRecentAsync(0));
+        Assert.Empty(await logger.ReadRecentAsync(-5));
+    }
 }

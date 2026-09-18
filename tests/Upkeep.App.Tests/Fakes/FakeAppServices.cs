@@ -4,6 +4,7 @@ using Upkeep.App.Core.Drivers;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Logging;
 using Upkeep.App.Core.Platform;
+using Upkeep.App.Core.Storage;
 using Upkeep.App.Core.Updates;
 
 namespace Upkeep.App.Tests.Fakes;
@@ -18,6 +19,70 @@ public sealed class FakeJunkScanner : IJunkScanner
 
     public Task<JunkCategoryScan> ScanCategoryAsync(JunkCategoryId categoryId, CancellationToken cancellationToken = default) =>
         Task.FromResult(UserScans.FirstOrDefault(scan => scan.CategoryId == categoryId) ?? JunkCategoryScan.Empty(categoryId));
+
+    /// <summary>What the custom rules are said to match, whatever the rules themselves are.</summary>
+    public JunkCategoryScan CustomRuleScan { get; set; } = JunkCategoryScan.Empty(JunkCategoryId.CustomRules);
+
+    public List<IReadOnlyList<CustomCleanupRule>> CustomRuleScans { get; } = [];
+
+    public Task<JunkCategoryScan> ScanCustomRulesAsync(IReadOnlyList<CustomCleanupRule> rules, CancellationToken cancellationToken = default)
+    {
+        CustomRuleScans.Add(rules);
+        return Task.FromResult(CustomRuleScan);
+    }
+}
+
+/// <summary>Points the well-known locations at a throwaway tree, so a rule can be validated
+/// against folders a test made rather than the machine running it.</summary>
+public sealed class FakeWellKnownPaths : IWellKnownPaths, IDisposable
+{
+    private readonly string _root = Path.Combine(Path.GetTempPath(), $"upkeep-app-paths-{Guid.NewGuid():N}");
+
+    public FakeWellKnownPaths()
+    {
+        UserTemp = CreateUnder("Temp");
+        LocalAppData = CreateUnder("LocalAppData");
+        RoamingAppData = CreateUnder("AppData");
+        ProgramData = CreateUnder("ProgramData");
+        WindowsDirectory = CreateUnder("Windows");
+        UserProfilesRoot = CreateUnder("Users");
+        UserProfile = CreateUnder(Path.Combine("Users", "tester"));
+        SystemDriveRoot = _root;
+    }
+
+    public string UserTemp { get; }
+
+    public string LocalAppData { get; }
+
+    public string RoamingAppData { get; }
+
+    public string ProgramData { get; }
+
+    public string WindowsDirectory { get; }
+
+    public string SystemDriveRoot { get; }
+
+    public string UserProfilesRoot { get; }
+
+    public string UserProfile { get; }
+
+    public string CreateUnder(string relativePath)
+    {
+        string full = Path.Combine(_root, relativePath);
+        Directory.CreateDirectory(full);
+        return full;
+    }
+
+    public void Dispose()
+    {
+        try
+        {
+            Directory.Delete(_root, recursive: true);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or DirectoryNotFoundException)
+        {
+        }
+    }
 }
 
 /// <summary>Records the plan it was given and returns a canned outcome.</summary>
@@ -109,6 +174,12 @@ public sealed class FakeAppLogger : IAppLogger
 
     public string LogDirectory => Path.Combine(Path.GetTempPath(), "upkeep-fake-logs");
 
+    /// <summary>What ReadRecentAsync hands back — set by tests that care about the log viewer.</summary>
+    public List<string> RecentLines { get; } = [];
+
+    public Task<IReadOnlyList<string>> ReadRecentAsync(int maxLines, CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<string>>([.. RecentLines.TakeLast(maxLines)]);
+
     public Task LogErrorAsync(string message, Exception? exception = null, CancellationToken cancellationToken = default)
     {
         Lines.Add($"ERROR {message}");
@@ -187,4 +258,16 @@ public sealed class FixedTimeProvider : TimeProvider
     public FixedTimeProvider(DateTimeOffset utcNow) => _utcNow = utcNow;
 
     public override DateTimeOffset GetUtcNow() => _utcNow;
+}
+
+/// <summary>Reports whatever drives a test put in it, without touching a real disk.</summary>
+public sealed class FakeDriveScanner : IDriveScanner
+{
+    public List<DriveSnapshot> Drives { get; } = [];
+
+    public long? FreeBytes { get; set; }
+
+    public IReadOnlyList<DriveSnapshot> GetFixedDrives() => Drives;
+
+    public long? GetFreeBytes(string path) => FreeBytes;
 }

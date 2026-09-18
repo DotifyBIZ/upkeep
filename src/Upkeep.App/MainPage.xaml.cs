@@ -1,18 +1,45 @@
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
+using Upkeep.App.Core.Logging;
+using Upkeep.App.ViewModels;
 using Upkeep.App.Views;
+using Windows.System;
 
 namespace Upkeep.App;
 
 public sealed partial class MainPage : Page
 {
+    private readonly DispatcherTimer _toastTimer = new() { Interval = TimeSpan.FromSeconds(8) };
+
     public MainPage()
     {
+        PaletteViewModel = App.Services.GetRequiredService<CommandPaletteViewModel>();
+        WelcomeViewModel = App.Services.GetRequiredService<WelcomeViewModel>();
         InitializeComponent();
         ContentFrame.Navigated += ContentFrame_Navigated;
         ContentFrame.Navigate(typeof(HomePage));
+
+        // Settings asks for the tour from inside the frame; the dialog belongs to the window.
+        WeakReferenceMessenger.Default.Register<MainPage, ShowWelcomeMessage>(this, (page, _) => page.ShowWelcome());
+        WeakReferenceMessenger.Default.Register<MainPage, CleanupFinishedMessage>(this, (page, message) => page.ShowCleanupToast(message));
+
+        // A toast that stays put is a banner; this one leaves on its own, or when it is clicked.
+        _toastTimer.Tick += (_, _) =>
+        {
+            _toastTimer.Stop();
+            ShellToast.IsOpen = false;
+        };
+
+        Loaded += MainPage_Loaded;
     }
+
+    public CommandPaletteViewModel PaletteViewModel { get; }
+
+    public WelcomeViewModel WelcomeViewModel { get; }
 
     private static Type PageFor(string tag) => tag switch
     {
@@ -65,6 +92,126 @@ public sealed partial class MainPage : Page
         {
             ContentFrame.GoBack();
         }
+    }
+
+    private void CommandPaletteAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        args.Handled = true;
+
+        PaletteViewModel.Reset();
+        CommandPaletteDialog.XamlRoot = XamlRoot;
+
+        // Not awaited: ShowAsync doesn't resolve until the dialog closes, and this handler has
+        // nothing left to do once it's open — the fire-and-forget is the point, not an oversight.
+        _ = CommandPaletteDialog.ShowAsync();
+    }
+
+    // Focus has to wait for Opened rather than happen right after ShowAsync is called: the dialog's
+    // content isn't loaded yet at that point, so a Focus() call there silently lands nowhere.
+    private void CommandPaletteDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args) =>
+        CommandPaletteInput.Focus(FocusState.Programmatic);
+
+    private void CommandPaletteInput_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case VirtualKey.Enter:
+                NavigateToAndClosePalette(PaletteViewModel.Results.FirstOrDefault());
+                e.Handled = true;
+                break;
+            case VirtualKey.Escape:
+                CommandPaletteDialog.Hide();
+                e.Handled = true;
+                break;
+        }
+    }
+
+    private async void MainPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (await WelcomeViewModel.ShouldShowOnLaunchAsync(CancellationToken.None))
+            {
+                ShowWelcome();
+            }
+        }
+        catch (Exception ex)
+        {
+            await App.Services.GetRequiredService<IAppLogger>().LogErrorAsync("Deciding whether to show the welcome tour failed.", ex);
+        }
+    }
+
+    /// <summary>
+    /// Only for someone who walked away from the run: the Cleanup page shows its own results
+    /// screen, and a toast on top of it would be the same news twice.
+    /// </summary>
+    private void ShowCleanupToast(CleanupFinishedMessage message)
+    {
+        if (ContentFrame.CurrentSourcePageType == typeof(CleanupPage))
+        {
+            return;
+        }
+
+        ShellToast.Message = message.FreedSummary;
+        ShellToast.IsOpen = true;
+
+        _toastTimer.Stop();
+        _toastTimer.Start();
+    }
+
+    private void ShellToastView_Click(object sender, RoutedEventArgs e)
+    {
+        ShellToast.IsOpen = false;
+        _toastTimer.Stop();
+        Navigate("History");
+    }
+
+    private void ShowWelcome()
+    {
+        WelcomeViewModel.Reset();
+        WelcomeDialog.XamlRoot = XamlRoot;
+
+        // Not awaited for the same reason the palette isn't: ShowAsync only resolves on close.
+        _ = WelcomeDialog.ShowAsync();
+    }
+
+    // "Next" on anything but the last screen advances instead of closing, which is what cancelling
+    // the click does — the dialog's own primary button is the tour's forward control.
+    private void WelcomeDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        if (!WelcomeViewModel.IsLastStep)
+        {
+            args.Cancel = true;
+            WelcomeViewModel.Next();
+        }
+    }
+
+    // Closed rather than the button handlers: skipping, finishing and pressing Escape all mean the
+    // same thing — this machine's owner has seen it and shouldn't be shown it again.
+    private async void WelcomeDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
+    {
+        try
+        {
+            await WelcomeViewModel.MarkSeenAsync(CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            await App.Services.GetRequiredService<IAppLogger>().LogErrorAsync("Recording that the welcome tour was seen failed.", ex);
+        }
+    }
+
+    private void CommandPaletteList_ItemClick(object sender, ItemClickEventArgs e) =>
+        NavigateToAndClosePalette(e.ClickedItem as CommandPaletteItem);
+
+    private void NavigateToAndClosePalette(CommandPaletteItem? item)
+    {
+        if (item is null)
+        {
+            return;
+        }
+
+        CommandPaletteDialog.Hide();
+        Navigate(item.Tag);
     }
 
     // Keeps the rail honest about where the user actually is, including after a GoBack or a

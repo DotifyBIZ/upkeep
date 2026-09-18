@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Xml.Linq;
+using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Services;
 
 namespace Upkeep.App.Tests.Localization;
@@ -84,6 +85,40 @@ public class ResourceParityTests
         }
 
         return count;
+    }
+
+    [Fact]
+    public void EveryJunkCategoryHasANameAndDescriptionInBothLanguages()
+    {
+        // These keys are built from the enum at runtime rather than written in XAML, so a new
+        // category compiles happily and then shows its own resource key on screen.
+        var english = ReadResources("en-US");
+        var polish = ReadResources("pl-PL");
+
+        foreach (var category in JunkCatalog.All)
+        {
+            Assert.True(english.ContainsKey(category.NameKey), $"en-US is missing {category.NameKey}");
+            Assert.True(english.ContainsKey(category.DescriptionKey), $"en-US is missing {category.DescriptionKey}");
+            Assert.True(polish.ContainsKey(category.NameKey), $"pl-PL is missing {category.NameKey}");
+            Assert.True(polish.ContainsKey(category.DescriptionKey), $"pl-PL is missing {category.DescriptionKey}");
+        }
+    }
+
+    [Fact]
+    public void EveryCustomRuleProblemHasAMessageInBothLanguages()
+    {
+        // Same runtime-built keys, and this one is the message a user sees when their rule was
+        // refused — the worst moment to show them "CustomRuleProblemTooBroad" instead of a reason.
+        var english = ReadResources("en-US");
+        var polish = ReadResources("pl-PL");
+
+        foreach (var problem in Enum.GetValues<CustomRuleProblem>().Where(problem => problem != CustomRuleProblem.None))
+        {
+            string key = $"CustomRuleProblem{problem}";
+
+            Assert.True(english.ContainsKey(key), $"en-US is missing {key}");
+            Assert.True(polish.ContainsKey(key), $"pl-PL is missing {key}");
+        }
     }
 
     [Fact]

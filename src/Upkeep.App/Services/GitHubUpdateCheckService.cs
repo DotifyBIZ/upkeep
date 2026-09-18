@@ -57,19 +57,20 @@ public sealed class GitHubUpdateCheckService : IUpdateCheckService
             if (!response.IsSuccessStatusCode)
             {
                 await _logger.LogWarningAsync($"Update check returned {(int)response.StatusCode}.", cancellationToken);
-                return UpdateCheckResult.NoUpdate;
+                return UpdateCheckResult.Failed;
             }
 
             if (response.Content.Headers.ContentLength > MaxResponseBytes)
             {
                 await _logger.LogWarningAsync("Update check response was larger than expected and was ignored.", cancellationToken);
-                return UpdateCheckResult.NoUpdate;
+                return UpdateCheckResult.Failed;
             }
 
             var release = await response.Content.ReadFromJsonAsync<GitHubRelease>(timeout.Token);
             if (release?.TagName is null)
             {
-                return UpdateCheckResult.NoUpdate;
+                await _logger.LogWarningAsync("Update check got an answer with no release tag in it.", cancellationToken);
+                return UpdateCheckResult.Failed;
             }
 
             string currentVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0";
@@ -81,7 +82,7 @@ public sealed class GitHubUpdateCheckService : IUpdateCheckService
         {
             // Offline, GitHub down, rate-limited, malformed: all mean the same thing to the user.
             await _logger.LogWarningAsync($"Update check did not complete: {ex.Message}", cancellationToken);
-            return UpdateCheckResult.NoUpdate;
+            return UpdateCheckResult.Failed;
         }
     }
 

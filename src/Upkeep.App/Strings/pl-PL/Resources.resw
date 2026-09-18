@@ -85,6 +85,14 @@
     <value>Ustawienia</value>
   </data>
 
+  <!-- Paleta poleceń -->
+  <data name="CommandPaletteSearchPlaceholder.PlaceholderText">
+    <value>Szukaj sekcji…</value>
+  </data>
+  <data name="CommandPaletteEmptyMessage.Text">
+    <value>Brak pasującej sekcji.</value>
+  </data>
+
   <!-- Start -->
   <data name="HomeSubtitle.Text">
     <value>Oczyść, dostrój, utrzymaj — wszystko działa na tym komputerze i nic go nie opuszcza.</value>
@@ -104,6 +112,9 @@
   <data name="HomeUpdateActionButton.Content">
     <value>Zobacz wydanie</value>
   </data>
+  <data name="HomeNextActionButton.Content">
+    <value>Przejrzyj pliki</value>
+  </data>
 
   <!-- Start, teksty budowane w kodzie -->
   <data name="HomeGreetingMorning">
@@ -120,6 +131,30 @@
   </data>
   <data name="HomeUpdateAvailableFormat">
     <value>Dostępny jest Upkeep {0}.</value>
+  </data>
+  <data name="HomeHealthGoodHeadline">
+    <value>Wygląda dobrze</value>
+  </data>
+  <data name="HomeHealthAttentionHeadline">
+    <value>Czas na porządki</value>
+  </data>
+  <data name="HomeHealthGoodFormat">
+    <value>Ostatnio czyszczono {0}.</value>
+  </data>
+  <data name="HomeHealthGoodWithFreedFormat">
+    <value>Ostatnio czyszczono {0} — zwolniono {1}.</value>
+  </data>
+  <data name="HomeHealthNeverCleanedDetail">
+    <value>Nie wykonano jeszcze czyszczenia.</value>
+  </data>
+  <data name="HomeHealthStaleFormat">
+    <value>Ostatnie czyszczenie: {0}.</value>
+  </data>
+  <data name="HomeNextActionLowDiskTitleFormat">
+    <value>Dysk {0} jest zapełniony w {1}%</value>
+  </data>
+  <data name="HomeNextActionLowDiskDetail">
+    <value>Warto sprawdzić duże pliki i duplikaty.</value>
   </data>
   <data name="DriveFreeOfTotalFormat">
     <value>{0} wolne z {1}</value>
@@ -876,6 +911,99 @@
   </data>
   <data name="SettingsOpenLogsButton.Content">
     <value>Otwórz folder dzienników</value>
+  </data>
+  <data name="SettingsLogViewer.Header">
+    <value>Pokaż ostatnie wpisy dziennika</value>
+  </data>
+  <data name="SettingsLogEmpty">
+    <value>Nic jeszcze nie zapisano w dzienniku.</value>
+  </data>
+  <data name="WelcomePrivacyTitle">
+    <value>Wszystko zostaje na tym komputerze</value>
+  </data>
+  <data name="WelcomePrivacyBody">
+    <value>Bez konta, bez serwera, bez telemetrii. Upkeep odczytuje i zmienia tylko ten komputer — nic poza nim.</value>
+  </data>
+  <data name="WelcomePreviewTitle">
+    <value>Nic nie dzieje się bez podglądu</value>
+  </data>
+  <data name="WelcomePreviewBody">
+    <value>Każde skanowanie pokazuje dokładnie, czego dotknie, zanim cokolwiek się wydarzy. Pliki, które możesz chcieć odzyskać, trafiają do kwarantanny, a nie od razu do usunięcia.</value>
+  </data>
+  <data name="WelcomeRevertTitle">
+    <value>Jedno kliknięcie cofa całą sesję</value>
+  </data>
+  <data name="WelcomeRevertBody">
+    <value>Elementy autostartu, usługi, klucze rejestru, pliki w kwarantannie — Historia potrafi przywrócić to wszystko.</value>
+  </data>
+  <data name="WelcomeNextButton">
+    <value>Dalej</value>
+  </data>
+  <data name="WelcomeFinishButton">
+    <value>Zaczynajmy</value>
+  </data>
+  <data name="WelcomeDialog.CloseButtonText">
+    <value>Pomiń</value>
+  </data>
+  <data name="SettingsWelcomeHeader.Text">
+    <value>Przewodnik powitalny</value>
+  </data>
+  <data name="SettingsWelcomeNote.Text">
+    <value>Trzy ekrany pokazywane przy pierwszym uruchomieniu Upkeep.</value>
+  </data>
+  <data name="SettingsWelcomeButton.Content">
+    <value>Pokaż przewodnik</value>
+  </data>
+  <data name="ShellToastCleanup.Title">
+    <value>Czyszczenie zakończone</value>
+  </data>
+  <data name="ShellToastViewButton.Content">
+    <value>Pokaż w Historii</value>
+  </data>
+  <data name="JunkCategoryCustomRulesName">
+    <value>Twoje własne reguły</value>
+  </data>
+  <data name="JunkCategoryCustomRulesDescription">
+    <value>Pliki pasujące do dodanych reguł, przenoszone do kwarantanny</value>
+  </data>
+  <data name="CleanupCustomRules.Header">
+    <value>Reguły własne</value>
+  </data>
+  <data name="CleanupCustomRulesNote.Text">
+    <value>Dodaj folder albo folder i wzorzec, na przykład *.cache. Dopasowania pojawiają się w podglądzie powyżej i trafiają do kwarantanny, nigdy nie są usuwane od razu — folder w Twoim folderze użytkownika albo dowolne miejsce na innym dysku.</value>
+  </data>
+  <data name="CleanupCustomRuleInput.PlaceholderText">
+    <value>D:\Renders\*.cache</value>
+  </data>
+  <data name="CleanupCustomRuleAddButton.Content">
+    <value>Dodaj regułę</value>
+  </data>
+  <data name="CleanupCustomRuleRemoveButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name">
+    <value>Usuń tę regułę</value>
+  </data>
+  <data name="CleanupConfirmQuarantined">
+    <value>Pliki dopasowane przez Twoje reguły trafiają do kwarantanny, a Historia potrafi je przywrócić.</value>
+  </data>
+  <data name="CustomRuleProblemEmpty">
+    <value>Najpierw wpisz folder lub wzorzec.</value>
+  </data>
+  <data name="CustomRuleProblemWildcardInFolder">
+    <value>Znak * lub ? może być w nazwie pliku, ale nie w ścieżce folderu.</value>
+  </data>
+  <data name="CustomRuleProblemNotAbsolute">
+    <value>Podaj pełną ścieżkę albo wzorzec taki jak *.bak dla Twojego folderu użytkownika.</value>
+  </data>
+  <data name="CustomRuleProblemFolderMissing">
+    <value>Tego folderu tam nie ma.</value>
+  </data>
+  <data name="CustomRuleProblemOutsideAllowedArea">
+    <value>Reguły mogą obejmować tylko Twój folder użytkownika albo inny dysk — nie Windows, nie inne konta i nie pliki samego Upkeep.</value>
+  </data>
+  <data name="CustomRuleProblemTooBroad">
+    <value>To dopasowałoby każdy plik na dysku. Zawęź regułę folderem lub wzorcem.</value>
+  </data>
+  <data name="CustomRuleProblemDuplicate">
+    <value>Ta reguła już jest na liście.</value>
   </data>
   <data name="SettingsCouldNotOpen">
     <value>Nie udało się otworzyć tego folderu.</value>

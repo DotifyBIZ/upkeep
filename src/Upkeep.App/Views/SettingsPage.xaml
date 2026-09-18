@@ -106,12 +106,37 @@
                     </StackPanel>
                 </Border>
 
+                <!--  Welcome tour  -->
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <StackPanel Spacing="8">
+                        <TextBlock x:Uid="SettingsWelcomeHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                        <TextBlock x:Uid="SettingsWelcomeNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                        <Button x:Uid="SettingsWelcomeButton" Command="{x:Bind ViewModel.ReplayWelcomeTourCommand}" HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+
                 <!--  Logs  -->
                 <Border Style="{StaticResource CardBorderStyle}">
                     <StackPanel Spacing="8">
                         <TextBlock x:Uid="SettingsLogsHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
                         <TextBlock x:Uid="SettingsLogsNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
                         <Button x:Uid="SettingsOpenLogsButton" Command="{x:Bind ViewModel.OpenLogsFolderCommand}" HorizontalAlignment="Left" />
+
+                        <!--  Collapsed by default: the log is for the run that went wrong, not for everyone's first visit.  -->
+                        <Expander
+                            x:Uid="SettingsLogViewer"
+                            x:Name="LogViewer"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            Expanding="LogViewer_Expanding">
+                            <ScrollViewer MaxHeight="260" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                <TextBlock
+                                    Text="{x:Bind ViewModel.LogLines, Mode=OneWay}"
+                                    FontFamily="Consolas"
+                                    FontSize="12"
+                                    IsTextSelectionEnabled="True" />
+                            </ScrollViewer>
+                        </Expander>
                     </StackPanel>
                 </Border>
 

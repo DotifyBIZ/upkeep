@@ -1,3 +1,4 @@
+using System.IO.Enumeration;
 using Upkeep.App.Core.Platform;
 
 namespace Upkeep.App.Core.Cleanup;
@@ -25,7 +26,10 @@ public sealed class JunkScanner : IJunkScanner
     public async Task<IReadOnlyList<JunkCategoryScan>> ScanUserCategoriesAsync(CancellationToken cancellationToken = default)
     {
         var scans = new List<JunkCategoryScan>();
-        foreach (var category in JunkCatalog.ForScope(JunkScope.User))
+
+        // Custom rules are user-scope too, but they come from settings rather than the catalog and
+        // are scanned through ScanCustomRulesAsync, which is the only call that knows the rules.
+        foreach (var category in JunkCatalog.ForScope(JunkScope.User).Where(category => category.Id != JunkCategoryId.CustomRules))
         {
             cancellationToken.ThrowIfCancellationRequested();
             scans.Add(await ScanCategoryAsync(category.Id, cancellationToken));
@@ -59,7 +63,64 @@ public sealed class JunkScanner : IJunkScanner
         }, cancellationToken);
     }
 
+    public Task<JunkCategoryScan> ScanCustomRulesAsync(IReadOnlyList<CustomCleanupRule> rules, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(rules);
+
+        if (rules.Count == 0)
+        {
+            return Task.FromResult(JunkCategoryScan.Empty(JunkCategoryId.CustomRules));
+        }
+
+        return Task.Run(() => ScanCustomRules(rules, cancellationToken), cancellationToken);
+    }
+
     private DateTime UtcNow => _timeProvider.GetUtcNow().UtcDateTime;
+
+    /// <summary>
+    /// Walks each rule's folder and keeps the files whose names match its pattern. Two rules over
+    /// the same tree are common ("*.bak" and "*.tmp" in the same place), so matches are deduplicated
+    /// — the same file listed twice would be counted twice in the preview's total.
+    /// </summary>
+    private JunkCategoryScan ScanCustomRules(IReadOnlyList<CustomCleanupRule> rules, CancellationToken cancellationToken)
+    {
+        var items = new List<JunkItem>();
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var details = new List<string>();
+        int skipped = 0;
+        bool unreadable = false;
+
+        foreach (var rule in rules)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // No grace period: these are the user's own files chosen by their own rule, not
+            // something an installer might be holding open.
+            var scan = FileTreeScanner.Scan(rule.Root, TimeSpan.Zero, UtcNow, cancellationToken);
+            skipped += scan.SkippedCount;
+            unreadable |= scan.HadUnreadableEntries;
+
+            foreach (var item in scan.Items)
+            {
+                if (FileSystemName.MatchesSimpleExpression(rule.Pattern, Path.GetFileName(item.Path), ignoreCase: true)
+                    && seen.Add(item.Path))
+                {
+                    items.Add(item);
+                }
+            }
+
+            details.Add(rule.Display);
+        }
+
+        return new JunkCategoryScan(
+            JunkCategoryId.CustomRules,
+            items,
+            unreadable ? JunkScanNote.PartiallyUnreadable : JunkScanNote.None,
+            skipped)
+        {
+            Details = details,
+        };
+    }
 
     private JunkCategoryScan ScanUserTemp(CancellationToken cancellationToken)
     {

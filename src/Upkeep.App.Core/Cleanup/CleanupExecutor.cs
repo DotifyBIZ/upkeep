@@ -1,6 +1,7 @@
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Logging;
 using Upkeep.App.Core.Platform;
+using Upkeep.App.Core.Quarantine;
 using Upkeep.App.Core.Safety;
 using Upkeep.App.Core.Sessions;
 using Upkeep.App.Core.Storage;
@@ -32,6 +33,7 @@ public sealed class CleanupExecutor : ICleanupExecutor
     private readonly IRecycleBin _recycleBin;
     private readonly IDriveScanner _driveScanner;
     private readonly IWellKnownPaths _paths;
+    private readonly IQuarantineStore _quarantine;
     private readonly IAppLogger _logger;
 
     public CleanupExecutor(
@@ -41,6 +43,7 @@ public sealed class CleanupExecutor : ICleanupExecutor
         IRecycleBin recycleBin,
         IDriveScanner driveScanner,
         IWellKnownPaths paths,
+        IQuarantineStore quarantine,
         IAppLogger logger)
     {
         _journal = journal;
@@ -49,6 +52,7 @@ public sealed class CleanupExecutor : ICleanupExecutor
         _recycleBin = recycleBin;
         _driveScanner = driveScanner;
         _paths = paths;
+        _quarantine = quarantine;
         _logger = logger;
     }
 
@@ -131,6 +135,14 @@ public sealed class CleanupExecutor : ICleanupExecutor
     {
         var category = planned.Category;
 
+        // Quarantined categories are journaled a file at a time, because that is what it takes to
+        // put each one back. Everything else is one summary entry per category: a deleted cache
+        // has nothing to restore, and a hundred thousand entries would make the manifest useless.
+        if (category.Removal == RemovalKind.Quarantined)
+        {
+            return await QuarantineCategoryAsync(session, planned, cancellationToken);
+        }
+
         // Journaled before the work, not after: an interrupted run must still say what it started.
         var entry = new IrreversibleOperationEntry(
             $"Cleanup.{category.Id}",
@@ -168,6 +180,80 @@ public sealed class CleanupExecutor : ICleanupExecutor
             cancellationToken);
 
         return (session, outcome);
+    }
+
+    /// <summary>
+    /// Moves a category's files to quarantine, one journal entry each, written before the move.
+    /// Nothing here is reported as freed: a quarantined file still occupies the disk until the
+    /// quarantine is purged, and saying otherwise would be the "7.7 GB freed" that isn't.
+    /// </summary>
+    private async Task<(SessionManifest Session, CategoryOutcome Outcome)> QuarantineCategoryAsync(
+        SessionManifest session,
+        PlannedCategory planned,
+        CancellationToken cancellationToken)
+    {
+        long affected = 0;
+        long moved = 0;
+        long skipped = 0;
+
+        foreach (var item in planned.Scan.Items)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // Size now, not the size the scan saw. A file that has since gone is one to skip.
+            long size = TryGetSize(item.Path);
+            if (size < 0)
+            {
+                skipped++;
+                continue;
+            }
+
+            // The quarantine path isn't known until the move happens, which is why the entry is
+            // written empty first and completed after — the record still exists if the run dies.
+            session = await _journal.AppendAsync(session, new FileQuarantinedEntry(item.Path, string.Empty, size), cancellationToken);
+            int entryIndex = session.Entries.Count - 1;
+
+            var result = await _quarantine.QuarantineAsync(item.Path, session.Id, cancellationToken);
+            if (result.Success)
+            {
+                affected += size;
+                moved++;
+            }
+            else
+            {
+                skipped++;
+                await _logger.LogWarningAsync($"Could not quarantine {item.Path}: {result.FailureDetail}", cancellationToken);
+            }
+
+            session = await _journal.UpdateEntryAsync(
+                session,
+                entryIndex,
+                new FileQuarantinedEntry(item.Path, result.QuarantinePath ?? string.Empty, size)
+                {
+                    Completed = result.Success,
+                    FailureDetail = result.FailureDetail,
+                },
+                cancellationToken);
+        }
+
+        await _logger.LogInfoAsync(
+            $"Quarantined {moved} of {planned.ItemCount} files for {planned.Scan.CategoryId} ({affected} bytes held).",
+            cancellationToken);
+
+        return (session, new CategoryOutcome(planned.Scan.CategoryId, 0, moved, skipped));
+    }
+
+    private static long TryGetSize(string path)
+    {
+        try
+        {
+            var info = new FileInfo(path);
+            return info.Exists ? info.Length : -1;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+        {
+            return -1;
+        }
     }
 
     private async Task<CategoryOutcome> CleanUserCategoryAsync(PlannedCategory planned, CancellationToken cancellationToken)

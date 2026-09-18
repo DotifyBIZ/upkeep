@@ -41,6 +41,10 @@ public sealed record CleanupPlan
     /// </summary>
     public bool HasIrreversibleWork => Categories.Any(category => category.Category.Removal == RemovalKind.Irreversible);
 
+    /// <summary>True when part of the run moves files to quarantine rather than deleting them —
+    /// worth saying in the confirmation, because it is the opposite promise from the rest.</summary>
+    public bool HasQuarantinedWork => Categories.Any(category => category.Category.Removal == RemovalKind.Quarantined);
+
     /// <summary>
     /// A restore point precedes any run that touches the system, which is the case worth being able
     /// to roll back: a user-scope cache clean has nothing a restore point would help with.
