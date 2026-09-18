@@ -28,6 +28,46 @@ public sealed class FileAppLogger : IAppLogger, IDisposable
 
     public void Dispose() => _writeLock.Dispose();
 
+    public async Task<IReadOnlyList<string>> ReadRecentAsync(int maxLines, CancellationToken cancellationToken = default)
+    {
+        if (maxLines <= 0)
+        {
+            return [];
+        }
+
+        try
+        {
+            // Names are upkeep-yyyy-MM-dd.log, so the highest name is the newest file.
+            string? newest = Directory.EnumerateFiles(_logDirectory, "upkeep-*.log")
+                .OrderByDescending(path => path, StringComparer.Ordinal)
+                .FirstOrDefault();
+
+            if (newest is null)
+            {
+                return [];
+            }
+
+            // A day's log can run to thousands of lines; only the last maxLines are ever shown, so
+            // the queue keeps exactly that many in memory rather than the whole file.
+            var tail = new Queue<string>(maxLines);
+            await foreach (string line in File.ReadLinesAsync(newest, cancellationToken))
+            {
+                if (tail.Count == maxLines)
+                {
+                    tail.Dequeue();
+                }
+
+                tail.Enqueue(line);
+            }
+
+            return [.. tail];
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or DirectoryNotFoundException or OperationCanceledException)
+        {
+            return [];
+        }
+    }
+
     public Task LogErrorAsync(string message, Exception? exception = null, CancellationToken cancellationToken = default) =>
         WriteAsync("ERROR", exception is null ? message : $"{message}{Environment.NewLine}{exception}", cancellationToken);
 

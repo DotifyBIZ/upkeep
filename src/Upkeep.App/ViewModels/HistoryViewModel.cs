@@ -129,7 +129,7 @@ public sealed partial class HistoryViewModel : ObservableObject
             Sessions.Clear();
             foreach (var session in sessions)
             {
-                Sessions.Add(BuildDisplay(session));
+                Sessions.Add(BuildDisplay(session, _localization));
             }
 
             IsEmpty = Sessions.Count == 0;
@@ -188,26 +188,30 @@ public sealed partial class HistoryViewModel : ObservableObject
         }
     }
 
-    private HistorySessionDisplay BuildDisplay(SessionManifest session)
+    /// <summary>
+    /// Turns a raw session into the words History (and Home's recent-activity list, which shares
+    /// this rather than inventing its own phrasing for the same session) shows for it.
+    /// </summary>
+    internal static HistorySessionDisplay BuildDisplay(SessionManifest session, ILocalizationService localization)
     {
         string? freed = session.FreedBytes > 0
-            ? _localization.GetString("HistoryFreedFormat", ByteSize.Format(session.FreedBytes))
+            ? localization.GetString("HistoryFreedFormat", ByteSize.Format(session.FreedBytes))
             : null;
 
         string? restorePoint = session.RestorePointDescription is null
             ? null
-            : _localization.GetString(session.RestorePointWasReused ? "HistoryRestorePointReused" : "HistoryRestorePointCreated");
+            : localization.GetString(session.RestorePointWasReused ? "HistoryRestorePointReused" : "HistoryRestorePointCreated");
 
         return new HistorySessionDisplay(
             session,
-            _localization.GetString($"HistoryKind{session.Kind}"),
+            localization.GetString($"HistoryKind{session.Kind}"),
             session.StartedAt.ToLocalTime().ToString("g", CultureInfo.CurrentCulture),
-            _localization.GetString("HistoryChangesFormat", session.CompletedCount),
+            localization.GetString("HistoryChangesFormat", session.CompletedCount),
             freed,
             restorePoint,
-            session.CompletedAt is null ? _localization.GetString("HistoryUnfinished") : null,
+            session.CompletedAt is null ? localization.GetString("HistoryUnfinished") : null,
             session.RevertedAt is DateTimeOffset reverted
-                ? _localization.GetString("HistoryRevertedFormat", reverted.ToLocalTime().ToString("g", CultureInfo.CurrentCulture))
+                ? localization.GetString("HistoryRevertedFormat", reverted.ToLocalTime().ToString("g", CultureInfo.CurrentCulture))
                 : null);
     }
 }

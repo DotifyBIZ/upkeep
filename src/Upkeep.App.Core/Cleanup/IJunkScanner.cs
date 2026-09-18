@@ -12,4 +12,10 @@ public interface IJunkScanner
 
     /// <summary>Scans one category. Throws for system-scope categories, which belong to the helper.</summary>
     Task<JunkCategoryScan> ScanCategoryAsync(JunkCategoryId categoryId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Scans the user's own rules. Separate from the categories above because the rules come from
+    /// settings rather than from the catalog, and an empty list is the normal case.
+    /// </summary>
+    Task<JunkCategoryScan> ScanCustomRulesAsync(IReadOnlyList<CustomCleanupRule> rules, CancellationToken cancellationToken = default);
 }

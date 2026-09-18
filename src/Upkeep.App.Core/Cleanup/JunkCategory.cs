@@ -15,6 +15,7 @@ public enum JunkCategoryId
     WindowsUpdateCleanup,
     DeliveryOptimization,
     SystemCrashDumps,
+    CustomRules,
 }
 
 /// <summary>Whether a category can be cleaned as the signed-in user, or needs the elevated helper.</summary>

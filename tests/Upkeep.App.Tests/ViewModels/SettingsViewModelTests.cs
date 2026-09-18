@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.Messaging;
 using Upkeep.App.Core.Abstractions;
 using Upkeep.App.Core.Settings;
 using Upkeep.App.Tests.Fakes;
@@ -11,9 +12,11 @@ public class SettingsViewModelTests
     private readonly FakeUpdateCheckService _updates = new();
     private readonly FakeQuarantineStore _quarantine = new();
     private readonly FakeWindowsUiLauncher _launcher = new();
+    private readonly FakeAppLogger _logger = new();
+    private readonly WeakReferenceMessenger _messenger = new();
 
     private SettingsViewModel CreateViewModel(string? productVersion = "1.2.3") =>
-        new(_settings, _updates, _quarantine, _launcher, new FakeLocalizationService(), new FakeAppLogger(), productVersion);
+        new(_settings, _updates, _quarantine, _launcher, new FakeLocalizationService(), _logger, _messenger, productVersion);
 
     private async Task<SettingsViewModel> LoadedAsync(string? productVersion = "1.2.3")
     {
@@ -148,6 +151,20 @@ public class SettingsViewModelTests
     }
 
     [Fact]
+    public async Task CheckForUpdatesNowAsync_CheckCouldNotBeMade_DoesNotClaimTheAppIsUpToDate()
+    {
+        // GitHub rate-limits unauthenticated callers: a 403 comes back as a perfectly good HTTP
+        // response, and reporting it as "up to date" answers a question nobody managed to ask.
+        _updates.Result = UpdateCheckResult.Failed;
+        var viewModel = await LoadedAsync();
+
+        await viewModel.CheckForUpdatesNowAsync(CancellationToken.None);
+
+        Assert.Equal("SettingsUpdateCheckFailed", viewModel.UpdateStatus);
+        Assert.False(viewModel.HasRelease);
+    }
+
+    [Fact]
     public async Task CheckForUpdatesNowAsync_Offline_IsAPlainMessageNotAnError()
     {
         // Upkeep works offline; a failed check is a normal outcome.
@@ -258,5 +275,26 @@ public class SettingsViewModelTests
     {
         Assert.Contains("1.4.0", CreateViewModel("1.4.0+abc1234").VersionDisplay, StringComparison.Ordinal);
         Assert.DoesNotContain("abc1234", CreateViewModel("1.4.0+abc1234").VersionDisplay, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task LoadLogAsync_ShowsTheLinesInOrder()
+    {
+        _logger.RecentLines.AddRange(["first line", "second line"]);
+        var viewModel = CreateViewModel();
+
+        await viewModel.LoadLogAsync(CancellationToken.None);
+
+        Assert.Equal($"first line{Environment.NewLine}second line", viewModel.LogLines);
+    }
+
+    [Fact]
+    public async Task LoadLogAsync_NothingLoggedYet_SaysSo()
+    {
+        var viewModel = CreateViewModel();
+
+        await viewModel.LoadLogAsync(CancellationToken.None);
+
+        Assert.Equal("SettingsLogEmpty", viewModel.LogLines);
     }
 }

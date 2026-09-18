@@ -2,12 +2,15 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Upkeep.App.Core.Abstractions;
 using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Formatting;
 using Upkeep.App.Core.Logging;
+using Upkeep.App.Core.Platform;
 using Upkeep.App.Core.Safety;
+using Upkeep.App.Core.Settings;
 
 namespace Upkeep.App.ViewModels;
 
@@ -26,19 +29,28 @@ public sealed partial class CleanupViewModel : ObservableObject
     private readonly IElevationService _elevation;
     private readonly ILocalizationService _localization;
     private readonly IAppLogger _logger;
+    private readonly IMessenger _messenger;
+    private readonly IAppSettingsService _settings;
+    private readonly IWellKnownPaths _paths;
 
     public CleanupViewModel(
         IJunkScanner scanner,
         ICleanupExecutor executor,
         IElevationService elevation,
         ILocalizationService localization,
-        IAppLogger logger)
+        IAppLogger logger,
+        IMessenger messenger,
+        IAppSettingsService settings,
+        IWellKnownPaths paths)
     {
         _scanner = scanner;
         _executor = executor;
         _elevation = elevation;
         _localization = localization;
         _logger = logger;
+        _messenger = messenger;
+        _settings = settings;
+        _paths = paths;
         Categories.CollectionChanged += (_, _) => RefreshSelectionSummary();
     }
 
@@ -49,6 +61,19 @@ public sealed partial class CleanupViewModel : ObservableObject
     public ObservableCollection<CleanupCategoryDisplay> UserCategories { get; } = [];
 
     public ObservableCollection<CleanupCategoryDisplay> SystemCategories { get; } = [];
+
+    /// <summary>The user's own rules, as they typed them. Empty for almost everyone.</summary>
+    public ObservableCollection<string> CustomRules { get; } = [];
+
+    [ObservableProperty]
+    public partial string NewRule { get; set; } = string.Empty;
+
+    /// <summary>Why the last rule wasn't accepted, or null when it was.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasRuleProblem))]
+    public partial string? RuleProblem { get; set; }
+
+    public bool HasRuleProblem => !string.IsNullOrEmpty(RuleProblem);
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowScanPrompt))]
@@ -141,6 +166,8 @@ public sealed partial class CleanupViewModel : ObservableObject
             {
                 Add(scan);
             }
+
+            await ScanCustomRulesAsync(cancellationToken);
 
             // Machine-wide categories appear straight away, so the user can see what exists before
             // deciding whether to grant anything — they just have no size until they ask.
@@ -235,6 +262,112 @@ public sealed partial class CleanupViewModel : ObservableObject
         await ScanAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// Accepts a rule the user typed, or says why it can't be. A rule decides what gets
+    /// quarantined, so what it points at is checked here (<see cref="CustomCleanupRule"/>) and not
+    /// left for the scan to discover.
+    /// </summary>
+    [RelayCommand]
+    public async Task AddRuleAsync(CancellationToken cancellationToken)
+    {
+        if (!CustomCleanupRule.TryParse(NewRule, _paths, out var rule, out var problem))
+        {
+            RuleProblem = _localization.GetString($"CustomRuleProblem{problem}");
+            return;
+        }
+
+        if (CustomRules.Contains(rule.Display, StringComparer.OrdinalIgnoreCase))
+        {
+            RuleProblem = _localization.GetString($"CustomRuleProblem{CustomRuleProblem.Duplicate}");
+            return;
+        }
+
+        CustomRules.Add(rule.Display);
+        NewRule = string.Empty;
+        RuleProblem = null;
+
+        await SaveRulesAsync(cancellationToken);
+    }
+
+    /// <summary>Called straight from the row's button rather than through a command: a command
+    /// bound by ElementName cannot be reached from inside a DataTemplate.</summary>
+    public async Task RemoveRuleAsync(string? rule)
+    {
+        if (rule is null || !CustomRules.Remove(rule))
+        {
+            return;
+        }
+
+        RuleProblem = null;
+        await SaveRulesAsync(CancellationToken.None);
+    }
+
+    /// <summary>Reads the saved rules and measures what they match, as its own category in the
+    /// preview. Categories with nothing in them are dropped from the plan anyway, so a user with
+    /// no rules never sees the row at all.</summary>
+    private async Task ScanCustomRulesAsync(CancellationToken cancellationToken)
+    {
+        var settings = await _settings.LoadAsync(cancellationToken);
+        var rules = CustomCleanupRule.ParseAll(settings.CustomCleanupRules, _paths);
+
+        CustomRules.Clear();
+        foreach (var rule in rules)
+        {
+            CustomRules.Add(rule.Display);
+        }
+
+        if (rules.Count == 0)
+        {
+            return;
+        }
+
+        Add(await _scanner.ScanCustomRulesAsync(rules, cancellationToken));
+    }
+
+    private async Task SaveRulesAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var settings = await _settings.LoadAsync(cancellationToken);
+            settings.CustomCleanupRules = [.. CustomRules];
+            await _settings.SaveAsync(settings, cancellationToken);
+
+            // The preview has to agree with the rules it was built from, so what the new rule
+            // matches is measured now rather than at the next scan.
+            if (HasScanned)
+            {
+                var rules = CustomCleanupRule.ParseAll(CustomRules, _paths);
+
+                // With the last rule gone the row goes too, rather than sitting in the preview
+                // saying nothing was found by rules that no longer exist.
+                if (rules.Count == 0)
+                {
+                    Remove(JunkCategoryId.CustomRules);
+                }
+                else
+                {
+                    var scan = await _scanner.ScanCustomRulesAsync(rules, cancellationToken);
+
+                    if (Categories.Any(category => category.CategoryId == JunkCategoryId.CustomRules))
+                    {
+                        Replace(scan);
+                    }
+                    else
+                    {
+                        Add(scan);
+                    }
+                }
+
+                RefreshSelectionSummary();
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            await _logger.LogErrorAsync("Saving the custom cleanup rules failed.", ex, cancellationToken);
+            StatusMessage = ex.Message;
+        }
+    }
+
     private void ShowOutcome(CleanupOutcome outcome)
     {
         FreedDisplay = _localization.GetString("CleanupResultsFreedFormat", ByteSize.Format(outcome.FreedBytes));
@@ -259,6 +392,10 @@ public sealed partial class CleanupViewModel : ObservableObject
 
         StatusMessage = outcome.ElevationDeclined ? _localization.GetString("CommonElevationDeclined") : null;
         ShowResults = true;
+
+        // A run started here can finish while the user is three pages away; the shell decides
+        // whether that is worth a toast, since only it knows where they went.
+        _messenger.Send(new CleanupFinishedMessage(FreedDisplay));
     }
 
     private void Add(JunkCategoryScan scan)
@@ -294,6 +431,19 @@ public sealed partial class CleanupViewModel : ObservableObject
 
             return;
         }
+    }
+
+    private void Remove(JunkCategoryId categoryId)
+    {
+        var display = Categories.FirstOrDefault(category => category.CategoryId == categoryId);
+        if (display is null)
+        {
+            return;
+        }
+
+        display.PropertyChanged -= OnCategoryPropertyChanged;
+        Categories.Remove(display);
+        GroupFor(display).Remove(display);
     }
 
     private ObservableCollection<CleanupCategoryDisplay> GroupFor(CleanupCategoryDisplay display) =>

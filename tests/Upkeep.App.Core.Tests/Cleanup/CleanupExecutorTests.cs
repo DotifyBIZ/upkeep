@@ -2,6 +2,7 @@ using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Logging;
 using Upkeep.App.Core.Platform;
+using Upkeep.App.Core.Quarantine;
 using Upkeep.App.Core.Safety;
 using Upkeep.App.Core.Sessions;
 using Upkeep.App.Core.Tests.Fakes;
@@ -42,7 +43,7 @@ public class CleanupExecutorTests : IDisposable
     }
 
     private CleanupExecutor CreateExecutor() =>
-        new(_journal, _restorePoints, _elevation, _recycleBin, _drives, _paths, _logger);
+        new(_journal, _restorePoints, _elevation, _recycleBin, _drives, _paths, new QuarantineStore(_paths), _logger);
 
     private JunkCategoryScan ScanOfRealFiles(JunkCategoryId categoryId, params (string Name, int Size)[] files)
     {
@@ -242,5 +243,71 @@ public class CleanupExecutorTests : IDisposable
         var outcome = await CreateExecutor().ExecuteAsync(PlanOf(scan), progress: null, CancellationToken.None);
 
         Assert.Equal(12345, outcome.SystemDriveFreeBytes);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_CustomRules_QuarantinesRatherThanDeletes()
+    {
+        // These are the user's own files chosen by their own rule, not a cache Upkeep recognises.
+        var scan = ScanOfRealFiles(JunkCategoryId.CustomRules, ("render.cache", 300));
+
+        var outcome = await CreateExecutor().ExecuteAsync(PlanOf(scan), progress: null, CancellationToken.None);
+
+        Assert.False(File.Exists(scan.Items[0].Path));
+        Assert.Equal(1, outcome.ItemsRemoved);
+        Assert.Equal(0, outcome.ItemsSkipped);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_CustomRules_ReportsNothingFreedBecauseNothingIsGoneYet()
+    {
+        // A quarantined file still occupies the disk until the quarantine is purged.
+        var scan = ScanOfRealFiles(JunkCategoryId.CustomRules, ("render.cache", 4096));
+
+        var outcome = await CreateExecutor().ExecuteAsync(PlanOf(scan), progress: null, CancellationToken.None);
+
+        Assert.Equal(0, outcome.FreedBytes);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_CustomRules_JournalsEveryFileSoTheSessionCanBeReverted()
+    {
+        var scan = ScanOfRealFiles(JunkCategoryId.CustomRules, ("one.cache", 10), ("two.cache", 20));
+
+        var outcome = await CreateExecutor().ExecuteAsync(PlanOf(scan), progress: null, CancellationToken.None);
+
+        var session = await _journal.LoadAsync(outcome.SessionId, CancellationToken.None);
+        var entries = session!.Entries.OfType<FileQuarantinedEntry>().ToList();
+
+        Assert.Equal(2, entries.Count);
+        Assert.All(entries, entry =>
+        {
+            Assert.True(entry.Completed);
+            Assert.NotEmpty(entry.QuarantinePath);
+            Assert.True(File.Exists(entry.QuarantinePath));
+        });
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_CustomRulesFileAlreadyGone_IsSkippedRatherThanFailingTheRun()
+    {
+        var scan = ScanOfRealFiles(JunkCategoryId.CustomRules, ("gone.cache", 10), ("here.cache", 20));
+        File.Delete(scan.Items[0].Path);
+
+        var outcome = await CreateExecutor().ExecuteAsync(PlanOf(scan), progress: null, CancellationToken.None);
+
+        Assert.Equal(1, outcome.ItemsRemoved);
+        Assert.Equal(1, outcome.ItemsSkipped);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_CustomRules_TakesNoRestorePoint()
+    {
+        // Nothing here touches the system, and the files themselves are already restorable.
+        var scan = ScanOfRealFiles(JunkCategoryId.CustomRules, ("render.cache", 10));
+
+        await CreateExecutor().ExecuteAsync(PlanOf(scan), progress: null, CancellationToken.None);
+
+        Assert.Empty(_restorePoints.Requests);
     }
 }

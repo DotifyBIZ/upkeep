@@ -15,4 +15,16 @@ public sealed class AppSettings
     /// <summary>How long quarantined items are kept before they're deleted for good
     /// (docs/adr/0006-safety-model.md). Seven days by product decision.</summary>
     public int QuarantineRetentionDays { get; set; } = 7;
+
+    /// <summary>Set once the welcome tour has been shown, whether it was read through or skipped.
+    /// A tool that runs as administrator on someone's own machine gets to explain itself once, not
+    /// every launch.</summary>
+    public bool HasSeenWelcome { get; set; }
+
+    /// <summary>
+    /// The user's own cleanup rules, as they typed them ("D:\Renders\*.cache"). Stored as text and
+    /// re-validated on every read: this file is user-writable, and a rule decides what gets
+    /// quarantined. See <see cref="Cleanup.CustomCleanupRule"/>.
+    /// </summary>
+    public List<string> CustomCleanupRules { get; set; } = [];
 }

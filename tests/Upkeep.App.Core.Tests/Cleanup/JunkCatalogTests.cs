@@ -62,11 +62,19 @@ public class JunkCatalogTests
     }
 
     [Fact]
-    public void NoJunkCategoryIsQuarantined()
+    public void TheOnlyQuarantinedCategoryIsTheUsersOwnRules()
     {
         // Quarantine is for files a user might want back. Caches rebuild themselves, and keeping
-        // copies would mean a cleanup frees nothing (ADR-0006).
-        Assert.DoesNotContain(JunkCatalog.All, category => category.Removal == RemovalKind.Quarantined);
+        // copies would mean a cleanup frees nothing (ADR-0006) — so every category Upkeep derives
+        // itself is deleted outright. Custom rules are the exception in both directions: the files
+        // are the user's own rather than a cache Upkeep recognises, and Upkeep has no idea what is
+        // in them, so they are held rather than destroyed.
+        var quarantined = JunkCatalog.All
+            .Where(category => category.Removal == RemovalKind.Quarantined)
+            .Select(category => category.Id)
+            .ToHashSet();
+
+        Assert.Equal([JunkCategoryId.CustomRules], quarantined);
     }
 
     [Fact]

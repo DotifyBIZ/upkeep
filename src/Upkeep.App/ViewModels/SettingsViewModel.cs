@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Upkeep.App.Core.Abstractions;
 using Upkeep.App.Core.Formatting;
 using Upkeep.App.Core.Logging;
@@ -33,12 +34,17 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     public const int MaximumRetentionDays = 90;
 
+    /// <summary>How much of the log the viewer shows. Enough to cover the run that just went
+    /// wrong; the full files are one button away for anything older.</summary>
+    public const int LogLinesShown = 200;
+
     private readonly IAppSettingsService _settings;
     private readonly IUpdateCheckService _updates;
     private readonly IQuarantineStore _quarantine;
     private readonly IWindowsUiLauncher _launcher;
     private readonly ILocalizationService _localization;
     private readonly IAppLogger _logger;
+    private readonly IMessenger _messenger;
 
     private AppSettings _current = new();
     private string? _releaseUrl;
@@ -51,6 +57,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         IWindowsUiLauncher launcher,
         ILocalizationService localization,
         IAppLogger logger,
+        IMessenger messenger,
         string? productVersion = null)
     {
         _settings = settings;
@@ -59,6 +66,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         _launcher = launcher;
         _localization = localization;
         _logger = logger;
+        _messenger = messenger;
 
         Languages =
         [
@@ -98,6 +106,10 @@ public sealed partial class SettingsViewModel : ObservableObject
     /// <summary>True once a check found a newer release, so the page can offer to open it.</summary>
     [ObservableProperty]
     public partial bool HasRelease { get; set; }
+
+    /// <summary>The tail of the diagnostic log, as one block of text.</summary>
+    [ObservableProperty]
+    public partial string LogLines { get; set; } = string.Empty;
 
     public bool HasStatusMessage => !string.IsNullOrEmpty(StatusMessage);
 
@@ -173,6 +185,14 @@ public sealed partial class SettingsViewModel : ObservableObject
             var result = await _updates.CheckForUpdateAsync(cancellationToken);
             _releaseUrl = result.ReleaseUrl;
 
+            // A check that never completed is not "you're up to date" — GitHub rate-limits
+            // unauthenticated callers, and a 403 answered the question for nobody.
+            if (result.CheckFailed)
+            {
+                UpdateStatus = _localization.GetString("SettingsUpdateCheckFailed");
+                return;
+            }
+
             if (result.IsUpdateAvailable && result.LatestVersion is not null)
             {
                 UpdateStatus = _localization.GetString("SettingsUpdateAvailableFormat", result.LatestVersion);
@@ -204,8 +224,27 @@ public sealed partial class SettingsViewModel : ObservableObject
         StatusMessage = _localization.GetString("SettingsQuarantineEmptiedFormat", ByteSize.Format(freed));
     }
 
+    /// <summary>
+    /// Fills <see cref="LogLines"/> from the diagnostic log. Called when the user opens the log
+    /// section rather than on page load: reading the file has no reason to happen for the people
+    /// who never look at it.
+    /// </summary>
+    public async Task LoadLogAsync(CancellationToken cancellationToken)
+    {
+        var lines = await _logger.ReadRecentAsync(LogLinesShown, cancellationToken);
+
+        LogLines = lines.Count == 0
+            ? _localization.GetString("SettingsLogEmpty")
+            : string.Join(Environment.NewLine, lines);
+    }
+
     [RelayCommand]
     public void OpenLogsFolder() => Open(_logger.LogDirectory);
+
+    /// <summary>Plays the welcome tour again. The dialog belongs to the shell, so this asks for it
+    /// rather than owning one of its own.</summary>
+    [RelayCommand]
+    public void ReplayWelcomeTour() => _messenger.Send(new ShowWelcomeMessage());
 
     [RelayCommand]
     public void OpenProjectPage() => Open(ProjectUrl);

@@ -33,4 +33,9 @@ public sealed partial class HomePage : Page
 
     private void ScanThisPc_Click(object sender, RoutedEventArgs e) =>
         Frame.Navigate(typeof(CleanupPage));
+
+    // The only next action Home currently offers is a low-disk nudge, so this goes straight to
+    // Files rather than dispatching on a target the view model would have to name.
+    private void NextAction_Click(object sender, RoutedEventArgs e) =>
+        Frame.Navigate(typeof(FilesPage));
 }

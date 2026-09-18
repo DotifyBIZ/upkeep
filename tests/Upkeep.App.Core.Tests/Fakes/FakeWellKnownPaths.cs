@@ -34,7 +34,9 @@ public sealed class FakeWellKnownPaths : IWellKnownPaths, IDisposable
 
     public string WindowsDirectory { get; }
 
-    public string SystemDriveRoot { get; }
+    /// <summary>Settable so a test can use a real drive root ("C:\"), which behaves differently
+    /// from an ordinary folder: it already ends in a separator.</summary>
+    public string SystemDriveRoot { get; set; }
 
     public string UserProfilesRoot { get; }
 

@@ -85,6 +85,14 @@
     <value>Settings</value>
   </data>
 
+  <!-- Command palette -->
+  <data name="CommandPaletteSearchPlaceholder.PlaceholderText">
+    <value>Search sections…</value>
+  </data>
+  <data name="CommandPaletteEmptyMessage.Text">
+    <value>No matching section.</value>
+  </data>
+
   <!-- Home -->
   <data name="HomeSubtitle.Text">
     <value>Clean it, tune it, keep it — everything runs on this PC, nothing leaves it.</value>
@@ -104,6 +112,9 @@
   <data name="HomeUpdateActionButton.Content">
     <value>View release</value>
   </data>
+  <data name="HomeNextActionButton.Content">
+    <value>Review files</value>
+  </data>
 
   <!-- Home, built in code -->
   <data name="HomeGreetingMorning">
@@ -120,6 +131,30 @@
   </data>
   <data name="HomeUpdateAvailableFormat">
     <value>Upkeep {0} is available.</value>
+  </data>
+  <data name="HomeHealthGoodHeadline">
+    <value>Looking good</value>
+  </data>
+  <data name="HomeHealthAttentionHeadline">
+    <value>Time for a cleanup</value>
+  </data>
+  <data name="HomeHealthGoodFormat">
+    <value>Last cleaned {0}.</value>
+  </data>
+  <data name="HomeHealthGoodWithFreedFormat">
+    <value>Last cleaned {0} — freed {1}.</value>
+  </data>
+  <data name="HomeHealthNeverCleanedDetail">
+    <value>You haven't run a cleanup scan yet.</value>
+  </data>
+  <data name="HomeHealthStaleFormat">
+    <value>Your last cleanup was on {0}.</value>
+  </data>
+  <data name="HomeNextActionLowDiskTitleFormat">
+    <value>{0} is {1}% full</value>
+  </data>
+  <data name="HomeNextActionLowDiskDetail">
+    <value>Large and duplicate files might be worth a look.</value>
   </data>
   <data name="DriveFreeOfTotalFormat">
     <value>{0} free of {1}</value>
@@ -876,6 +911,99 @@
   </data>
   <data name="SettingsOpenLogsButton.Content">
     <value>Open logs folder</value>
+  </data>
+  <data name="SettingsLogViewer.Header">
+    <value>Show recent log entries</value>
+  </data>
+  <data name="SettingsLogEmpty">
+    <value>Nothing has been logged yet.</value>
+  </data>
+  <data name="WelcomePrivacyTitle">
+    <value>Everything stays on this PC</value>
+  </data>
+  <data name="WelcomePrivacyBody">
+    <value>No account, no server, no telemetry. Upkeep reads and changes this machine and nothing else — ever.</value>
+  </data>
+  <data name="WelcomePreviewTitle">
+    <value>Nothing happens without a preview</value>
+  </data>
+  <data name="WelcomePreviewBody">
+    <value>Every scan shows exactly what it would touch before anything runs. Files you might want back go to quarantine, not straight to delete.</value>
+  </data>
+  <data name="WelcomeRevertTitle">
+    <value>One click undoes a whole session</value>
+  </data>
+  <data name="WelcomeRevertBody">
+    <value>Startup items, services, registry keys, quarantined files — History can put all of it back.</value>
+  </data>
+  <data name="WelcomeNextButton">
+    <value>Next</value>
+  </data>
+  <data name="WelcomeFinishButton">
+    <value>Get started</value>
+  </data>
+  <data name="WelcomeDialog.CloseButtonText">
+    <value>Skip</value>
+  </data>
+  <data name="SettingsWelcomeHeader.Text">
+    <value>Welcome tour</value>
+  </data>
+  <data name="SettingsWelcomeNote.Text">
+    <value>The three screens shown the first time Upkeep runs.</value>
+  </data>
+  <data name="SettingsWelcomeButton.Content">
+    <value>Show the tour</value>
+  </data>
+  <data name="ShellToastCleanup.Title">
+    <value>Cleanup finished</value>
+  </data>
+  <data name="ShellToastViewButton.Content">
+    <value>View in History</value>
+  </data>
+  <data name="JunkCategoryCustomRulesName">
+    <value>Your own rules</value>
+  </data>
+  <data name="JunkCategoryCustomRulesDescription">
+    <value>Files matching the rules you added, moved to quarantine</value>
+  </data>
+  <data name="CleanupCustomRules.Header">
+    <value>Custom rules</value>
+  </data>
+  <data name="CleanupCustomRulesNote.Text">
+    <value>Add a folder, or a folder and a pattern like *.cache. Matches are listed in the preview above and moved to quarantine, never deleted outright — a folder inside your user folder, or anywhere on another drive.</value>
+  </data>
+  <data name="CleanupCustomRuleInput.PlaceholderText">
+    <value>D:\Renders\*.cache</value>
+  </data>
+  <data name="CleanupCustomRuleAddButton.Content">
+    <value>Add rule</value>
+  </data>
+  <data name="CleanupCustomRuleRemoveButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name">
+    <value>Remove this rule</value>
+  </data>
+  <data name="CleanupConfirmQuarantined">
+    <value>Files matched by your own rules move to quarantine, and History can put them back.</value>
+  </data>
+  <data name="CustomRuleProblemEmpty">
+    <value>Type a folder or a pattern first.</value>
+  </data>
+  <data name="CustomRuleProblemWildcardInFolder">
+    <value>A * or ? belongs in the file name, not in the folder path.</value>
+  </data>
+  <data name="CustomRuleProblemNotAbsolute">
+    <value>Use a full path, or a pattern like *.bak for your own user folder.</value>
+  </data>
+  <data name="CustomRuleProblemFolderMissing">
+    <value>That folder isn't there.</value>
+  </data>
+  <data name="CustomRuleProblemOutsideAllowedArea">
+    <value>Rules can only cover your own user folder or another drive — not Windows, other accounts, or Upkeep's own files.</value>
+  </data>
+  <data name="CustomRuleProblemTooBroad">
+    <value>That would match every file on the drive. Narrow it down with a folder or a pattern.</value>
+  </data>
+  <data name="CustomRuleProblemDuplicate">
+    <value>That rule is already in the list.</value>
   </data>
   <data name="SettingsCouldNotOpen">
     <value>That folder could not be opened.</value>
