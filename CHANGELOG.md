@@ -1,3 +1,20 @@
+# [1.1.0](https://github.com/DotifyBIZ/upkeep/compare/v1.0.0...v1.1.0) (2026-09-18)
+
+
+### Bug Fixes
+
+* five defects found by running the app ([1ea26cb](https://github.com/DotifyBIZ/upkeep/commit/1ea26cb62bb7e391fd087299ce344635ba598f65))
+
+
+### Features
+
+* **cleanup:** let people add their own cleanup rules ([e346732](https://github.com/DotifyBIZ/upkeep/commit/e34673211b08b95b2b34ce53fedc60ed201427ec))
+* **home:** turn Home into a real dashboard ([935a3b3](https://github.com/DotifyBIZ/upkeep/commit/935a3b3eb0ce9b4f157e78118b4e09333e668083))
+* **settings:** show the diagnostic log in the app ([b0a43ff](https://github.com/DotifyBIZ/upkeep/commit/b0a43ff9ce93f5f640b0a45e4fa13acc0260debd))
+* **shell:** add a Ctrl+K command palette ([ae16c1f](https://github.com/DotifyBIZ/upkeep/commit/ae16c1f33c7e2c0b41ea85ccfdaaf7f6ceae1c81))
+* **shell:** introduce Upkeep on first launch ([3c11be3](https://github.com/DotifyBIZ/upkeep/commit/3c11be35a33e05085884daf6b5295a54a3ff3187))
+* **shell:** say when a cleanup finished off-page ([2d4c5f8](https://github.com/DotifyBIZ/upkeep/commit/2d4c5f833bc953e2463a425ce4be293629bf5313))
+
 # 1.0.0 (2026-09-14)
 
 
