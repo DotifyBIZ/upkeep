@@ -50,6 +50,19 @@ public sealed partial class CleanupPage : Page
         }
     }
 
+    // The row's own rule is its DataContext, which is how the button knows which one it removes.
+    private async void RemoveRule_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            await ViewModel.RemoveRuleAsync((sender as FrameworkElement)?.DataContext as string);
+        }
+        catch (Exception ex)
+        {
+            await App.Services.GetRequiredService<IAppLogger>().LogErrorAsync("Removing a custom cleanup rule failed.", ex);
+        }
+    }
+
     // Typing a rule and pressing Enter is what anyone does with a box and an Add button next to it.
     private async void CustomRule_KeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
     {

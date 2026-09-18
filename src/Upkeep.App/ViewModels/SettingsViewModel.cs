@@ -185,6 +185,14 @@ public sealed partial class SettingsViewModel : ObservableObject
             var result = await _updates.CheckForUpdateAsync(cancellationToken);
             _releaseUrl = result.ReleaseUrl;
 
+            // A check that never completed is not "you're up to date" — GitHub rate-limits
+            // unauthenticated callers, and a 403 answered the question for nobody.
+            if (result.CheckFailed)
+            {
+                UpdateStatus = _localization.GetString("SettingsUpdateCheckFailed");
+                return;
+            }
+
             if (result.IsUpdateAvailable && result.LatestVersion is not null)
             {
                 UpdateStatus = _localization.GetString("SettingsUpdateAvailableFormat", result.LatestVersion);

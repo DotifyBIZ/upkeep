@@ -151,6 +151,20 @@ public class SettingsViewModelTests
     }
 
     [Fact]
+    public async Task CheckForUpdatesNowAsync_CheckCouldNotBeMade_DoesNotClaimTheAppIsUpToDate()
+    {
+        // GitHub rate-limits unauthenticated callers: a 403 comes back as a perfectly good HTTP
+        // response, and reporting it as "up to date" answers a question nobody managed to ask.
+        _updates.Result = UpdateCheckResult.Failed;
+        var viewModel = await LoadedAsync();
+
+        await viewModel.CheckForUpdatesNowAsync(CancellationToken.None);
+
+        Assert.Equal("SettingsUpdateCheckFailed", viewModel.UpdateStatus);
+        Assert.False(viewModel.HasRelease);
+    }
+
+    [Fact]
     public async Task CheckForUpdatesNowAsync_Offline_IsAPlainMessageNotAnError()
     {
         // Upkeep works offline; a failed check is a normal outcome.

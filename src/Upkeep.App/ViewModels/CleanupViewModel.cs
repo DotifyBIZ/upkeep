@@ -289,7 +289,8 @@ public sealed partial class CleanupViewModel : ObservableObject
         await SaveRulesAsync(cancellationToken);
     }
 
-    [RelayCommand]
+    /// <summary>Called straight from the row's button rather than through a command: a command
+    /// bound by ElementName cannot be reached from inside a DataTemplate.</summary>
     public async Task RemoveRuleAsync(string? rule)
     {
         if (rule is null || !CustomRules.Remove(rule))
@@ -336,17 +337,25 @@ public sealed partial class CleanupViewModel : ObservableObject
             if (HasScanned)
             {
                 var rules = CustomCleanupRule.ParseAll(CustomRules, _paths);
-                var scan = rules.Count == 0
-                    ? JunkCategoryScan.Empty(JunkCategoryId.CustomRules)
-                    : await _scanner.ScanCustomRulesAsync(rules, cancellationToken);
 
-                if (Categories.Any(category => category.CategoryId == JunkCategoryId.CustomRules))
+                // With the last rule gone the row goes too, rather than sitting in the preview
+                // saying nothing was found by rules that no longer exist.
+                if (rules.Count == 0)
                 {
-                    Replace(scan);
+                    Remove(JunkCategoryId.CustomRules);
                 }
                 else
                 {
-                    Add(scan);
+                    var scan = await _scanner.ScanCustomRulesAsync(rules, cancellationToken);
+
+                    if (Categories.Any(category => category.CategoryId == JunkCategoryId.CustomRules))
+                    {
+                        Replace(scan);
+                    }
+                    else
+                    {
+                        Add(scan);
+                    }
                 }
 
                 RefreshSelectionSummary();
@@ -422,6 +431,19 @@ public sealed partial class CleanupViewModel : ObservableObject
 
             return;
         }
+    }
+
+    private void Remove(JunkCategoryId categoryId)
+    {
+        var display = Categories.FirstOrDefault(category => category.CategoryId == categoryId);
+        if (display is null)
+        {
+            return;
+        }
+
+        display.PropertyChanged -= OnCategoryPropertyChanged;
+        Categories.Remove(display);
+        GroupFor(display).Remove(display);
     }
 
     private ObservableCollection<CleanupCategoryDisplay> GroupFor(CleanupCategoryDisplay display) =>

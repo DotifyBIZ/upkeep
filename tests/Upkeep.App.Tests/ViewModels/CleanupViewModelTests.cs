@@ -322,6 +322,22 @@ public class CleanupViewModelTests : IDisposable
     }
 
     [Fact]
+    public async Task RemoveRuleAsync_TheLastRule_TakesTheCategoryOutOfThePreviewToo()
+    {
+        // Otherwise the row sits there reporting that rules which no longer exist found nothing.
+        string folder = _paths.CreateUnder(Path.Combine("Users", "tester", "Renders"));
+        _settings.Settings = new AppSettings { CustomCleanupRules = [Path.Combine(folder, "*.cache")] };
+        _scanner.CustomRuleScan = ScanWith(JunkCategoryId.CustomRules, 2048);
+        var viewModel = CreateViewModel();
+        await viewModel.ScanAsync(CancellationToken.None);
+
+        await viewModel.RemoveRuleAsync(Path.Combine(folder, "*.cache"));
+
+        Assert.DoesNotContain(viewModel.Categories, category => category.CategoryId == JunkCategoryId.CustomRules);
+        Assert.DoesNotContain(viewModel.UserCategories, category => category.CategoryId == JunkCategoryId.CustomRules);
+    }
+
+    [Fact]
     public async Task ScanAsync_NoRules_DoesNotShowTheCategoryAtAll()
     {
         var viewModel = CreateViewModel();

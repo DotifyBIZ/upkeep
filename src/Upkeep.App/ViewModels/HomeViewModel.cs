@@ -121,8 +121,7 @@ public sealed partial class HomeViewModel : ObservableObject
         try
         {
             LoadDrives();
-            await EvaluateHealthAsync(cancellationToken);
-            await LoadRecentActivityAsync(cancellationToken);
+            await LoadFromJournalAsync(cancellationToken);
             await CheckForUpdateAsync(cancellationToken);
         }
         finally
@@ -166,40 +165,29 @@ public sealed partial class HomeViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Reads the last *completed* cleanup from the journal already on disk — no rescan, so this
-    /// costs nothing a page load doesn't already pay elsewhere in the app.
+    /// Reads the journal already on disk — no rescan, so this costs nothing a page load doesn't
+    /// already pay elsewhere in the app. One read backs both the status and the activity list:
+    /// they were a read each, which walked every session manifest twice on every visit to Home.
     /// </summary>
-    private async Task EvaluateHealthAsync(CancellationToken cancellationToken)
+    private async Task LoadFromJournalAsync(CancellationToken cancellationToken)
     {
+        RecentActivity.Clear();
+
+        // Reset, so a reload that finds sessions clears an empty-state message left by one that
+        // didn't: setting this to true when it is already true raises no change notification.
+        HasLoadedActivity = false;
+
         try
         {
             var sessions = await _journal.ListAsync(cancellationToken);
-            var lastCleanup = sessions.FirstOrDefault(session => session.Kind == SessionKind.Cleanup && session.CompletedAt is not null);
 
-            if (lastCleanup is null)
+            EvaluateHealth(sessions);
+
+            // Newest first already, per the journal's own contract — Home just takes the front of it.
+            foreach (var session in sessions.Take(3))
             {
-                IsHealthGood = false;
-                HealthHeadline = _localization.GetString("HomeHealthAttentionHeadline");
-                HealthDetail = _localization.GetString("HomeHealthNeverCleanedDetail");
-                return;
+                RecentActivity.Add(HistoryViewModel.BuildDisplay(session, _localization));
             }
-
-            var completedAt = lastCleanup.CompletedAt!.Value;
-            string whenDisplay = completedAt.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture);
-
-            if (IsCleanupStale(completedAt, _timeProvider.GetUtcNow()))
-            {
-                IsHealthGood = false;
-                HealthHeadline = _localization.GetString("HomeHealthAttentionHeadline");
-                HealthDetail = _localization.GetString("HomeHealthStaleFormat", whenDisplay);
-                return;
-            }
-
-            IsHealthGood = true;
-            HealthHeadline = _localization.GetString("HomeHealthGoodHeadline");
-            HealthDetail = lastCleanup.FreedBytes > 0
-                ? _localization.GetString("HomeHealthGoodWithFreedFormat", whenDisplay, ByteSize.Format(lastCleanup.FreedBytes))
-                : _localization.GetString("HomeHealthGoodFormat", whenDisplay);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
@@ -210,29 +198,42 @@ public sealed partial class HomeViewModel : ObservableObject
             HealthHeadline = string.Empty;
             HealthDetail = string.Empty;
         }
-    }
-
-    private async Task LoadRecentActivityAsync(CancellationToken cancellationToken)
-    {
-        RecentActivity.Clear();
-
-        try
-        {
-            // Newest first already, per the journal's own contract — Home just takes the front of it.
-            var sessions = await _journal.ListAsync(cancellationToken);
-            foreach (var session in sessions.Take(3))
-            {
-                RecentActivity.Add(HistoryViewModel.BuildDisplay(session, _localization));
-            }
-        }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-        {
-            await _logger.LogWarningAsync($"Home could not read session history: {ex.Message}", cancellationToken);
-        }
         finally
         {
             HasLoadedActivity = true;
         }
+    }
+
+    /// <summary>The last *completed* cleanup decides the status — an interrupted one says nothing
+    /// about whether this machine has actually been cleaned.</summary>
+    private void EvaluateHealth(IReadOnlyList<SessionManifest> sessions)
+    {
+        var lastCleanup = sessions.FirstOrDefault(session => session.Kind == SessionKind.Cleanup && session.CompletedAt is not null);
+
+        if (lastCleanup is null)
+        {
+            IsHealthGood = false;
+            HealthHeadline = _localization.GetString("HomeHealthAttentionHeadline");
+            HealthDetail = _localization.GetString("HomeHealthNeverCleanedDetail");
+            return;
+        }
+
+        var completedAt = lastCleanup.CompletedAt!.Value;
+        string whenDisplay = completedAt.ToLocalTime().ToString("g", System.Globalization.CultureInfo.CurrentCulture);
+
+        if (IsCleanupStale(completedAt, _timeProvider.GetUtcNow()))
+        {
+            IsHealthGood = false;
+            HealthHeadline = _localization.GetString("HomeHealthAttentionHeadline");
+            HealthDetail = _localization.GetString("HomeHealthStaleFormat", whenDisplay);
+            return;
+        }
+
+        IsHealthGood = true;
+        HealthHeadline = _localization.GetString("HomeHealthGoodHeadline");
+        HealthDetail = lastCleanup.FreedBytes > 0
+            ? _localization.GetString("HomeHealthGoodWithFreedFormat", whenDisplay, ByteSize.Format(lastCleanup.FreedBytes))
+            : _localization.GetString("HomeHealthGoodFormat", whenDisplay);
     }
 
     private async Task CheckForUpdateAsync(CancellationToken cancellationToken)

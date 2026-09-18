@@ -978,7 +978,7 @@
   <data name="CleanupCustomRuleAddButton.Content">
     <value>Dodaj regułę</value>
   </data>
-  <data name="CleanupCustomRuleRemoveButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip">
+  <data name="CleanupCustomRuleRemoveButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name">
     <value>Usuń tę regułę</value>
   </data>
   <data name="CleanupConfirmQuarantined">
