@@ -10,12 +10,16 @@ namespace Upkeep.App.ViewModels;
 /// </summary>
 public sealed partial class StartupItemDisplay : ObservableObject
 {
+    /// <summary>The widest a timing bar is drawn, in pixels; the slowest app fills it.</summary>
+    public const double TimingBarMaxWidth = 96;
+
     public StartupItemDisplay(StartupItem item, string sourceLabel, string? disabledAtDisplay)
     {
         Item = item;
         SourceLabel = sourceLabel;
         DisabledAtDisplay = disabledAtDisplay;
         IsEnabled = item.IsEnabled;
+        AppliedEnabled = item.IsEnabled;
     }
 
     public StartupItem Item { get; }
@@ -45,4 +49,56 @@ public sealed partial class StartupItemDisplay : ObservableObject
     /// </summary>
     [ObservableProperty]
     public partial bool IsEnabled { get; set; }
+
+    /// <summary>
+    /// What Windows actually has. The switch's Toggled event also fires when Upkeep moves the
+    /// switch itself — putting it back after a refusal, or applying a plan — and comparing against
+    /// this is how those are told apart from the person flipping it.
+    /// </summary>
+    public bool AppliedEnabled { get; set; }
+
+    /// <summary>"2.6 s", "Not timed", or a dash before anything was measured.</summary>
+    [ObservableProperty]
+    public partial string TimingDisplay { get; set; } = string.Empty;
+
+    /// <summary>Why a row says what it says about timing.</summary>
+    [ObservableProperty]
+    public partial string TimingTooltip { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial double TimingBarWidth { get; set; }
+
+    [ObservableProperty]
+    public partial string LastStartedDisplay { get; set; } = string.Empty;
+
+    /// <summary>Not started by the person in 30 days — shown as a badge, not a verdict.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsRecent))]
+    public partial bool IsStale { get; set; }
+
+    public bool IsRecent => !IsStale;
+
+    /// <summary>Slow and apparently unused: pre-ticked in the plan, never acted on alone.</summary>
+    public bool IsSuggested { get; set; }
+}
+
+/// <summary>One line of the "turn these off" preview, which the person can untick.</summary>
+public sealed partial class StartupPlanItem : ObservableObject
+{
+    public StartupPlanItem(StartupItemDisplay display, string detail)
+    {
+        Display = display;
+        Detail = detail;
+        IsSelected = true;
+    }
+
+    public StartupItemDisplay Display { get; }
+
+    public string Name => Display.Name;
+
+    /// <summary>Measured time and when it was last started, so the decision is made on the facts.</summary>
+    public string Detail { get; }
+
+    [ObservableProperty]
+    public partial bool IsSelected { get; set; }
 }

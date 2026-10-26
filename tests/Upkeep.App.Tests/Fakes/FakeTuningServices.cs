@@ -54,3 +54,52 @@ public sealed class FakeWindowsUiLauncher : IWindowsUiLauncher
         return Succeeds;
     }
 }
+
+/// <summary>Records power-mode changes instead of making them.</summary>
+public sealed class FakePowerModeSettings : IPowerModeSettings
+{
+    public PowerModeState State { get; set; } = new(PowerMode.Balanced, PowerMode.Balanced, AppliesToActivePlan: true, HasBattery: true);
+
+    public bool Succeeds { get; set; } = true;
+
+    public List<string> Changes { get; } = [];
+
+    public PowerModeState Read() => State;
+
+    public bool SetMode(PowerSource source, PowerMode mode, out string? failure)
+    {
+        Changes.Add($"{source}={mode}");
+        failure = Succeeds ? null : "Windows refused it.";
+        return Succeeds;
+    }
+}
+
+/// <summary>Records background-access changes instead of making them.</summary>
+public sealed class FakeBackgroundAppSettings : IBackgroundAppSettings
+{
+    public List<BackgroundApp> Apps { get; } = [];
+
+    public IReadOnlyList<RegistryValueSnapshot> CurrentValues { get; set; } = [];
+
+    public bool Succeeds { get; set; } = true;
+
+    public List<string> Changes { get; } = [];
+
+    public IReadOnlyList<BackgroundApp> Read() => Apps;
+
+    public IReadOnlyList<RegistryValueSnapshot> Snapshot(string familyName) => CurrentValues;
+
+    public bool SetAllowed(string familyName, bool allowed, out string? failure)
+    {
+        Changes.Add($"{familyName}:allowed={allowed}");
+        failure = Succeeds ? null : "Access is denied.";
+        return Succeeds;
+    }
+
+    public bool Restore(string familyName, IReadOnlyList<RegistryValueSnapshot> previous, out string? failure)
+    {
+        Changes.Add($"{familyName}:restore");
+        failure = null;
+        return true;
+    }
+}
