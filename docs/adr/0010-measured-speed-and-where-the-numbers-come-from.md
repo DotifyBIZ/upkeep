@@ -31,7 +31,7 @@ Windows logs event 101 only for apps that slowed a start down, so an app with no
 To suggest which slow startup apps someone no longer uses, Upkeep reads the per-user **UserAssist** record Explorer keeps:
 
 - Key: `HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist\{GUID}\Count`, for `{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}` (executables) and `{F4E57C4B-2036-45F0-A9AB-443BCFE33D9F}` (shortcuts).
-- Value names are ROT13-encoded paths. A path may begin with a known-folder GUID in braces (for example `{6D809377-6AFA-444B-8957-A3773F02200E}` for Program Files) instead of a drive letter, so Upkeep compares only the **file name** (`steam.exe`), never the full path.
+- Value names are ROT13-encoded. A name is either a path, which may begin with a known-folder GUID in braces (for example `{6D809377-6AFA-444B-8957-A3773F02200E}` for Program Files) instead of a drive letter, or an **app id** (`Microsoft.VisualStudioCode`, `MSEdge`, `Valve.Steam.Client`): apps that register one are recorded under it, not under their path. So Upkeep never compares full paths. It splits each name into words, drops words common to many apps (`microsoft`, `windows`, `exe`, `client`, …), and matches a startup item if its own name, or the file name of what it runs, equals one of those words. Matching is generous on purpose: a wrong match only makes an app look used, so Upkeep doesn't suggest it. A missed match is the costly mistake, because then the app looks unused.
 - Value data is 72 bytes on Windows 7 and later: run count (Int32) at offset 4, focus count at 8, focus time in ms at 12, and the last run time as a `FILETIME` at offset 60. Anything shorter than 68 bytes, or a zero `FILETIME`, is ignored.
 
 It records launches made through the shell: Start, the taskbar, Explorer, a shortcut. It does **not** record an app being started by Windows at sign-in, or reopened from its tray icon. An app someone uses every day through its tray icon can look unused. So this signal only **pre-selects** rows in a preview the person reviews and can untick. It never acts on its own, and the column is labelled "Last started by you", not "Last used".
@@ -98,7 +98,8 @@ Upkeep never adds up per-app times into an "it will save N seconds" figure, beca
 ## Implementation Notes
 
 - Parsing lives in Core and is tested: `BootPerformanceParser`, `UserAssistParser`, `BackgroundAccessValues`, `SpeedComparison`, `StartupRecommendation`. The OS reads (`EventLogReader`, `powrprof`, `PackageManager`) are thin adapters excluded from coverage.
-- Startup items are matched to event 101 and UserAssist by the executable's file name, taken from the item's command. A Startup-folder shortcut has no command to read the file name from, so it shows "Not timed".
+- Startup items are matched to event 101 by the executable's file name without its extension, taken from the item's command (`StartupCommand.ExecutableStem`). A Startup-folder shortcut is matched by the shortcut's own name, because Upkeep doesn't resolve shortcuts; when that name differs from the executable's, the item shows "Not timed".
+- Windows' own tray pieces (`SecurityHealthSystray`) are never suggested for turning off, however slow; they stay switchable by hand.
 
 ## References
 
