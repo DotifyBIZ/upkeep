@@ -7,6 +7,7 @@ using System.Text.Json;
 using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Drivers;
 using Upkeep.App.Core.Logging;
+using Upkeep.App.Core.Performance;
 using Upkeep.App.Core.Platform;
 using Upkeep.App.Core.Safety;
 using Upkeep.App.Core.Services;
@@ -153,6 +154,7 @@ public static class HelperHost
             serviceConfigurator,
             new DriverUpdateSearch(),
             updateSettings,
+            new BootPerformanceLog(),
             UserProfileResolver.TryGetProfilePath(shellUser));
 
         return new HelperDispatcher(operations, logger);
