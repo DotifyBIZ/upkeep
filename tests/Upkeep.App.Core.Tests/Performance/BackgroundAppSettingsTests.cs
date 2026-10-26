@@ -54,6 +54,8 @@ public class BackgroundAppSettingsTests
         _registry.AddValue(RegistryHiveName.CurrentUser, Key(Xbox), "Disabled", 1);
         _registry.AddValue(RegistryHiveName.CurrentUser, Key(Xbox), "DisabledByUser", 1);
         _registry.AddKey(RegistryHiveName.CurrentUser, Key(Plumbing));
+        _registry.AddKey(RegistryHiveName.CurrentUser, Key("Microsoft.SecHealthUI_8wekyb3d8bbwe"));
+        _catalog.Names["Microsoft.SecHealthUI_8wekyb3d8bbwe"] = "Windows Security";
         _catalog.Names[Music] = "Media Player";
         _catalog.Names[Xbox] = "Xbox";
 

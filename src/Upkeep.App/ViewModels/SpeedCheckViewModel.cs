@@ -297,7 +297,7 @@ public sealed partial class SpeedCheckViewModel : ObservableObject
                 "Performance"));
         }
 
-        int inBackground = _backgroundApps.Read().Count(app => app.Access != BackgroundAccess.Never);
+        int inBackground = (await Task.Run(_backgroundApps.Read, cancellationToken)).Count(app => app.Access != BackgroundAccess.Never);
         if (inBackground > 0)
         {
             Recommendations.Add(new SpeedRecommendation(

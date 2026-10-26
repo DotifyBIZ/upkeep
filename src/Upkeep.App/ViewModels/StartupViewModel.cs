@@ -197,6 +197,7 @@ public sealed partial class StartupViewModel : ObservableObject
 
             display.AppliedEnabled = enabled;
             display.IsEnabled = enabled;
+            display.IsStale &= enabled;
             StatusMessage = null;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -258,8 +259,10 @@ public sealed partial class StartupViewModel : ObservableObject
         {
             IsSuggested = insight.Suggested,
             LastStartedDisplay = LastStartedText(insight.LastStartedByUser),
-            IsStale = insight.LastStartedByUser is null
-                || _timeProvider.GetUtcNow() - insight.LastStartedByUser.Value > StartupAdvisor.UnusedAfter,
+            // Only worth flagging on something still starting with Windows.
+            IsStale = item.IsEnabled
+                && (insight.LastStartedByUser is null
+                    || _timeProvider.GetUtcNow() - insight.LastStartedByUser.Value > StartupAdvisor.UnusedAfter),
         };
 
         if (!IsMeasured)

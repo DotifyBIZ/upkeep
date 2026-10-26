@@ -101,6 +101,18 @@ public class StartupViewModelTests : IDisposable
         Assert.False(viewModel.HasSuggestions);
     }
 
+    [Fact]
+    public async Task LoadAsync_ItemAlreadyOff_IsNotFlaggedAsUnused()
+    {
+        _scanner.Items.Add(Item(isEnabled: false));
+
+        var viewModel = CreateViewModel();
+        await viewModel.LoadAsync(CancellationToken.None);
+
+        Assert.False(viewModel.Items[0].IsStale);
+        Assert.True(viewModel.Items[0].IsRecent);
+    }
+
     [Theory]
     [InlineData(0, "StartupLastStartedToday")]
     [InlineData(1, "StartupLastStartedYesterday")]
@@ -169,7 +181,9 @@ public class StartupViewModelTests : IDisposable
         await viewModel.ApplyPlanAsync(CancellationToken.None);
 
         Assert.Equal(("Steam", false), Assert.Single(_toggler.Changes));
-        Assert.False(viewModel.Items.Single(item => item.Name == "Steam").IsEnabled);
+        var steam = viewModel.Items.Single(item => item.Name == "Steam");
+        Assert.False(steam.IsEnabled);
+        Assert.False(steam.IsStale);
         Assert.Empty(viewModel.PlanItems);
         Assert.False(viewModel.HasSuggestions);
         Assert.Single(await _journal.ListAsync(CancellationToken.None));

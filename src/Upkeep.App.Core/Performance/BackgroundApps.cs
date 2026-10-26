@@ -30,6 +30,15 @@ public static partial class BackgroundAccessValues
     public const string IgnoreBatterySaver = "IgnoreBatterySaver";
     public const string SleepDisabled = "SleepDisabled";
 
+    /// <summary>
+    /// Windows Security: its background work is how it raises protection alerts, which no speed
+    /// gain is worth muting. Never listed, so never offered.
+    /// </summary>
+    public static readonly IReadOnlySet<string> NeverOffered = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        "Microsoft.SecHealthUI_8wekyb3d8bbwe",
+    };
+
     /// <summary>Every value Upkeep reads, writes or puts back for one app. Nothing else is touched.</summary>
     public static readonly IReadOnlyList<string> Managed = [Disabled, DisabledByUser, IgnoreBatterySaver, SleepDisabled];
 
@@ -98,6 +107,7 @@ public sealed class BackgroundAppSettings : IBackgroundAppSettings
         return [.. _registry.GetSubKeyNames(RegistryHiveName.CurrentUser, BackgroundAccessValues.RootKey)
             .Where(BackgroundAccessValues.IsValidFamilyName)
             .Where(names.ContainsKey)
+            .Where(familyName => !BackgroundAccessValues.NeverOffered.Contains(familyName))
             .Select(familyName => new BackgroundApp(familyName, names[familyName], ReadAccess(familyName)))
             .OrderBy(app => app.DisplayName, StringComparer.CurrentCultureIgnoreCase)];
     }
@@ -213,6 +223,13 @@ public sealed class StorePackageCatalog : IStorePackageCatalog
                     // components aren't apps a person chose, so they aren't offered here either.
                     if (package.IsFramework || package.IsResourcePackage || package.IsBundle
                         || package.SignatureKind == Windows.ApplicationModel.PackageSignatureKind.System)
+                    {
+                        continue;
+                    }
+
+                    // No entry in Start means runtime plumbing (WinAppRuntime, widget hosts), not
+                    // an app a person opens — and so not one they'd know what turning off does to.
+                    if (package.GetAppListEntries().Count == 0)
                     {
                         continue;
                     }

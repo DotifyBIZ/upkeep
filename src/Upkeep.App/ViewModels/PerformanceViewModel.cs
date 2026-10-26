@@ -138,7 +138,8 @@ public sealed partial class PerformanceViewModel : ObservableObject
             ShowPowerMode(_powerMode.Read());
 
             BackgroundApps.Clear();
-            foreach (var app in _backgroundApps.Read())
+            // Off the UI thread: naming every installed package takes the package manager a second or so.
+            foreach (var app in await Task.Run(_backgroundApps.Read, cancellationToken))
             {
                 BackgroundApps.Add(new BackgroundAppDisplay(app, AccessLabel(app.Access)));
             }
