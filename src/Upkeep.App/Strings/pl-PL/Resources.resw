@@ -1322,4 +1322,109 @@
   <data name="PerformanceBackgroundNever">
     <value>Nigdy</value>
   </data>
+  <data name="NavMilestones.Content">
+    <value>Kamienie milowe</value>
+  </data>
+  <data name="MilestonesTitle.Text">
+    <value>Kamienie milowe</value>
+  </data>
+  <data name="MilestonesSubtitle.Text">
+    <value>Jak regularnie dbasz o ten komputer i co z tego wynikło.</value>
+  </data>
+  <data name="MilestonesRhythmHeader.Text">
+    <value>Comiesięczny rytm</value>
+  </data>
+  <data name="MilestonesTotalsHeader.Text">
+    <value>Odkąd korzystasz z Upkeep</value>
+  </data>
+  <data name="MilestonesFreedCaption.Text">
+    <value>odzyskane na dyskach</value>
+  </data>
+  <data name="MilestonesChangesCaption.Text">
+    <value>zmiany nadal obowiązujące, każdą można cofnąć</value>
+  </data>
+  <data name="MilestonesListHeader.Text">
+    <value>Kamienie milowe</value>
+  </data>
+  <data name="MilestonesFootnote.Text">
+    <value>Przechowywane tylko na tym komputerze i wyliczane z Historii oraz pomiarów systemu Windows. Cofnięcie sesji cofa też jej zasługi.</value>
+  </data>
+  <data name="MilestonesStreakFormat">
+    <value>Miesiące z rzędu: {0}</value>
+  </data>
+  <data name="MilestonesRhythmDone">
+    <value>W tym miesiącu zrobione. Wystarczy jeden przegląd w miesiącu; Upkeep liczy miesiące, nie dni.</value>
+  </data>
+  <data name="MilestonesRhythmOpen">
+    <value>Przegląd w dowolnym momencie tego miesiąca podtrzyma serię. Pominięty miesiąc po prostu zaczyna nową.</value>
+  </data>
+  <data name="MilestonesMonthDone">
+    <value>{0}: przegląd zrobiony</value>
+  </data>
+  <data name="MilestonesMonthOpen">
+    <value>{0}: jeszcze otwarty</value>
+  </data>
+  <data name="MilestonesMonthMissed">
+    <value>{0}: bez przeglądu</value>
+  </data>
+  <data name="MilestonesStartupSavedCaption">
+    <value>krócej przy każdym uruchomieniu, według pomiarów systemu Windows</value>
+  </data>
+  <data name="MilestonesStartupSavedUnknown">
+    <value>szybsze uruchamianie: po zmianie i ponownym uruchomieniu użyj Testu szybkości</value>
+  </data>
+  <data name="MilestonesAchievedFormat">
+    <value>{0} z {1}</value>
+  </data>
+  <data name="MilestoneNeedsSpeedCheck">
+    <value>Użyj Testu szybkości, aby zobaczyć, ile brakuje.</value>
+  </data>
+  <data name="MilestoneFirstTuneUpTitle">
+    <value>Pierwszy przegląd</value>
+  </data>
+  <data name="MilestoneFirstTuneUpDetail">
+    <value>Dowolna sesja Upkeep, która coś zmieniła.</value>
+  </data>
+  <data name="MilestoneTenGigabytesTitle">
+    <value>10 GB odzyskane</value>
+  </data>
+  <data name="MilestoneTenGigabytesDetail">
+    <value>Miejsce zwolnione w sesjach, których nie cofnięto.</value>
+  </data>
+  <data name="MilestoneSpeedTuneUpTitle">
+    <value>Pierwsze przyspieszenie</value>
+  </data>
+  <data name="MilestoneSpeedTuneUpDetail">
+    <value>Zmiana aplikacji startowych, usług, zasilania lub efektów wizualnych.</value>
+  </data>
+  <data name="MilestoneUnderFortySecondsTitle">
+    <value>Uruchamianie poniżej 40 s</value>
+  </data>
+  <data name="MilestoneUnderFortySecondsDetail">
+    <value>Ostatnie uruchomienie według pomiaru systemu Windows.</value>
+  </data>
+  <data name="MilestoneTenSecondsFasterTitle">
+    <value>Szybciej o 10 s</value>
+  </data>
+  <data name="MilestoneTenSecondsFasterDetail">
+    <value>Przed i po ostatniej zmianie przyspieszającej.</value>
+  </data>
+  <data name="MilestoneLeanStartupTitle">
+    <value>Lekki autostart</value>
+  </data>
+  <data name="MilestoneLeanStartupDetail">
+    <value>Najwyżej sześć aplikacji uruchamianych z systemem Windows.</value>
+  </data>
+  <data name="MilestoneThreeMonthsTitle">
+    <value>Trzy miesiące z rzędu</value>
+  </data>
+  <data name="MilestoneThreeMonthsDetail">
+    <value>Przegląd co miesiąc przez cały kwartał.</value>
+  </data>
+  <data name="MilestoneSixMonthsTitle">
+    <value>Pół roku</value>
+  </data>
+  <data name="MilestoneSixMonthsDetail">
+    <value>Sześć miesięcy z rzędu.</value>
+  </data>
 </root>

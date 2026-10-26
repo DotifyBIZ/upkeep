@@ -67,6 +67,11 @@
                         <FontIcon Glyph="&#xE895;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem x:Uid="NavMilestones" Tag="Milestones">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7C1;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem x:Uid="NavHistory" Tag="History">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE81C;" />

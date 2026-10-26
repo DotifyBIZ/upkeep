@@ -26,6 +26,7 @@ public sealed partial class CommandPaletteViewModel : ObservableObject
         ("Apps", "NavApps.Content"),
         ("Startup", "NavStartup.Content"),
         ("Drivers", "NavDrivers.Content"),
+        ("Milestones", "NavMilestones.Content"),
         ("History", "NavHistory.Content"),
         ("Settings", "NavSettings.Content"),
     ];

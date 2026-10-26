@@ -66,7 +66,7 @@ public class CommandPaletteViewModelTests
     {
         var viewModel = CreateViewModel();
 
-        Assert.Equal(8, viewModel.Results.Count);
+        Assert.Equal(9, viewModel.Results.Count);
         Assert.False(viewModel.HasNoResults);
     }
 
@@ -102,6 +102,6 @@ public class CommandPaletteViewModelTests
         viewModel.Reset();
 
         Assert.Equal(string.Empty, viewModel.Query);
-        Assert.Equal(8, viewModel.Results.Count);
+        Assert.Equal(9, viewModel.Results.Count);
     }
 }

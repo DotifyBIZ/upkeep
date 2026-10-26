@@ -1322,4 +1322,109 @@
   <data name="PerformanceBackgroundNever">
     <value>Never</value>
   </data>
+  <data name="NavMilestones.Content">
+    <value>Milestones</value>
+  </data>
+  <data name="MilestonesTitle.Text">
+    <value>Milestones</value>
+  </data>
+  <data name="MilestonesSubtitle.Text">
+    <value>How regularly this PC is looked after, and what that has added up to.</value>
+  </data>
+  <data name="MilestonesRhythmHeader.Text">
+    <value>Monthly rhythm</value>
+  </data>
+  <data name="MilestonesTotalsHeader.Text">
+    <value>Since you started using Upkeep</value>
+  </data>
+  <data name="MilestonesFreedCaption.Text">
+    <value>back on your drives</value>
+  </data>
+  <data name="MilestonesChangesCaption.Text">
+    <value>changes still in place, every one undoable</value>
+  </data>
+  <data name="MilestonesListHeader.Text">
+    <value>Milestones</value>
+  </data>
+  <data name="MilestonesFootnote.Text">
+    <value>Kept on this PC only, and worked out from History and Windows' own measurements. Reverting a session takes its credit with it.</value>
+  </data>
+  <data name="MilestonesStreakFormat">
+    <value>Months in a row: {0}</value>
+  </data>
+  <data name="MilestonesRhythmDone">
+    <value>Done for this month. One tune-up a month is plenty; Upkeep counts months, not days.</value>
+  </data>
+  <data name="MilestonesRhythmOpen">
+    <value>A tune-up any time this month keeps the run going. A missed month simply starts a new one.</value>
+  </data>
+  <data name="MilestonesMonthDone">
+    <value>{0}: tune-up done</value>
+  </data>
+  <data name="MilestonesMonthOpen">
+    <value>{0}: still open</value>
+  </data>
+  <data name="MilestonesMonthMissed">
+    <value>{0}: no tune-up</value>
+  </data>
+  <data name="MilestonesStartupSavedCaption">
+    <value>off every startup, measured by Windows</value>
+  </data>
+  <data name="MilestonesStartupSavedUnknown">
+    <value>faster startup: run Speed check after a change and a restart</value>
+  </data>
+  <data name="MilestonesAchievedFormat">
+    <value>{0} of {1}</value>
+  </data>
+  <data name="MilestoneNeedsSpeedCheck">
+    <value>Run Speed check to see how close you are.</value>
+  </data>
+  <data name="MilestoneFirstTuneUpTitle">
+    <value>First tune-up</value>
+  </data>
+  <data name="MilestoneFirstTuneUpDetail">
+    <value>Any Upkeep session that changed something.</value>
+  </data>
+  <data name="MilestoneTenGigabytesTitle">
+    <value>10 GB back</value>
+  </data>
+  <data name="MilestoneTenGigabytesDetail">
+    <value>Space freed across the sessions you kept.</value>
+  </data>
+  <data name="MilestoneSpeedTuneUpTitle">
+    <value>First speed tune-up</value>
+  </data>
+  <data name="MilestoneSpeedTuneUpDetail">
+    <value>A change to startup apps, services, power or visual effects.</value>
+  </data>
+  <data name="MilestoneUnderFortySecondsTitle">
+    <value>Startup under 40 s</value>
+  </data>
+  <data name="MilestoneUnderFortySecondsDetail">
+    <value>Your latest start, as Windows timed it.</value>
+  </data>
+  <data name="MilestoneTenSecondsFasterTitle">
+    <value>10 s faster</value>
+  </data>
+  <data name="MilestoneTenSecondsFasterDetail">
+    <value>Before against after your latest speed change.</value>
+  </data>
+  <data name="MilestoneLeanStartupTitle">
+    <value>Lean startup</value>
+  </data>
+  <data name="MilestoneLeanStartupDetail">
+    <value>Six or fewer apps starting with Windows.</value>
+  </data>
+  <data name="MilestoneThreeMonthsTitle">
+    <value>Three months in a row</value>
+  </data>
+  <data name="MilestoneThreeMonthsDetail">
+    <value>A tune-up every month for a season.</value>
+  </data>
+  <data name="MilestoneSixMonthsTitle">
+    <value>Half a year</value>
+  </data>
+  <data name="MilestoneSixMonthsDetail">
+    <value>Six months in a row.</value>
+  </data>
 </root>
