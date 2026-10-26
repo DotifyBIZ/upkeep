@@ -1,0 +1,25 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: upkeep
+  title: Upkeep
+  description: >-
+    Local-first Windows 11 maintenance suite: cleanup, duplicates and disk
+    usage, uninstaller, startup and performance, drivers and updates.
+  annotations:
+    github.com/project-slug: DotifyBIZ/upkeep
+    backstage.io/source-location: url:https://github.com/DotifyBIZ/upkeep
+    backstage.io/adr-location: docs/adr
+  tags:
+    - dotnet
+    - winui
+    - windows
+  links:
+    - url: https://github.com/DotifyBIZ/upkeep/releases
+      title: Releases (installer)
+      icon: download
+spec:
+  type: desktop-app
+  lifecycle: production
+  # TR-ITOperations
+  owner: group:default/1c2b973e-7b63-4f3b-bca4-17c950dfb1b6
