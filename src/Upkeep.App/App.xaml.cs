@@ -136,6 +136,9 @@ public partial class App : Application
         services.AddSingleton<IStartupItemToggler, StartupItemToggler>();
         services.AddSingleton<IServiceScanner, ServiceScanner>();
         services.AddSingleton<IPerformanceSettings, PerformanceSettings>();
+        services.AddSingleton<IPowerModeSettings, PowerModeSettings>();
+        services.AddSingleton<IStorePackageCatalog, StorePackageCatalog>();
+        services.AddSingleton<IBackgroundAppSettings, BackgroundAppSettings>();
         services.AddSingleton<IWindowsUiLauncher, WindowsUiLauncher>();
         services.AddSingleton<IDriverScanner, DriverScanner>();
 
