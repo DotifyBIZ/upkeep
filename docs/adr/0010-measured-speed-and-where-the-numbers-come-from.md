@@ -52,7 +52,7 @@ Per-app background permission is read from and written to `HKCU\Software\Microso
 | Always | `Disabled` = 0, `DisabledByUser` = 0, `IgnoreBatterySaver` = 1 |
 | Power optimized (Windows' default) | none of the above present |
 
-Upkeep offers on/off: off writes "Never", and on goes back to whatever the app had before Upkeep turned it off. Each change journals the exact previous values of `Disabled`, `DisabledByUser`, `IgnoreBatterySaver` and `SleepDisabled` (present or absent) *before* writing, and a revert restores exactly those. The list is limited to installed, non-framework packages that `PackageManager` can name. The other entries under the key belong to Windows components with no name a person would recognise.
+Upkeep offers on/off: off writes "Never", and on goes back to whatever the app had before Upkeep turned it off. Each change journals the exact previous values of `Disabled`, `DisabledByUser`, `IgnoreBatterySaver` and `SleepDisabled` (present or absent) *before* writing, and a revert restores exactly those. The list is limited to installed, non-framework, non-system packages that have an entry in Start. That leaves out runtime plumbing like `WinAppRuntime` and widget hosts, which also have keys here but aren't apps a person would know what turning off does to. Windows Security (`Microsoft.SecHealthUI_8wekyb3d8bbwe`) is never listed, because its background work is how it raises protection alerts.
 
 ### 5. Not measured: memory at idle
 
