@@ -730,7 +730,7 @@
     <value>Plan zasilania</value>
   </data>
   <data name="PerformancePowerPlanNote.Text">
-    <value>Plany pochodzą z systemu Windows. Na komputerach oferujących tylko Zrównoważony wybierz tryb zasilania w Ustawieniach.</value>
+    <value>Plany pochodzą z systemu Windows. Na komputerach oferujących tylko Zrównoważony liczy się tryb zasilania powyżej.</value>
   </data>
   <data name="PerformancePowerSettingsButton.Content">
     <value>Ustawienia zasilania i baterii</value>
@@ -1120,5 +1120,311 @@
   </data>
   <data name="UpdatesChangeRefused">
     <value>System Windows nie zastosował tej zmiany.</value>
+  </data>
+  <data name="StartupTabSpeedCheck.Text">
+    <value>Test szybkości</value>
+  </data>
+  <data name="SpeedCheckIntro.Text">
+    <value>Windows mierzy każde uruchomienie tego komputera. Test szybkości odczytuje te pomiary. Są w dzienniku, który może otworzyć tylko administrator, więc Windows raz poprosi o zgodę.</value>
+  </data>
+  <data name="SpeedCheckMeasureButton.Text">
+    <value>Sprawdź szybkość uruchamiania</value>
+  </data>
+  <data name="SpeedCheckMeasuredByWindows.Text">
+    <value>Zmierzone przez Windows</value>
+  </data>
+  <data name="SpeedCheckLastBootLabel.Text">
+    <value>Ostatnie uruchomienie</value>
+  </data>
+  <data name="SpeedCheckLastBootWhat.Text">
+    <value>Od rozpoczęcia ładowania systemu Windows do chwili, gdy pulpit jest gotowy.</value>
+  </data>
+  <data name="SpeedCheckChartCaption.Text">
+    <value>Ostatnie uruchomienia, w sekundach</value>
+  </data>
+  <data name="SpeedCheckNoBoots.Text">
+    <value>Windows nie zapisał jeszcze żadnego uruchomienia tego komputera. Uruchom go ponownie i sprawdź jeszcze raz.</value>
+  </data>
+  <data name="SpeedCheckRecommendationsHeader.Text">
+    <value>Co pomoże, od największego wpływu</value>
+  </data>
+  <data name="SpeedCheckReviewButton.Content">
+    <value>Przejrzyj</value>
+  </data>
+  <data name="SpeedCheckFootnote.Text">
+    <value>Każda liczba tutaj pochodzi z pomiarów systemu Windows. Upkeep nie szacuje oszczędności, tylko mierzy ponownie po następnym uruchomieniu.</value>
+  </data>
+  <data name="StartupMeasurePrompt.Text">
+    <value>Zobacz, jak bardzo każda aplikacja opóźnia uruchamianie według pomiarów systemu Windows. Odczyt dziennika wymaga zgody administratora.</value>
+  </data>
+  <data name="StartupMeasureButton.Text">
+    <value>Pokaż zmierzone czasy</value>
+  </data>
+  <data name="StartupSuggestionBody.Text">
+    <value>Wyłączenie działa jak przełącznik w Menedżerze zadań. Aplikacje nadal otworzą się, gdy uruchomisz je samodzielnie, a Historia może je z powrotem włączyć.</value>
+  </data>
+  <data name="StartupPreviewPlanButton.Text">
+    <value>Podgląd wyłączenia</value>
+  </data>
+  <data name="StartupColumnTiming.Text">
+    <value>Czas zmierzony przez Windows</value>
+  </data>
+  <data name="StartupColumnLastStarted.Text">
+    <value>Ostatnio uruchomione przez Ciebie</value>
+  </data>
+  <data name="PerformancePowerModeHeader.Text">
+    <value>Tryb zasilania</value>
+  </data>
+  <data name="PerformancePowerModeNote.Text">
+    <value>Tryb zasilania systemu Windows, ten sam co w Ustawieniach › System › Zasilanie. Najlepsza efektywność energetyczna celowo ogranicza procesor; po podłączeniu do zasilania zwykle lepszy jest tryb Zrównoważony lub Najlepsza wydajność.</value>
+  </data>
+  <data name="PerformancePowerModeInert.Message">
+    <value>Windows stosuje tryb zasilania tylko w planie Zrównoważony. Wybierz Zrównoważony w sekcji Plan zasilania poniżej, aby te ustawienia zadziałały.</value>
+  </data>
+  <data name="PerformancePowerModePluggedIn.Text">
+    <value>Podłączony</value>
+  </data>
+  <data name="PerformancePowerModeOnBattery.Text">
+    <value>Na baterii</value>
+  </data>
+  <data name="PerformancePowerModeEfficiency.Content">
+    <value>Najlepsza efektywność energetyczna</value>
+  </data>
+  <data name="PerformancePowerModeBalanced.Content">
+    <value>Zrównoważony</value>
+  </data>
+  <data name="PerformancePowerModePerformance.Content">
+    <value>Najlepsza wydajność</value>
+  </data>
+  <data name="PerformanceBackgroundHeader.Text">
+    <value>Aplikacje w tle</value>
+  </data>
+  <data name="PerformanceBackgroundNote.Text">
+    <value>Aplikacje ze Sklepu, które Windows pozwala uruchamiać, gdy z nich nie korzystasz. Wyłączenie działa jak wybór „Nigdy” w Ustawieniach. Oszczędza głównie baterię i pamięć, więc wpływ na szybkość jest niewielki.</value>
+  </data>
+  <data name="CommonSecondsFormat">
+    <value>{0} s</value>
+  </data>
+  <data name="SpeedCheckReadFailed">
+    <value>Nie udało się odczytać dziennika uruchamiania systemu Windows. Szczegóły są w dzienniku diagnostycznym w Ustawieniach.</value>
+  </data>
+  <data name="SpeedCheckLastBootCaptionFormat">
+    <value>Zmierzone przez Windows {0}. Średnia z ostatnich uruchomień ({1}): {2}.</value>
+  </data>
+  <data name="SpeedCheckBarTooltipFormat">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="SpeedCheckWaitingForRestartFormat">
+    <value>Zmiany wprowadzono {0}. Uruchom komputer ponownie i wróć tutaj, aby zobaczyć, co zmierzył Windows.</value>
+  </data>
+  <data name="SpeedCheckAboutTheSame">
+    <value>Mniej więcej tak samo jak wcześniej</value>
+  </data>
+  <data name="SpeedCheckFasterFormat">
+    <value>Szybciej o {0}</value>
+  </data>
+  <data name="SpeedCheckSlowerFormat">
+    <value>Wolniej o {0}</value>
+  </data>
+  <data name="SpeedCheckComparisonDetailFormat">
+    <value>Przed zmianami z {2}: średnio {1} (uruchomienia: {0}). Od tego czasu: średnio {4} (uruchomienia: {3}).</value>
+  </data>
+  <data name="SpeedCheckSmallSample">
+    <value>To na razie niewiele uruchomień; wynik zaktualizuje się po każdym ponownym uruchomieniu.</value>
+  </data>
+  <data name="SpeedCheckStartupTitleFormat">
+    <value>Wolne aplikacje startowe, których nie uruchamiasz od 30 dni: {0}</value>
+  </data>
+  <data name="SpeedCheckStartupDetailFormat">
+    <value>Najwolniejszą Windows zmierzył na {0} przy logowaniu.</value>
+  </data>
+  <data name="SpeedCheckBadgeEveryStart">
+    <value>Przy każdym uruchomieniu</value>
+  </data>
+  <data name="SpeedCheckPowerModeTitle">
+    <value>Po podłączeniu do zasilania działa tryb Najlepsza efektywność energetyczna</value>
+  </data>
+  <data name="SpeedCheckPowerModeDetail">
+    <value>W tym trybie Windows celowo ogranicza procesor, nawet gdy nie ma baterii do oszczędzania.</value>
+  </data>
+  <data name="SpeedCheckBadgeFeltEverywhere">
+    <value>Odczuwalne wszędzie</value>
+  </data>
+  <data name="SpeedCheckAnimationsTitle">
+    <value>Animacje są włączone</value>
+  </data>
+  <data name="SpeedCheckAnimationsDetail">
+    <value>Po ich wyłączeniu okna i menu otwierają się od razu. Windows wygląda skromniej.</value>
+  </data>
+  <data name="SpeedCheckBackgroundTitleFormat">
+    <value>Aplikacje ze Sklepu, które mogą działać w tle: {0}</value>
+  </data>
+  <data name="SpeedCheckBackgroundDetail">
+    <value>Głównie bateria i pamięć; niewielki wpływ na szybkość.</value>
+  </data>
+  <data name="SpeedCheckBadgeSmall">
+    <value>Niewielki</value>
+  </data>
+  <data name="StartupTimingNotMeasuredTooltip">
+    <value>Jeszcze nie zmierzono. Użyj „Pokaż zmierzone czasy”, aby odczytać pomiary systemu Windows.</value>
+  </data>
+  <data name="StartupTimingTooltipFormat">
+    <value>Średnia z pomiarów systemu Windows przy logowaniu (uruchomienia: {0}).</value>
+  </data>
+  <data name="StartupNotTimed">
+    <value>Bez pomiaru</value>
+  </data>
+  <data name="StartupNotTimedTooltip">
+    <value>Windows mierzy aplikację tylko wtedy, gdy spowalnia uruchamianie bardziej niż zwykle, więc ta nie ma pomiaru. Upkeep go nie zgaduje.</value>
+  </data>
+  <data name="StartupLastStartedNever">
+    <value>Brak zapisu</value>
+  </data>
+  <data name="StartupLastStartedToday">
+    <value>Dzisiaj</value>
+  </data>
+  <data name="StartupLastStartedYesterday">
+    <value>Wczoraj</value>
+  </data>
+  <data name="StartupLastStartedDaysAgoFormat">
+    <value>{0} dni temu</value>
+  </data>
+  <data name="StartupSuggestionHeadlineFormat">
+    <value>Wolne aplikacje startowe, których nie uruchamiasz od 30 dni: {0}</value>
+  </data>
+  <data name="StartupPlanLineFormat">
+    <value>{0} przy logowaniu · ostatnio uruchomione przez Ciebie: {1}</value>
+  </data>
+  <data name="StartupPlanIntro">
+    <value>Te aplikacje przestaną uruchamiać się z systemem Windows. Odznacz te, których używasz przez ikonę w zasobniku: Windows nie zapisuje tego jako ich uruchomienia.</value>
+  </data>
+  <data name="StartupPlanMeasureNote">
+    <value>Każda zmiana jest najpierw zapisywana w Historii. Test szybkości zmierzy rzeczywistą różnicę po następnym uruchomieniu.</value>
+  </data>
+  <data name="StartupPlanTitle">
+    <value>Wyłączyć te aplikacje startowe?</value>
+  </data>
+  <data name="StartupPlanPrimary">
+    <value>Wyłącz</value>
+  </data>
+  <data name="StartupPlanCancel">
+    <value>Anuluj</value>
+  </data>
+  <data name="PerformancePowerModeName">
+    <value>tryb zasilania</value>
+  </data>
+  <data name="PerformanceBackgroundPowerOptimized">
+    <value>Zoptymalizowane pod kątem zasilania (decyduje Windows)</value>
+  </data>
+  <data name="PerformanceBackgroundAlways">
+    <value>Zawsze</value>
+  </data>
+  <data name="PerformanceBackgroundNever">
+    <value>Nigdy</value>
+  </data>
+  <data name="NavMilestones.Content">
+    <value>Kamienie milowe</value>
+  </data>
+  <data name="MilestonesTitle.Text">
+    <value>Kamienie milowe</value>
+  </data>
+  <data name="MilestonesSubtitle.Text">
+    <value>Jak regularnie dbasz o ten komputer i co z tego wynikło.</value>
+  </data>
+  <data name="MilestonesRhythmHeader.Text">
+    <value>Comiesięczny rytm</value>
+  </data>
+  <data name="MilestonesTotalsHeader.Text">
+    <value>Odkąd korzystasz z Upkeep</value>
+  </data>
+  <data name="MilestonesFreedCaption.Text">
+    <value>odzyskane na dyskach</value>
+  </data>
+  <data name="MilestonesChangesCaption.Text">
+    <value>zmiany nadal obowiązujące, każdą można cofnąć</value>
+  </data>
+  <data name="MilestonesListHeader.Text">
+    <value>Kamienie milowe</value>
+  </data>
+  <data name="MilestonesFootnote.Text">
+    <value>Przechowywane tylko na tym komputerze i wyliczane z Historii oraz pomiarów systemu Windows. Cofnięcie sesji cofa też jej zasługi.</value>
+  </data>
+  <data name="MilestonesStreakFormat">
+    <value>Miesiące z rzędu: {0}</value>
+  </data>
+  <data name="MilestonesRhythmDone">
+    <value>W tym miesiącu zrobione. Wystarczy jeden przegląd w miesiącu; Upkeep liczy miesiące, nie dni.</value>
+  </data>
+  <data name="MilestonesRhythmOpen">
+    <value>Przegląd w dowolnym momencie tego miesiąca podtrzyma serię. Pominięty miesiąc po prostu zaczyna nową.</value>
+  </data>
+  <data name="MilestonesMonthDone">
+    <value>{0}: przegląd zrobiony</value>
+  </data>
+  <data name="MilestonesMonthOpen">
+    <value>{0}: jeszcze otwarty</value>
+  </data>
+  <data name="MilestonesMonthMissed">
+    <value>{0}: bez przeglądu</value>
+  </data>
+  <data name="MilestonesStartupSavedCaption">
+    <value>krócej przy każdym uruchomieniu, według pomiarów systemu Windows</value>
+  </data>
+  <data name="MilestonesStartupSavedUnknown">
+    <value>szybsze uruchamianie: po zmianie i ponownym uruchomieniu użyj Testu szybkości</value>
+  </data>
+  <data name="MilestonesAchievedFormat">
+    <value>{0} z {1}</value>
+  </data>
+  <data name="MilestoneNeedsSpeedCheck">
+    <value>Użyj Testu szybkości, aby zobaczyć, ile brakuje.</value>
+  </data>
+  <data name="MilestoneFirstTuneUpTitle">
+    <value>Pierwszy przegląd</value>
+  </data>
+  <data name="MilestoneFirstTuneUpDetail">
+    <value>Dowolna sesja Upkeep, która coś zmieniła.</value>
+  </data>
+  <data name="MilestoneTenGigabytesTitle">
+    <value>10 GB odzyskane</value>
+  </data>
+  <data name="MilestoneTenGigabytesDetail">
+    <value>Miejsce zwolnione w sesjach, których nie cofnięto.</value>
+  </data>
+  <data name="MilestoneSpeedTuneUpTitle">
+    <value>Pierwsze przyspieszenie</value>
+  </data>
+  <data name="MilestoneSpeedTuneUpDetail">
+    <value>Zmiana aplikacji startowych, usług, zasilania lub efektów wizualnych.</value>
+  </data>
+  <data name="MilestoneUnderFortySecondsTitle">
+    <value>Uruchamianie poniżej 40 s</value>
+  </data>
+  <data name="MilestoneUnderFortySecondsDetail">
+    <value>Ostatnie uruchomienie według pomiaru systemu Windows.</value>
+  </data>
+  <data name="MilestoneTenSecondsFasterTitle">
+    <value>Szybciej o 10 s</value>
+  </data>
+  <data name="MilestoneTenSecondsFasterDetail">
+    <value>Przed i po ostatniej zmianie przyspieszającej.</value>
+  </data>
+  <data name="MilestoneLeanStartupTitle">
+    <value>Lekki autostart</value>
+  </data>
+  <data name="MilestoneLeanStartupDetail">
+    <value>Najwyżej sześć aplikacji uruchamianych z systemem Windows.</value>
+  </data>
+  <data name="MilestoneThreeMonthsTitle">
+    <value>Trzy miesiące z rzędu</value>
+  </data>
+  <data name="MilestoneThreeMonthsDetail">
+    <value>Przegląd co miesiąc przez cały kwartał.</value>
+  </data>
+  <data name="MilestoneSixMonthsTitle">
+    <value>Pół roku</value>
+  </data>
+  <data name="MilestoneSixMonthsDetail">
+    <value>Sześć miesięcy z rzędu.</value>
   </data>
 </root>

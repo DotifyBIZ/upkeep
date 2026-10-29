@@ -1,6 +1,7 @@
 using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Drivers;
 using Upkeep.App.Core.Elevation;
+using Upkeep.App.Core.Performance;
 using Upkeep.App.Core.Platform;
 using Upkeep.App.Core.Safety;
 using Upkeep.App.Core.Services;
@@ -69,6 +70,14 @@ public sealed class FakeHelperOperations : IHelperOperations
     {
         Calls.Add("defer:" + featureDays + ":" + qualityDays);
         return ThrowOnOperation is not null ? throw ThrowOnOperation : UpdateChange;
+    }
+
+    public BootPerformance BootPerformance { get; set; } = BootPerformance.Empty;
+
+    public BootPerformance ReadBootPerformance(int maxBoots, CancellationToken cancellationToken)
+    {
+        Calls.Add("boot-performance:" + maxBoots);
+        return ThrowOnOperation is not null ? throw ThrowOnOperation : BootPerformance;
     }
 }
 

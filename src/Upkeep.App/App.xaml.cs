@@ -136,6 +136,14 @@ public partial class App : Application
         services.AddSingleton<IStartupItemToggler, StartupItemToggler>();
         services.AddSingleton<IServiceScanner, ServiceScanner>();
         services.AddSingleton<IPerformanceSettings, PerformanceSettings>();
+        services.AddSingleton<IPowerModeSettings, PowerModeSettings>();
+        services.AddSingleton<IStorePackageCatalog, StorePackageCatalog>();
+        services.AddSingleton<IBackgroundAppSettings, BackgroundAppSettings>();
+
+        // Speed check: Windows' own timings, read once per run through the helper and shared by
+        // every tab; UserAssist re-read per visit so it reflects what was started since.
+        services.AddSingleton<IBootPerformanceSource, BootPerformanceSource>();
+        services.AddTransient<ILaunchHistory, UserAssistLaunchHistory>();
         services.AddSingleton<IWindowsUiLauncher, WindowsUiLauncher>();
         services.AddSingleton<IDriverScanner, DriverScanner>();
 
@@ -147,9 +155,11 @@ public partial class App : Application
         services.AddTransient<CleanupViewModel>();
         services.AddTransient<FilesViewModel>();
         services.AddTransient<AppsViewModel>();
+        services.AddTransient<SpeedCheckViewModel>();
         services.AddTransient<StartupViewModel>();
         services.AddTransient<ServicesViewModel>();
         services.AddTransient<PerformanceViewModel>();
+        services.AddTransient<MilestonesViewModel>();
         services.AddTransient<HistoryViewModel>();
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<DriversViewModel>();

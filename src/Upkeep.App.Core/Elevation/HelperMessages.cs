@@ -21,6 +21,7 @@ namespace Upkeep.App.Core.Elevation;
 [JsonDerivedType(typeof(SearchDriverUpdatesRequest), "search-driver-updates")]
 [JsonDerivedType(typeof(SetUpdatePauseRequest), "set-update-pause")]
 [JsonDerivedType(typeof(SetUpdateDeferralRequest), "set-update-deferral")]
+[JsonDerivedType(typeof(ReadBootPerformanceRequest), "read-boot-performance")]
 public abstract record HelperRequest
 {
     /// <summary>Correlates a response with its request; the shell sends one request at a time.</summary>
@@ -82,6 +83,13 @@ public sealed record SetUpdatePauseRequest(int Days) : HelperRequest;
 public sealed record SetUpdateDeferralRequest(int FeatureDays, int QualityDays) : HelperRequest;
 
 /// <summary>
+/// Reads how long recent starts took, and which apps Windows says slowed them, from the
+/// Diagnostics-Performance log — which only administrators can read (ADR-0010). Read-only, and it
+/// carries nothing: the helper decides which log, which events and how many.
+/// </summary>
+public sealed record ReadBootPerformanceRequest : HelperRequest;
+
+/// <summary>
 /// Result of one helper operation. Failures cross the pipe as an error code the shell can
 /// localize — never as a raw exception or a stack trace.
 /// </summary>
@@ -94,6 +102,7 @@ public sealed record SetUpdateDeferralRequest(int FeatureDays, int QualityDays) 
 [JsonDerivedType(typeof(ServiceChangeResponse), "service-change")]
 [JsonDerivedType(typeof(DriverUpdateSearchResponse), "driver-update-search")]
 [JsonDerivedType(typeof(WindowsUpdateStateResponse), "windows-update-state")]
+[JsonDerivedType(typeof(BootPerformanceResponse), "boot-performance")]
 public abstract record HelperResponse
 {
     public int RequestId { get; init; }
@@ -118,6 +127,9 @@ public sealed record DriverUpdateSearchResponse(bool Succeeded, IReadOnlyList<Dr
 
 /// <summary>How Windows Update is scheduled, after whatever change was just made.</summary>
 public sealed record WindowsUpdateStateResponse(bool Success, Updates.WindowsUpdateState State, string? FailureDetail) : HelperResponse;
+
+/// <summary>Recent starts and the apps that slowed them, newest first.</summary>
+public sealed record BootPerformanceResponse(Performance.BootPerformance Performance) : HelperResponse;
 
 /// <summary>
 /// A failed operation. <paramref name="Code"/> is one of <see cref="HelperErrorCodes"/> — a stable

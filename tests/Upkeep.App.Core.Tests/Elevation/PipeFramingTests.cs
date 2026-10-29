@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using Upkeep.App.Core.Elevation;
+using Upkeep.App.Core.Performance;
 
 namespace Upkeep.App.Core.Tests.Elevation;
 
@@ -33,6 +34,25 @@ public class PipeFramingTests
         var error = Assert.IsType<HelperErrorResponse>(read);
         Assert.Equal(HelperErrorCodes.RefusedByPolicy, error.Code);
         Assert.Equal(7, error.RequestId);
+    }
+
+    [Fact]
+    public async Task ReadFrame_BootPerformanceKeepsItsTimes()
+    {
+        var boot = new BootRecord(new DateTimeOffset(2026, 10, 24, 7, 30, 0, TimeSpan.Zero), TimeSpan.FromMilliseconds(46_250));
+        var app = new SlowStartupApp(boot.At, "Steam.exe", "Steam", TimeSpan.FromMilliseconds(2600), TimeSpan.FromMilliseconds(900));
+
+        using var stream = new MemoryStream();
+        await PipeFraming.WriteFrameAsync(
+            stream,
+            (HelperResponse)new BootPerformanceResponse(new BootPerformance([boot], [app])),
+            CancellationToken.None);
+        stream.Position = 0;
+
+        var read = Assert.IsType<BootPerformanceResponse>(await PipeFraming.ReadFrameAsync<HelperResponse>(stream, CancellationToken.None));
+
+        Assert.Equal(boot, Assert.Single(read.Performance.Boots));
+        Assert.Equal(app, Assert.Single(read.Performance.SlowApps));
     }
 
     [Fact]
