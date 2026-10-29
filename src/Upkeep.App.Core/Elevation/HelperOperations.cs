@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Drivers;
+using Upkeep.App.Core.Performance;
 using Upkeep.App.Core.Safety;
 using Upkeep.App.Core.Services;
 using Upkeep.App.Core.Updates;
@@ -37,6 +38,9 @@ public interface IHelperOperations
 
     /// <summary>Sets how long feature and quality updates are held back.</summary>
     WindowsUpdateChangeResult SetUpdateDeferral(int featureDays, int qualityDays);
+
+    /// <summary>Reads at most <paramref name="maxBoots"/> recent starts from the Diagnostics-Performance log.</summary>
+    BootPerformance ReadBootPerformance(int maxBoots, CancellationToken cancellationToken);
 }
 
 /// <summary>
@@ -53,6 +57,7 @@ public sealed class WindowsHelperOperations : IHelperOperations
     private readonly ServiceConfigurator _serviceConfigurator;
     private readonly IDriverUpdateSearch _driverSearch;
     private readonly IWindowsUpdateSettings _updateSettings;
+    private readonly IBootPerformanceLog _bootLog;
     private readonly string? _shellUserProfilePath;
 
     public WindowsHelperOperations(
@@ -62,6 +67,7 @@ public sealed class WindowsHelperOperations : IHelperOperations
         ServiceConfigurator serviceConfigurator,
         IDriverUpdateSearch driverSearch,
         IWindowsUpdateSettings updateSettings,
+        IBootPerformanceLog bootLog,
         string? shellUserProfilePath)
     {
         _scanner = scanner;
@@ -70,6 +76,7 @@ public sealed class WindowsHelperOperations : IHelperOperations
         _serviceConfigurator = serviceConfigurator;
         _driverSearch = driverSearch;
         _updateSettings = updateSettings;
+        _bootLog = bootLog;
         _shellUserProfilePath = shellUserProfilePath;
     }
 
@@ -103,4 +110,7 @@ public sealed class WindowsHelperOperations : IHelperOperations
         bool succeeded = _updateSettings.SetDeferral(featureDays, qualityDays, out string? failure);
         return new WindowsUpdateChangeResult(succeeded, _updateSettings.Read(), failure);
     }
+
+    public BootPerformance ReadBootPerformance(int maxBoots, CancellationToken cancellationToken) =>
+        _bootLog.Read(maxBoots, cancellationToken);
 }

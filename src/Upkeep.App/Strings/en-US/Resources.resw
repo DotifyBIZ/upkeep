@@ -730,7 +730,7 @@
     <value>Power plan</value>
   </data>
   <data name="PerformancePowerPlanNote.Text">
-    <value>Plans come from Windows. On PCs that only offer Balanced, pick a Power mode in Settings instead.</value>
+    <value>Plans come from Windows. On PCs that only offer Balanced, power mode above is the setting that matters.</value>
   </data>
   <data name="PerformancePowerSettingsButton.Content">
     <value>Power &amp; battery settings</value>
@@ -1120,5 +1120,311 @@
   </data>
   <data name="UpdatesChangeRefused">
     <value>Windows would not apply that change.</value>
+  </data>
+  <data name="StartupTabSpeedCheck.Text">
+    <value>Speed check</value>
+  </data>
+  <data name="SpeedCheckIntro.Text">
+    <value>Windows times every start of this PC. Speed check reads those timings. They're in a log only administrators can open, so Windows asks for your approval once.</value>
+  </data>
+  <data name="SpeedCheckMeasureButton.Text">
+    <value>Check startup speed</value>
+  </data>
+  <data name="SpeedCheckMeasuredByWindows.Text">
+    <value>Measured by Windows</value>
+  </data>
+  <data name="SpeedCheckLastBootLabel.Text">
+    <value>Last startup</value>
+  </data>
+  <data name="SpeedCheckLastBootWhat.Text">
+    <value>From Windows starting to load until the desktop has settled.</value>
+  </data>
+  <data name="SpeedCheckChartCaption.Text">
+    <value>Recent starts, in seconds</value>
+  </data>
+  <data name="SpeedCheckNoBoots.Text">
+    <value>Windows hasn't recorded a start of this PC yet. Restart it once and check again.</value>
+  </data>
+  <data name="SpeedCheckRecommendationsHeader.Text">
+    <value>What would help, biggest first</value>
+  </data>
+  <data name="SpeedCheckReviewButton.Content">
+    <value>Review</value>
+  </data>
+  <data name="SpeedCheckFootnote.Text">
+    <value>Every number here is one Windows recorded. Upkeep doesn't estimate savings; it measures again after your next restart.</value>
+  </data>
+  <data name="StartupMeasurePrompt.Text">
+    <value>See how long each app delays startup, as Windows measured it. Reading Windows' log needs administrator approval.</value>
+  </data>
+  <data name="StartupMeasureButton.Text">
+    <value>Show measured times</value>
+  </data>
+  <data name="StartupSuggestionBody.Text">
+    <value>Turning them off is the same switch as in Task Manager. They still open when you start them yourself, and History can turn them back on.</value>
+  </data>
+  <data name="StartupPreviewPlanButton.Text">
+    <value>Preview turning them off</value>
+  </data>
+  <data name="StartupColumnTiming.Text">
+    <value>Time Windows measured</value>
+  </data>
+  <data name="StartupColumnLastStarted.Text">
+    <value>Last started by you</value>
+  </data>
+  <data name="PerformancePowerModeHeader.Text">
+    <value>Power mode</value>
+  </data>
+  <data name="PerformancePowerModeNote.Text">
+    <value>Windows' own power mode, the same one as in Settings › System › Power. Best power efficiency holds the processor back on purpose; while plugged in, Balanced or Best performance is usually what you want.</value>
+  </data>
+  <data name="PerformancePowerModeInert.Message">
+    <value>Windows applies power mode only with the Balanced power plan. Choose Balanced under Power plan below for these to take effect.</value>
+  </data>
+  <data name="PerformancePowerModePluggedIn.Text">
+    <value>Plugged in</value>
+  </data>
+  <data name="PerformancePowerModeOnBattery.Text">
+    <value>On battery</value>
+  </data>
+  <data name="PerformancePowerModeEfficiency.Content">
+    <value>Best power efficiency</value>
+  </data>
+  <data name="PerformancePowerModeBalanced.Content">
+    <value>Balanced</value>
+  </data>
+  <data name="PerformancePowerModePerformance.Content">
+    <value>Best performance</value>
+  </data>
+  <data name="PerformanceBackgroundHeader.Text">
+    <value>Background apps</value>
+  </data>
+  <data name="PerformanceBackgroundNote.Text">
+    <value>Store apps Windows lets run while you're not using them. Turning one off is the same as choosing "Never" in Settings. It mostly saves battery and memory, so the effect on speed is small.</value>
+  </data>
+  <data name="CommonSecondsFormat">
+    <value>{0} s</value>
+  </data>
+  <data name="SpeedCheckReadFailed">
+    <value>Windows' startup log couldn't be read. The diagnostic log in Settings has the details.</value>
+  </data>
+  <data name="SpeedCheckLastBootCaptionFormat">
+    <value>Measured by Windows on {0}. Average across {1} recent starts: {2}.</value>
+  </data>
+  <data name="SpeedCheckBarTooltipFormat">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="SpeedCheckWaitingForRestartFormat">
+    <value>You made changes on {0}. Restart your PC, then come back to see what Windows measured.</value>
+  </data>
+  <data name="SpeedCheckAboutTheSame">
+    <value>About the same as before</value>
+  </data>
+  <data name="SpeedCheckFasterFormat">
+    <value>{0} faster</value>
+  </data>
+  <data name="SpeedCheckSlowerFormat">
+    <value>{0} slower</value>
+  </data>
+  <data name="SpeedCheckComparisonDetailFormat">
+    <value>Before your changes on {2}: {1} on average over {0} starts. Since then: {4} on average over {3} starts.</value>
+  </data>
+  <data name="SpeedCheckSmallSample">
+    <value>That's only a few starts so far; this updates after each restart.</value>
+  </data>
+  <data name="SpeedCheckStartupTitleFormat">
+    <value>Slow startup apps you haven't started yourself in 30 days: {0}</value>
+  </data>
+  <data name="SpeedCheckStartupDetailFormat">
+    <value>Windows measured the slowest at {0} when you signed in.</value>
+  </data>
+  <data name="SpeedCheckBadgeEveryStart">
+    <value>Every start</value>
+  </data>
+  <data name="SpeedCheckPowerModeTitle">
+    <value>Power mode is Best power efficiency while plugged in</value>
+  </data>
+  <data name="SpeedCheckPowerModeDetail">
+    <value>Windows holds the processor back on purpose in this mode, even with no battery to save.</value>
+  </data>
+  <data name="SpeedCheckBadgeFeltEverywhere">
+    <value>Felt everywhere</value>
+  </data>
+  <data name="SpeedCheckAnimationsTitle">
+    <value>Animations are on</value>
+  </data>
+  <data name="SpeedCheckAnimationsDetail">
+    <value>Turning them off makes windows and menus open instantly. Windows looks plainer.</value>
+  </data>
+  <data name="SpeedCheckBackgroundTitleFormat">
+    <value>Store apps allowed to run in the background: {0}</value>
+  </data>
+  <data name="SpeedCheckBackgroundDetail">
+    <value>Mostly battery and memory; a small effect on speed.</value>
+  </data>
+  <data name="SpeedCheckBadgeSmall">
+    <value>Small</value>
+  </data>
+  <data name="StartupTimingNotMeasuredTooltip">
+    <value>Not measured yet. Use "Show measured times" to read what Windows recorded.</value>
+  </data>
+  <data name="StartupTimingTooltipFormat">
+    <value>Average of what Windows recorded at sign-in, over {0} starts.</value>
+  </data>
+  <data name="StartupNotTimed">
+    <value>Not timed</value>
+  </data>
+  <data name="StartupNotTimedTooltip">
+    <value>Windows only times an app when it makes a start slower than usual, so this one has no measurement. Upkeep won't guess one.</value>
+  </data>
+  <data name="StartupLastStartedNever">
+    <value>Not recorded</value>
+  </data>
+  <data name="StartupLastStartedToday">
+    <value>Today</value>
+  </data>
+  <data name="StartupLastStartedYesterday">
+    <value>Yesterday</value>
+  </data>
+  <data name="StartupLastStartedDaysAgoFormat">
+    <value>{0} days ago</value>
+  </data>
+  <data name="StartupSuggestionHeadlineFormat">
+    <value>Slow startup apps you haven't started yourself in 30 days: {0}</value>
+  </data>
+  <data name="StartupPlanLineFormat">
+    <value>{0} at sign-in · last started by you: {1}</value>
+  </data>
+  <data name="StartupPlanIntro">
+    <value>These will stop starting with Windows. Untick anything you use from its tray icon: Windows doesn't record that as you starting it.</value>
+  </data>
+  <data name="StartupPlanMeasureNote">
+    <value>Each change is saved in History first. Speed check measures the real difference after your next restart.</value>
+  </data>
+  <data name="StartupPlanTitle">
+    <value>Turn off these startup apps?</value>
+  </data>
+  <data name="StartupPlanPrimary">
+    <value>Turn off</value>
+  </data>
+  <data name="StartupPlanCancel">
+    <value>Cancel</value>
+  </data>
+  <data name="PerformancePowerModeName">
+    <value>power mode</value>
+  </data>
+  <data name="PerformanceBackgroundPowerOptimized">
+    <value>Power optimized (Windows decides)</value>
+  </data>
+  <data name="PerformanceBackgroundAlways">
+    <value>Always</value>
+  </data>
+  <data name="PerformanceBackgroundNever">
+    <value>Never</value>
+  </data>
+  <data name="NavMilestones.Content">
+    <value>Milestones</value>
+  </data>
+  <data name="MilestonesTitle.Text">
+    <value>Milestones</value>
+  </data>
+  <data name="MilestonesSubtitle.Text">
+    <value>How regularly this PC is looked after, and what that has added up to.</value>
+  </data>
+  <data name="MilestonesRhythmHeader.Text">
+    <value>Monthly rhythm</value>
+  </data>
+  <data name="MilestonesTotalsHeader.Text">
+    <value>Since you started using Upkeep</value>
+  </data>
+  <data name="MilestonesFreedCaption.Text">
+    <value>back on your drives</value>
+  </data>
+  <data name="MilestonesChangesCaption.Text">
+    <value>changes still in place, every one undoable</value>
+  </data>
+  <data name="MilestonesListHeader.Text">
+    <value>Milestones</value>
+  </data>
+  <data name="MilestonesFootnote.Text">
+    <value>Kept on this PC only, and worked out from History and Windows' own measurements. Reverting a session takes its credit with it.</value>
+  </data>
+  <data name="MilestonesStreakFormat">
+    <value>Months in a row: {0}</value>
+  </data>
+  <data name="MilestonesRhythmDone">
+    <value>Done for this month. One tune-up a month is plenty; Upkeep counts months, not days.</value>
+  </data>
+  <data name="MilestonesRhythmOpen">
+    <value>A tune-up any time this month keeps the run going. A missed month simply starts a new one.</value>
+  </data>
+  <data name="MilestonesMonthDone">
+    <value>{0}: tune-up done</value>
+  </data>
+  <data name="MilestonesMonthOpen">
+    <value>{0}: still open</value>
+  </data>
+  <data name="MilestonesMonthMissed">
+    <value>{0}: no tune-up</value>
+  </data>
+  <data name="MilestonesStartupSavedCaption">
+    <value>off every startup, measured by Windows</value>
+  </data>
+  <data name="MilestonesStartupSavedUnknown">
+    <value>faster startup: run Speed check after a change and a restart</value>
+  </data>
+  <data name="MilestonesAchievedFormat">
+    <value>{0} of {1}</value>
+  </data>
+  <data name="MilestoneNeedsSpeedCheck">
+    <value>Run Speed check to see how close you are.</value>
+  </data>
+  <data name="MilestoneFirstTuneUpTitle">
+    <value>First tune-up</value>
+  </data>
+  <data name="MilestoneFirstTuneUpDetail">
+    <value>Any Upkeep session that changed something.</value>
+  </data>
+  <data name="MilestoneTenGigabytesTitle">
+    <value>10 GB back</value>
+  </data>
+  <data name="MilestoneTenGigabytesDetail">
+    <value>Space freed across the sessions you kept.</value>
+  </data>
+  <data name="MilestoneSpeedTuneUpTitle">
+    <value>First speed tune-up</value>
+  </data>
+  <data name="MilestoneSpeedTuneUpDetail">
+    <value>A change to startup apps, services, power or visual effects.</value>
+  </data>
+  <data name="MilestoneUnderFortySecondsTitle">
+    <value>Startup under 40 s</value>
+  </data>
+  <data name="MilestoneUnderFortySecondsDetail">
+    <value>Your latest start, as Windows timed it.</value>
+  </data>
+  <data name="MilestoneTenSecondsFasterTitle">
+    <value>10 s faster</value>
+  </data>
+  <data name="MilestoneTenSecondsFasterDetail">
+    <value>Before against after your latest speed change.</value>
+  </data>
+  <data name="MilestoneLeanStartupTitle">
+    <value>Lean startup</value>
+  </data>
+  <data name="MilestoneLeanStartupDetail">
+    <value>Six or fewer apps starting with Windows.</value>
+  </data>
+  <data name="MilestoneThreeMonthsTitle">
+    <value>Three months in a row</value>
+  </data>
+  <data name="MilestoneThreeMonthsDetail">
+    <value>A tune-up every month for a season.</value>
+  </data>
+  <data name="MilestoneSixMonthsTitle">
+    <value>Half a year</value>
+  </data>
+  <data name="MilestoneSixMonthsDetail">
+    <value>Six months in a row.</value>
   </data>
 </root>

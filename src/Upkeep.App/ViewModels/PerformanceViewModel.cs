@@ -25,6 +25,8 @@ public sealed partial class PerformanceViewModel : ObservableObject
     private const string SearchServiceName = "WSearch";
 
     private readonly IPerformanceSettings _settings;
+    private readonly IPowerModeSettings _powerMode;
+    private readonly IBackgroundAppSettings _backgroundApps;
     private readonly IServiceScanner _scanner;
     private readonly IElevationService _elevation;
     private readonly IWindowsUiLauncher _launcher;
@@ -34,9 +36,12 @@ public sealed partial class PerformanceViewModel : ObservableObject
 
     private SessionManifest? _session;
     private bool _loading;
+    private PowerModeState? _powerModeState;
 
     public PerformanceViewModel(
         IPerformanceSettings settings,
+        IPowerModeSettings powerMode,
+        IBackgroundAppSettings backgroundApps,
         IServiceScanner scanner,
         IElevationService elevation,
         IWindowsUiLauncher launcher,
@@ -45,6 +50,8 @@ public sealed partial class PerformanceViewModel : ObservableObject
         IAppLogger logger)
     {
         _settings = settings;
+        _powerMode = powerMode;
+        _backgroundApps = backgroundApps;
         _scanner = scanner;
         _elevation = elevation;
         _launcher = launcher;
@@ -77,6 +84,34 @@ public sealed partial class PerformanceViewModel : ObservableObject
 
     public bool HasStatusMessage => !string.IsNullOrEmpty(StatusMessage);
 
+    /// <summary>Store apps and whether each may run in the background.</summary>
+    public ObservableCollection<BackgroundAppDisplay> BackgroundApps { get; } = [];
+
+    /// <summary>False when Windows wouldn't report a power mode Upkeep knows; the section hides.</summary>
+    [ObservableProperty]
+    public partial bool HasPowerMode { get; set; }
+
+    /// <summary>Power mode applies only under the Balanced plan; otherwise the pickers would do nothing.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PowerModeIsInert))]
+    public partial bool PowerModeApplies { get; set; }
+
+    public bool PowerModeIsInert => !PowerModeApplies;
+
+    /// <summary>Desktops have no battery, so only the plugged-in mode is shown.</summary>
+    [ObservableProperty]
+    public partial bool HasBattery { get; set; }
+
+    /// <summary>Index into the picker, which lists the modes in <see cref="PowerMode"/> order.</summary>
+    [ObservableProperty]
+    public partial int PluggedInModeIndex { get; set; } = -1;
+
+    [ObservableProperty]
+    public partial int OnBatteryModeIndex { get; set; } = -1;
+
+    [ObservableProperty]
+    public partial bool HasBackgroundApps { get; set; }
+
     public async Task LoadAsync(CancellationToken cancellationToken)
     {
         // Set through the guard so reading the current state doesn't look like the user changing it.
@@ -99,6 +134,17 @@ public sealed partial class PerformanceViewModel : ObservableObject
             HasPowerPlanChoice = state.PowerPlans.Count > 1;
 
             IndexingEnabled = await ReadIndexingEnabledAsync(cancellationToken);
+
+            ShowPowerMode(_powerMode.Read());
+
+            BackgroundApps.Clear();
+            // Off the UI thread: naming every installed package takes the package manager a second or so.
+            foreach (var app in await Task.Run(_backgroundApps.Read, cancellationToken))
+            {
+                BackgroundApps.Add(new BackgroundAppDisplay(app, AccessLabel(app.Access)));
+            }
+
+            HasBackgroundApps = BackgroundApps.Count > 0;
             StatusMessage = null;
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -229,6 +275,92 @@ public sealed partial class PerformanceViewModel : ObservableObject
         IndexingEnabled = !IndexingEnabled;
         StatusMessage = _localization.GetString("PerformanceChangeRefusedFormat", _localization.GetString("PerformanceIndexingName"));
     }
+
+    /// <summary>Applies the power mode picked for one power source, putting the picker back if Windows refuses.</summary>
+    public async Task ApplyPowerModeAsync(PowerSource source, CancellationToken cancellationToken)
+    {
+        if (_loading || _powerModeState is not PowerModeState state)
+        {
+            return;
+        }
+
+        int index = source == PowerSource.PluggedIn ? PluggedInModeIndex : OnBatteryModeIndex;
+        PowerMode? previous = source == PowerSource.PluggedIn ? state.PluggedIn : state.OnBattery;
+
+        if (index < 0 || !Enum.IsDefined((PowerMode)index) || (PowerMode)index == previous)
+        {
+            return;
+        }
+
+        var mode = (PowerMode)index;
+        var entry = new SystemSettingChangedEntry(PowerModes.SettingId(source), previous?.ToString() ?? string.Empty, mode.ToString());
+        int entryIndex = await JournalAsync(entry, cancellationToken);
+
+        bool succeeded = _powerMode.SetMode(source, mode, out string? failure);
+        await StampAsync(entryIndex, entry, succeeded, failure, cancellationToken);
+
+        if (succeeded)
+        {
+            _powerModeState = source == PowerSource.PluggedIn ? state with { PluggedIn = mode } : state with { OnBattery = mode };
+            StatusMessage = null;
+            return;
+        }
+
+        await _logger.LogErrorAsync($"Windows would not set the power mode: {failure}", null, cancellationToken);
+        ShowPowerMode(state);
+        StatusMessage = _localization.GetString("PerformanceChangeRefusedFormat", _localization.GetString("PerformancePowerModeName"));
+    }
+
+    /// <summary>
+    /// Applies one background-app switch. The app's values are journaled exactly as they were
+    /// before anything is written, so History can put back "Always" as readily as "Power optimized".
+    /// </summary>
+    public async Task ApplyBackgroundAccessAsync(BackgroundAppDisplay display, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(display);
+
+        // The switch moving to where Windows already is: Upkeep moved it, not the person.
+        if (_loading || display.IsAllowed == display.AppliedAllowed)
+        {
+            return;
+        }
+
+        bool allowed = display.IsAllowed;
+        var entry = new BackgroundAccessChangedEntry(display.FamilyName, display.Name, _backgroundApps.Snapshot(display.FamilyName), allowed);
+        int entryIndex = await JournalAsync(entry, cancellationToken);
+
+        bool succeeded = _backgroundApps.SetAllowed(display.FamilyName, allowed, out string? failure);
+        await StampAsync(entryIndex, entry, succeeded, failure, cancellationToken);
+
+        if (succeeded)
+        {
+            display.AppliedAllowed = allowed;
+            display.AccessLabel = AccessLabel(allowed ? BackgroundAccess.PowerOptimized : BackgroundAccess.Never);
+            StatusMessage = null;
+            return;
+        }
+
+        await _logger.LogErrorAsync($"Windows would not change background access for {display.Name}: {failure}", null, cancellationToken);
+        display.IsAllowed = display.AppliedAllowed;
+        StatusMessage = _localization.GetString("PerformanceChangeRefusedFormat", display.Name);
+    }
+
+    private void ShowPowerMode(PowerModeState state)
+    {
+        bool wasLoading = _loading;
+        _loading = true;
+
+        _powerModeState = state;
+        HasPowerMode = state.PluggedIn is not null;
+        PowerModeApplies = state.AppliesToActivePlan;
+        HasBattery = state.HasBattery && state.OnBattery is not null;
+        PluggedInModeIndex = state.PluggedIn is PowerMode pluggedIn ? (int)pluggedIn : -1;
+        OnBatteryModeIndex = state.OnBattery is PowerMode onBattery ? (int)onBattery : -1;
+
+        _loading = wasLoading;
+    }
+
+    private string AccessLabel(BackgroundAccess access) => _localization.GetString($"PerformanceBackground{access}");
 
     private async Task ApplySettingAsync(
         string settingId,

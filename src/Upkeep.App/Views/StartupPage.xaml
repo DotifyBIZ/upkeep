@@ -24,7 +24,8 @@
         </StackPanel>
 
         <SelectorBar x:Name="Tabs" Grid.Row="1" Margin="-12,4,0,0" SelectionChanged="Tabs_SelectionChanged">
-            <SelectorBarItem x:Uid="StartupTabStartup" Tag="Startup" IsSelected="True" />
+            <SelectorBarItem x:Uid="StartupTabSpeedCheck" Tag="SpeedCheck" IsSelected="True" />
+            <SelectorBarItem x:Uid="StartupTabStartup" Tag="Startup" />
             <SelectorBarItem x:Uid="StartupTabServices" Tag="Services" />
             <SelectorBarItem x:Uid="StartupTabPerformance" Tag="Performance" />
         </SelectorBar>
@@ -39,8 +40,170 @@
         <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
             <Grid>
 
+                <!--  Speed check  -->
+                <StackPanel x:Name="SpeedCheckPanel" Spacing="16">
+                    <!--  Before anything is measured: say what measuring needs, and ask.  -->
+                    <Border Style="{StaticResource CardBorderStyle}" HorizontalAlignment="Left" Visibility="{x:Bind SpeedCheck.NeedsMeasurement, Mode=OneWay}">
+                        <StackPanel Spacing="12" HorizontalAlignment="Left">
+                            <TextBlock x:Uid="SpeedCheckIntro" Style="{StaticResource BodyTextStyle}" MaxWidth="560" TextWrapping="Wrap" />
+                            <Button Style="{StaticResource PrimaryButtonStyle}" Click="OnSpeedCheckMeasureClicked" IsEnabled="{x:Bind SpeedCheck.IsNotMeasuring, Mode=OneWay}" HorizontalAlignment="Left">
+                                <Button.Resources>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
+                                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
+                                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
+                                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
+                                </Button.Resources>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xEA18;" FontSize="14" Foreground="White" />
+                                    <TextBlock x:Uid="SpeedCheckMeasureButton" Foreground="White" FontWeight="SemiBold" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+
+                    <!--  After a change and a restart: what Windows measured, before against after.  -->
+                    <Border Style="{StaticResource CardBorderStyle}" Visibility="{x:Bind SpeedCheck.HasComparison, Mode=OneWay}">
+                        <StackPanel Spacing="8">
+                            <Border Background="{StaticResource SuccessSurfaceBrush}" CornerRadius="10" Padding="10,2" HorizontalAlignment="Left">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="{StaticResource SuccessTextBrush}" />
+                                    <TextBlock x:Uid="SpeedCheckMeasuredByWindows" FontSize="{StaticResource FontSizeXs}" FontWeight="SemiBold" Foreground="{StaticResource SuccessTextBrush}" />
+                                </StackPanel>
+                            </Border>
+                            <TextBlock
+                                Text="{x:Bind SpeedCheck.ComparisonHeadline, Mode=OneWay}"
+                                FontFamily="{StaticResource BrandFontFamily}"
+                                FontSize="{StaticResource FontSize3xl}"
+                                FontWeight="SemiBold"
+                                Foreground="{StaticResource Gray900Brush}" />
+                            <TextBlock Text="{x:Bind SpeedCheck.ComparisonDetail, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" MaxWidth="640" HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </Border>
+
+                    <InfoBar
+                        IsOpen="{x:Bind SpeedCheck.IsWaitingForRestart, Mode=OneWay}"
+                        Message="{x:Bind SpeedCheck.WaitingForRestartMessage, Mode=OneWay}"
+                        Severity="Informational"
+                        IsClosable="False" />
+
+                    <!--  The last start and the ones before it.  -->
+                    <Border Style="{StaticResource CardBorderStyle}" Visibility="{x:Bind SpeedCheck.HasLastBoot, Mode=OneWay}">
+                        <Grid ColumnSpacing="32">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Spacing="6" VerticalAlignment="Bottom">
+                                <TextBlock x:Uid="SpeedCheckLastBootLabel" Style="{StaticResource SectionLabelTextStyle}" />
+                                <TextBlock
+                                    Text="{x:Bind SpeedCheck.LastBootDisplay, Mode=OneWay}"
+                                    FontFamily="{StaticResource BrandFontFamily}"
+                                    FontSize="48"
+                                    FontWeight="SemiBold"
+                                    Foreground="{StaticResource Gray900Brush}" />
+                                <TextBlock Text="{x:Bind SpeedCheck.LastBootCaption, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" />
+                                <TextBlock x:Uid="SpeedCheckLastBootWhat" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="6" VerticalAlignment="Bottom">
+                                <TextBlock x:Uid="SpeedCheckChartCaption" Style="{StaticResource CaptionTextStyle}" />
+                                <ItemsControl ItemsSource="{x:Bind SpeedCheck.Bars}" Height="96">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" Spacing="8" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="viewmodels:BootBar">
+                                            <Grid Height="96" Width="20" Background="Transparent" ToolTipService.ToolTip="{x:Bind Tooltip}">
+                                                <Border Height="{x:Bind Height}" VerticalAlignment="Bottom" CornerRadius="3,3,0,0" Background="{StaticResource Secondary200Brush}" Visibility="{x:Bind IsEarlier}" />
+                                                <Border Height="{x:Bind Height}" VerticalAlignment="Bottom" CornerRadius="3,3,0,0" Background="{StaticResource Secondary600Brush}" Visibility="{x:Bind IsLatest}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <Grid>
+                                    <TextBlock Text="{x:Bind SpeedCheck.ChartStartLabel, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" HorizontalAlignment="Left" />
+                                    <TextBlock Text="{x:Bind SpeedCheck.ChartEndLabel, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" HorizontalAlignment="Right" />
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <TextBlock x:Uid="SpeedCheckNoBoots" Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" Visibility="{x:Bind SpeedCheck.HasNoBoots, Mode=OneWay}" />
+
+                    <!--  What would help, biggest first.  -->
+                    <Border Style="{StaticResource CardBorderStyle}" Padding="0" Visibility="{x:Bind SpeedCheck.HasRecommendations, Mode=OneWay}">
+                        <StackPanel>
+                            <TextBlock x:Uid="SpeedCheckRecommendationsHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Margin="20,16,20,8" />
+                            <ItemsControl ItemsSource="{x:Bind SpeedCheck.Recommendations}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="viewmodels:SpeedRecommendation">
+                                        <Grid Padding="20,12" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,1,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind Title}" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextWrapping="Wrap" />
+                                                <TextBlock Text="{x:Bind Detail}" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                            </StackPanel>
+                                            <Border Grid.Column="1" Background="{StaticResource Gray100Brush}" CornerRadius="10" Padding="10,2" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind Badge}" FontSize="{StaticResource FontSizeXs}" FontWeight="SemiBold" Foreground="{StaticResource Gray700Brush}" />
+                                            </Border>
+                                            <Button Grid.Column="2" x:Uid="SpeedCheckReviewButton" Tag="{x:Bind TargetTab}" Click="OnRecommendationClicked" VerticalAlignment="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock x:Uid="SpeedCheckFootnote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="720" HorizontalAlignment="Left" />
+                </StackPanel>
+
                 <!--  Startup  -->
-                <Border x:Name="StartupPanel" Style="{StaticResource CardBorderStyle}" Padding="0" VerticalAlignment="Top">
+                <StackPanel x:Name="StartupPanel" Spacing="16" Visibility="Collapsed">
+                    <!--  Timings need the administrator-only log, so they're asked for rather than read on open.  -->
+                    <Border Style="{StaticResource CardBorderStyle}" Visibility="{x:Bind ViewModel.NeedsMeasurement, Mode=OneWay}">
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" x:Uid="StartupMeasurePrompt" Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" VerticalAlignment="Center" />
+                            <Button Grid.Column="1" Click="OnStartupMeasureClicked" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xEA18;" FontSize="14" Foreground="{StaticResource Secondary600Brush}" />
+                                    <TextBlock x:Uid="StartupMeasureButton" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <Border Background="{StaticResource Primary50Brush}" BorderBrush="{StaticResource Primary100Brush}" BorderThickness="1" CornerRadius="16" Padding="20,16" Visibility="{x:Bind ViewModel.HasSuggestions, Mode=OneWay}">
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="{x:Bind ViewModel.SuggestionHeadline, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextWrapping="Wrap" />
+                                <TextBlock x:Uid="StartupSuggestionBody" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                            </StackPanel>
+                            <Button Grid.Column="1" Style="{StaticResource PrimaryButtonStyle}" Click="OnPreviewPlanClicked" VerticalAlignment="Center">
+                                <Button.Resources>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
+                                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
+                                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
+                                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
+                                </Button.Resources>
+                                <TextBlock x:Uid="StartupPreviewPlanButton" Foreground="White" FontWeight="SemiBold" />
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                <Border Style="{StaticResource CardBorderStyle}" Padding="0" VerticalAlignment="Top">
                     <StackPanel>
                         <!--  WinUI has no SharedSizeGroup, so a header row and its data rows are separate Grids
                               that size independently. Auto columns therefore cannot line up: the header's Auto
@@ -51,12 +214,16 @@
                         <Grid Padding="20,12" ColumnSpacing="16" Background="{StaticResource Gray50Brush}" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="130" />
                                 <ColumnDefinition Width="260" />
                                 <ColumnDefinition Width="154" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" x:Uid="StartupColumnName" Style="{StaticResource CaptionTextStyle}" />
-                            <TextBlock Grid.Column="1" x:Uid="StartupColumnSource" Style="{StaticResource CaptionTextStyle}" />
-                            <TextBlock Grid.Column="2" x:Uid="StartupColumnEnabled" Style="{StaticResource CaptionTextStyle}" />
+                            <TextBlock Grid.Column="1" x:Uid="StartupColumnTiming" Style="{StaticResource CaptionTextStyle}" />
+                            <TextBlock Grid.Column="2" x:Uid="StartupColumnLastStarted" Style="{StaticResource CaptionTextStyle}" />
+                            <TextBlock Grid.Column="3" x:Uid="StartupColumnSource" Style="{StaticResource CaptionTextStyle}" />
+                            <TextBlock Grid.Column="4" x:Uid="StartupColumnEnabled" Style="{StaticResource CaptionTextStyle}" />
                         </Grid>
 
                         <TextBlock
@@ -72,6 +239,8 @@
                                     <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="140" />
+                                            <ColumnDefinition Width="130" />
                                             <ColumnDefinition Width="260" />
                                             <ColumnDefinition Width="154" />
                                         </Grid.ColumnDefinitions>
@@ -82,7 +251,22 @@
                                             <TextBlock Text="{x:Bind DisabledAtDisplay}" Style="{StaticResource CaptionTextStyle}" />
                                         </StackPanel>
 
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <!--  What Windows measured, with the reason in a tooltip — including why a row is "Not timed".  -->
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Background="Transparent" ToolTipService.ToolTip="{x:Bind TimingTooltip, Mode=OneWay}">
+                                            <Border Width="72" Height="6" CornerRadius="3" Background="{StaticResource Gray100Brush}" VerticalAlignment="Center">
+                                                <Border HorizontalAlignment="Left" Width="{x:Bind TimingBarWidth, Mode=OneWay}" CornerRadius="3" Background="{StaticResource Secondary400Brush}" />
+                                            </Border>
+                                            <TextBlock Text="{x:Bind TimingDisplay, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" FontSize="13" VerticalAlignment="Center" />
+                                        </StackPanel>
+
+                                        <Grid Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                            <Border Background="{StaticResource WarningSurfaceBrush}" CornerRadius="10" Padding="8,1" Visibility="{x:Bind IsStale, Mode=OneWay}">
+                                                <TextBlock Text="{x:Bind LastStartedDisplay, Mode=OneWay}" FontSize="{StaticResource FontSizeXs}" FontWeight="SemiBold" Foreground="{StaticResource WarningTextBrush}" />
+                                            </Border>
+                                            <TextBlock Text="{x:Bind LastStartedDisplay, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" FontSize="13" Visibility="{x:Bind IsRecent, Mode=OneWay}" />
+                                        </Grid>
+
+                                        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                             <TextBlock Text="{x:Bind SourceLabel}" Style="{StaticResource BodyTextStyle}" FontSize="13" TextWrapping="Wrap" />
                                             <FontIcon
                                                 Glyph="&#xE72E;"
@@ -94,7 +278,7 @@
 
                                         <!--  The column owns the width; the switch sits in it at its natural size.  -->
                                         <ToggleSwitch
-                                            Grid.Column="2"
+                                            Grid.Column="4"
                                             OnContent=""
                                             OffContent=""
                                             IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
@@ -107,6 +291,7 @@
                         </ItemsControl>
                     </StackPanel>
                 </Border>
+                </StackPanel>
 
                 <!--  Services  -->
                 <StackPanel x:Name="ServicesPanel" Spacing="16" Visibility="Collapsed">
@@ -264,6 +449,75 @@
                         </StackPanel>
                     </Border>
 
+                    <!--  Power mode: Windows' own, per power source, and only meaningful under Balanced.  -->
+                    <Border Style="{StaticResource CardBorderStyle}" Visibility="{x:Bind Performance.HasPowerMode, Mode=OneWay}">
+                        <StackPanel Spacing="12">
+                            <TextBlock x:Uid="PerformancePowerModeHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                            <TextBlock x:Uid="PerformancePowerModeNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="620" HorizontalAlignment="Left" />
+
+                            <InfoBar x:Uid="PerformancePowerModeInert" IsOpen="{x:Bind Performance.PowerModeIsInert, Mode=OneWay}" Severity="Informational" IsClosable="False" />
+
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <TextBlock x:Uid="PerformancePowerModePluggedIn" Style="{StaticResource BodyTextStyle}" Width="120" VerticalAlignment="Center" />
+                                <ComboBox
+                                    MinWidth="240"
+                                    SelectedIndex="{x:Bind Performance.PluggedInModeIndex, Mode=TwoWay}"
+                                    IsEnabled="{x:Bind Performance.PowerModeApplies, Mode=OneWay}"
+                                    SelectionChanged="OnPluggedInModeChanged">
+                                    <ComboBoxItem x:Uid="PerformancePowerModeEfficiency" />
+                                    <ComboBoxItem x:Uid="PerformancePowerModeBalanced" />
+                                    <ComboBoxItem x:Uid="PerformancePowerModePerformance" />
+                                </ComboBox>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Spacing="16" Visibility="{x:Bind Performance.HasBattery, Mode=OneWay}">
+                                <TextBlock x:Uid="PerformancePowerModeOnBattery" Style="{StaticResource BodyTextStyle}" Width="120" VerticalAlignment="Center" />
+                                <ComboBox
+                                    MinWidth="240"
+                                    SelectedIndex="{x:Bind Performance.OnBatteryModeIndex, Mode=TwoWay}"
+                                    IsEnabled="{x:Bind Performance.PowerModeApplies, Mode=OneWay}"
+                                    SelectionChanged="OnOnBatteryModeChanged">
+                                    <ComboBoxItem x:Uid="PerformancePowerModeEfficiency" />
+                                    <ComboBoxItem x:Uid="PerformancePowerModeBalanced" />
+                                    <ComboBoxItem x:Uid="PerformancePowerModePerformance" />
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!--  Background apps: on hands the choice back to Windows, off is "Never".  -->
+                    <Border Style="{StaticResource CardBorderStyle}" Padding="0" Visibility="{x:Bind Performance.HasBackgroundApps, Mode=OneWay}">
+                        <StackPanel>
+                            <StackPanel Padding="20,16,20,12" Spacing="2">
+                                <TextBlock x:Uid="PerformanceBackgroundHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                                <TextBlock x:Uid="PerformanceBackgroundNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="620" HorizontalAlignment="Left" />
+                            </StackPanel>
+                            <ItemsControl ItemsSource="{x:Bind Performance.BackgroundApps}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="viewmodels:BackgroundAppDisplay">
+                                        <Grid Padding="20,8" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,1,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="154" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{x:Bind AccessLabel, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" />
+                                            </StackPanel>
+                                            <ToggleSwitch
+                                                Grid.Column="1"
+                                                OnContent=""
+                                                OffContent=""
+                                                IsOn="{x:Bind IsAllowed, Mode=TwoWay}"
+                                                Toggled="OnBackgroundAppToggled"
+                                                VerticalAlignment="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
                     <Border Style="{StaticResource CardBorderStyle}">
                         <StackPanel Spacing="12">
                             <TextBlock x:Uid="PerformancePowerPlanHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
@@ -314,7 +568,7 @@
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="12">
             <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Width="20" Height="20" />
-            <TextBlock x:Name="StartupNote" x:Uid="StartupToggleNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" VerticalAlignment="Center" />
+            <TextBlock x:Name="StartupNote" x:Uid="StartupToggleNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" VerticalAlignment="Center" Visibility="Collapsed" />
             <TextBlock x:Name="ServicesNote" x:Uid="ServicesDisableNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" VerticalAlignment="Center" Visibility="Collapsed" />
             <TextBlock x:Name="ServicesSpeedNote" x:Uid="ServicesSpeedNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" VerticalAlignment="Center" Visibility="Collapsed" />
         </StackPanel>

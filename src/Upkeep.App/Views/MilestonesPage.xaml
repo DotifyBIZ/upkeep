@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="Upkeep.App.Views.MilestonesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:Upkeep.App.ViewModels"
+    mc:Ignorable="d"
+    Background="{StaticResource Gray50Brush}">
+
+    <Grid Padding="32,24" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Spacing="4">
+            <TextBlock x:Uid="MilestonesTitle" Style="{StaticResource PageTitleTextStyle}" />
+            <TextBlock x:Uid="MilestonesSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="640" HorizontalAlignment="Left" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <InfoBar
+            Grid.Row="1"
+            IsOpen="{x:Bind ViewModel.HasStatusMessage, Mode=OneWay}"
+            Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+            Severity="Warning"
+            IsClosable="False" />
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16">
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  Months, never days: a monthly tune-up is plenty, and a missed month just starts a new run.  -->
+                    <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}">
+                        <StackPanel Spacing="12">
+                            <TextBlock x:Uid="MilestonesRhythmHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                            <TextBlock
+                                Text="{x:Bind ViewModel.StreakHeadline, Mode=OneWay}"
+                                FontFamily="{StaticResource BrandFontFamily}"
+                                FontSize="{StaticResource FontSize3xl}"
+                                FontWeight="SemiBold"
+                                Foreground="{StaticResource Gray900Brush}" />
+                            <ItemsControl ItemsSource="{x:Bind ViewModel.Months}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="12" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="viewmodels:MonthDisplay">
+                                        <StackPanel Spacing="6" Width="40" ToolTipService.ToolTip="{x:Bind Description}" AutomationProperties.Name="{x:Bind Description}">
+                                            <Grid Width="28" Height="28" HorizontalAlignment="Center">
+                                                <Ellipse Fill="{StaticResource Secondary600Brush}" Visibility="{x:Bind Done}" />
+                                                <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="White" Visibility="{x:Bind Done}" />
+                                                <Ellipse Stroke="{StaticResource Secondary300Brush}" StrokeThickness="2" StrokeDashArray="2,2" Visibility="{x:Bind IsOpen}" />
+                                                <Ellipse Stroke="{StaticResource Gray200Brush}" StrokeThickness="2" Visibility="{x:Bind IsMissed}" />
+                                            </Grid>
+                                            <TextBlock Text="{x:Bind Label}" Style="{StaticResource CaptionTextStyle}" HorizontalAlignment="Center" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock Text="{x:Bind ViewModel.RhythmNote, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}">
+                        <StackPanel Spacing="12">
+                            <TextBlock x:Uid="MilestonesTotalsHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                            <Grid ColumnSpacing="20" RowSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Grid.Column="0">
+                                    <TextBlock Text="{x:Bind ViewModel.StartupSavedDisplay, Mode=OneWay}" FontFamily="{StaticResource BrandFontFamily}" FontSize="{StaticResource FontSize2xl}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" />
+                                    <TextBlock Text="{x:Bind ViewModel.StartupSavedCaption, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="1">
+                                    <TextBlock Text="{x:Bind ViewModel.FreedDisplay, Mode=OneWay}" FontFamily="{StaticResource BrandFontFamily}" FontSize="{StaticResource FontSize2xl}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" />
+                                    <TextBlock x:Uid="MilestonesFreedCaption" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="0">
+                                    <TextBlock Text="{x:Bind ViewModel.ChangesDisplay, Mode=OneWay}" FontFamily="{StaticResource BrandFontFamily}" FontSize="{StaticResource FontSize2xl}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" />
+                                    <TextBlock x:Uid="MilestonesChangesCaption" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Border Style="{StaticResource CardBorderStyle}">
+                    <StackPanel Spacing="16">
+                        <Grid>
+                            <TextBlock x:Uid="MilestonesListHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                            <TextBlock Text="{x:Bind ViewModel.AchievedSummary, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" HorizontalAlignment="Right" />
+                        </Grid>
+                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.Milestones}">
+                            <ItemsRepeater.Layout>
+                                <!--  Every cell takes the first item's size, so the height leaves room for two-line Polish details and a progress bar.  -->
+                                <UniformGridLayout MinItemWidth="200" MinItemHeight="196" MinColumnSpacing="12" MinRowSpacing="12" ItemsStretch="Fill" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="viewmodels:MilestoneDisplay">
+                                    <Grid>
+                                        <!--  Reached: navy fill and a tick. Not yet: an outlined star and how close. Not a lock:
+                                              in this app a lock only ever means "Upkeep won't change this" (design-tokens.md).  -->
+                                        <Border Background="{StaticResource Secondary50Brush}" BorderBrush="{StaticResource Secondary100Brush}" BorderThickness="1" CornerRadius="8" Padding="14" Visibility="{x:Bind Achieved}" VerticalAlignment="Stretch">
+                                            <StackPanel Spacing="6">
+                                                <Grid Width="36" Height="36" HorizontalAlignment="Left">
+                                                    <Ellipse Fill="{StaticResource Secondary600Brush}" />
+                                                    <FontIcon Glyph="&#xE73E;" FontSize="16" Foreground="White" />
+                                                </Grid>
+                                                <TextBlock Text="{x:Bind Title}" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextWrapping="Wrap" />
+                                                <TextBlock Text="{x:Bind Detail}" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Background="White" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="1" CornerRadius="8" Padding="14" Visibility="{x:Bind IsLocked}">
+                                            <StackPanel Spacing="6">
+                                                <Grid Width="36" Height="36" HorizontalAlignment="Left">
+                                                    <Ellipse Stroke="{StaticResource Gray200Brush}" StrokeThickness="2" />
+                                                    <FontIcon Glyph="&#xE734;" FontSize="14" Foreground="{StaticResource Gray500Brush}" />
+                                                </Grid>
+                                                <TextBlock Text="{x:Bind Title}" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextWrapping="Wrap" />
+                                                <TextBlock Text="{x:Bind Detail}" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                                <ProgressBar Value="{x:Bind ProgressPercent}" Maximum="100" Visibility="{x:Bind ShowsProgress}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock x:Uid="MilestonesFootnote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="720" HorizontalAlignment="Left" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

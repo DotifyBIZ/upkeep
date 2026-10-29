@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Upkeep.App.Core.Platform;
 
 namespace Upkeep.App.Core.Sessions;
 
@@ -20,6 +21,7 @@ namespace Upkeep.App.Core.Sessions;
 [JsonDerivedType(typeof(StartupItemToggledEntry), "startup-item-toggled")]
 [JsonDerivedType(typeof(ScheduledTaskToggledEntry), "scheduled-task-toggled")]
 [JsonDerivedType(typeof(SystemSettingChangedEntry), "system-setting-changed")]
+[JsonDerivedType(typeof(BackgroundAccessChangedEntry), "background-access-changed")]
 [JsonDerivedType(typeof(IrreversibleOperationEntry), "irreversible")]
 public abstract record SessionEntry
 {
@@ -96,6 +98,20 @@ public sealed record ScheduledTaskToggledEntry(string TaskPath, bool PreviouslyE
 
 /// <summary>A Windows setting Upkeep can put back (visual effects, power plan, indexing).</summary>
 public sealed record SystemSettingChangedEntry(string SettingId, string PreviousValue, string NewValue) : SessionEntry
+{
+    public override bool IsReversible => true;
+}
+
+/// <summary>
+/// A Store app allowed or stopped from running in the background. The values it had before are
+/// kept exactly — present or absent — because "Always" and "Power optimized" differ only in which
+/// values exist (ADR-0010).
+/// </summary>
+public sealed record BackgroundAccessChangedEntry(
+    string PackageFamilyName,
+    string DisplayName,
+    IReadOnlyList<RegistryValueSnapshot> PreviousValues,
+    bool Allowed) : SessionEntry
 {
     public override bool IsReversible => true;
 }

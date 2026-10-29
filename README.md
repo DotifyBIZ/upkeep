@@ -37,7 +37,9 @@ Upkeep is a local-first Windows maintenance suite: the whole health of a PC in o
 - **Duplicate and large-file finder** — duplicates matched by content hash, never by name, so a delete action is never based on a guess; large and forgotten files surfaced by size and age thresholds you set
 - **Disk usage visualizer** — a native treemap of where the space actually went, drillable folder by folder
 - **Uninstaller with leftover cleanup** — desktop and Store apps in one list, uninstalled with their own uninstaller, then a preview of the folders and registry keys *that app* left behind
-- **Startup manager and performance tuning** — Run keys, Startup folder, logon tasks and background apps, toggled the way Task Manager does it; services labelled honestly from "commonly safe" to locked; visual effects, power plan and search indexing
+- **Speed check** — how long this PC takes to start, as Windows itself timed it; what would make it faster, biggest first; and, after a change and a restart, how much faster it actually got. Nothing is estimated ([ADR-0010](docs/adr/0010-measured-speed-and-where-the-numbers-come-from.md))
+- **Startup manager and performance tuning** — Run keys, Startup folder and logon tasks ranked by the delay Windows measured, toggled the way Task Manager does it; services labelled honestly from "commonly safe" to locked; power mode, background apps, visual effects, power plan and search indexing
+- **Milestones** — a monthly maintenance rhythm and milestones drawn from what Windows measured, worked out from History rather than kept as a score
 - **Driver and Windows Update management** — installed driver versions from Device Manager, available driver updates from Windows Update itself, feature-update pause and deferral through Windows' own settings, and driver rollback where Windows kept a previous driver
 - **English and Polish**, both shipped from day one, following your Windows display language unless you pick otherwise
 

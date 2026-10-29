@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Logging;
+using Upkeep.App.Core.Performance;
 using Upkeep.App.Core.Platform;
 using Upkeep.App.Core.Quarantine;
 using Upkeep.App.Core.Services;
@@ -22,6 +23,8 @@ public class SessionReverterTests : IDisposable
     private readonly FakeStartupItemScanner _startupScanner = new();
     private readonly FakeStartupItemToggler _startupToggler = new();
     private readonly FakePerformanceSettings _performance = new();
+    private readonly FakePowerModeSettings _powerMode = new();
+    private readonly FakeBackgroundAppSettings _backgroundApps = new();
     private readonly SessionJournal _journal;
     private readonly FileAppLogger _logger;
 
@@ -57,6 +60,8 @@ public class SessionReverterTests : IDisposable
         _startupScanner,
         _startupToggler,
         _performance,
+        _powerMode,
+        _backgroundApps,
         _journal,
         _logger,
         new FixedTimeProvider(Now));
@@ -250,6 +255,66 @@ public class SessionReverterTests : IDisposable
 
         Assert.Equal($"power-plan={previous}", Assert.Single(_performance.Changes));
         Assert.Equal(1, outcome.RevertedCount);
+    }
+
+    [Theory]
+    [InlineData(PerformanceSettingIds.PowerModePluggedIn, "PluggedIn=BestPowerEfficiency")]
+    [InlineData(PerformanceSettingIds.PowerModeOnBattery, "OnBattery=BestPowerEfficiency")]
+    public async Task RevertAsync_PowerMode_PutsThePreviousModeBackForThatSource(string settingId, string expected)
+    {
+        var session = Session(new SystemSettingChangedEntry(settingId, nameof(PowerMode.BestPowerEfficiency), nameof(PowerMode.Balanced)) { Completed = true });
+
+        (_, var outcome) = await CreateReverter().RevertAsync(session, CancellationToken.None);
+
+        Assert.Equal(expected, Assert.Single(_powerMode.Changes));
+        Assert.Equal(1, outcome.RevertedCount);
+    }
+
+    [Theory]
+    [InlineData("Turbo")]
+    [InlineData("42")]
+    public async Task RevertAsync_PowerModeThisBuildDoesNotKnow_IsRefused(string previous)
+    {
+        var session = Session(new SystemSettingChangedEntry(PerformanceSettingIds.PowerModePluggedIn, previous, nameof(PowerMode.Balanced)) { Completed = true });
+
+        (_, var outcome) = await CreateReverter().RevertAsync(session, CancellationToken.None);
+
+        Assert.Empty(_powerMode.Changes);
+        Assert.Equal(1, outcome.FailedCount);
+    }
+
+    [Fact]
+    public async Task RevertAsync_BackgroundAccess_PutsTheExactPreviousValuesBack()
+    {
+        RegistryValueSnapshot[] previous = [new("Disabled", "DWord", Number: 0), new("IgnoreBatterySaver", "DWord", Number: 1)];
+        var session = Session(new BackgroundAccessChangedEntry("Microsoft.ZuneMusic_8wekyb3d8bbwe", "Media Player", previous, Allowed: false) { Completed = true });
+
+        (_, var outcome) = await CreateReverter().RevertAsync(session, CancellationToken.None);
+
+        Assert.Equal("Microsoft.ZuneMusic_8wekyb3d8bbwe:restore=Disabled=0,IgnoreBatterySaver=1", Assert.Single(_backgroundApps.Changes));
+        Assert.Equal(1, outcome.RevertedCount);
+    }
+
+    [Fact]
+    public async Task RevertAsync_BackgroundAccessWithATamperedPackageName_IsRefusedBeforeTouchingTheRegistry()
+    {
+        var session = Session(new BackgroundAccessChangedEntry(@"..\..\Run", "x", [], Allowed: false) { Completed = true });
+
+        (_, var outcome) = await CreateReverter().RevertAsync(session, CancellationToken.None);
+
+        Assert.Empty(_backgroundApps.Changes);
+        Assert.Equal(1, outcome.FailedCount);
+    }
+
+    [Fact]
+    public async Task RevertAsync_BackgroundAccessWindowsRefuses_CountsAsFailed()
+    {
+        _backgroundApps.Succeeds = false;
+        var session = Session(new BackgroundAccessChangedEntry("Microsoft.ZuneMusic_8wekyb3d8bbwe", "Media Player", [], Allowed: false) { Completed = true });
+
+        (_, var outcome) = await CreateReverter().RevertAsync(session, CancellationToken.None);
+
+        Assert.Equal(1, outcome.FailedCount);
     }
 
     [Fact]

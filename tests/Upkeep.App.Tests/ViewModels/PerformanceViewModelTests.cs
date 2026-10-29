@@ -36,8 +36,138 @@ public class PerformanceViewModelTests : IDisposable
         }
     }
 
+    private readonly FakePowerModeSettings _powerMode = new();
+    private readonly FakeBackgroundAppSettings _backgroundApps = new();
+
     private PerformanceViewModel CreateViewModel() =>
-        new(_settings, _scanner, _elevation, _launcher, _journal, new FakeLocalizationService(), new FakeAppLogger());
+        new(_settings, _powerMode, _backgroundApps, _scanner, _elevation, _launcher, _journal, new FakeLocalizationService(), new FakeAppLogger());
+
+    private const string Music = "Microsoft.ZuneMusic_8wekyb3d8bbwe";
+
+    [Fact]
+    public async Task LoadAsync_ShowsThePowerModeForEachSource()
+    {
+        _powerMode.State = new PowerModeState(PowerMode.BestPowerEfficiency, PowerMode.Balanced, AppliesToActivePlan: true, HasBattery: true);
+
+        var viewModel = await LoadedAsync();
+
+        Assert.True(viewModel.HasPowerMode);
+        Assert.Equal((int)PowerMode.BestPowerEfficiency, viewModel.PluggedInModeIndex);
+        Assert.Equal((int)PowerMode.Balanced, viewModel.OnBatteryModeIndex);
+        Assert.True(viewModel.HasBattery);
+        Assert.False(viewModel.PowerModeIsInert);
+    }
+
+    [Fact]
+    public async Task LoadAsync_DesktopUnderAnotherPlan_HidesTheBatteryAndSaysPowerModeWontApply()
+    {
+        _powerMode.State = new PowerModeState(PowerMode.Balanced, null, AppliesToActivePlan: false, HasBattery: false);
+
+        var viewModel = await LoadedAsync();
+
+        Assert.False(viewModel.HasBattery);
+        Assert.True(viewModel.PowerModeIsInert);
+    }
+
+    [Fact]
+    public async Task LoadAsync_UnknownPowerMode_HidesTheSection()
+    {
+        _powerMode.State = new PowerModeState(null, null, AppliesToActivePlan: true, HasBattery: true);
+
+        Assert.False((await LoadedAsync()).HasPowerMode);
+    }
+
+    [Fact]
+    public async Task ApplyPowerModeAsync_JournalsThePreviousModeThenSetsIt()
+    {
+        _powerMode.State = new PowerModeState(PowerMode.BestPowerEfficiency, PowerMode.Balanced, AppliesToActivePlan: true, HasBattery: true);
+        var viewModel = await LoadedAsync();
+
+        viewModel.PluggedInModeIndex = (int)PowerMode.Balanced;
+        await viewModel.ApplyPowerModeAsync(PowerSource.PluggedIn, CancellationToken.None);
+
+        Assert.Equal("PluggedIn=Balanced", Assert.Single(_powerMode.Changes));
+        var entry = Assert.IsType<SystemSettingChangedEntry>(Assert.Single(Assert.Single(await _journal.ListAsync(CancellationToken.None)).Entries));
+        Assert.Equal(PerformanceSettingIds.PowerModePluggedIn, entry.SettingId);
+        Assert.Equal(nameof(PowerMode.BestPowerEfficiency), entry.PreviousValue);
+        Assert.True(entry.Completed);
+
+        // Picking the same mode again is not a change.
+        await viewModel.ApplyPowerModeAsync(PowerSource.PluggedIn, CancellationToken.None);
+        Assert.Single(_powerMode.Changes);
+    }
+
+    [Fact]
+    public async Task ApplyPowerModeAsync_WindowsRefuses_PutsThePickerBack()
+    {
+        _powerMode.State = new PowerModeState(PowerMode.Balanced, PowerMode.Balanced, AppliesToActivePlan: true, HasBattery: true);
+        _powerMode.Succeeds = false;
+        var viewModel = await LoadedAsync();
+
+        viewModel.OnBatteryModeIndex = (int)PowerMode.BestPerformance;
+        await viewModel.ApplyPowerModeAsync(PowerSource.OnBattery, CancellationToken.None);
+
+        Assert.Equal((int)PowerMode.Balanced, viewModel.OnBatteryModeIndex);
+        Assert.Contains("PerformanceChangeRefusedFormat", viewModel.StatusMessage, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task LoadAsync_ListsBackgroundAppsWithWhatSettingsWouldCallThem()
+    {
+        _backgroundApps.Apps.Add(new BackgroundApp(Music, "Media Player", BackgroundAccess.Always));
+        _backgroundApps.Apps.Add(new BackgroundApp("Microsoft.GamingApp_8wekyb3d8bbwe", "Xbox", BackgroundAccess.Never));
+
+        var viewModel = await LoadedAsync();
+
+        Assert.True(viewModel.HasBackgroundApps);
+        Assert.True(viewModel.BackgroundApps[0].IsAllowed);
+        Assert.Equal("PerformanceBackgroundAlways", viewModel.BackgroundApps[0].AccessLabel);
+        Assert.False(viewModel.BackgroundApps[1].IsAllowed);
+    }
+
+    [Fact]
+    public async Task ApplyBackgroundAccessAsync_JournalsTheExactPreviousValuesFirst()
+    {
+        _backgroundApps.Apps.Add(new BackgroundApp(Music, "Media Player", BackgroundAccess.Always));
+        _backgroundApps.CurrentValues = [new RegistryValueSnapshot("IgnoreBatterySaver", "DWord", Number: 1)];
+        var viewModel = await LoadedAsync();
+        var app = viewModel.BackgroundApps[0];
+
+        app.IsAllowed = false;
+        await viewModel.ApplyBackgroundAccessAsync(app, CancellationToken.None);
+
+        Assert.Equal(Music + ":allowed=False", Assert.Single(_backgroundApps.Changes));
+        var entry = Assert.IsType<BackgroundAccessChangedEntry>(Assert.Single(Assert.Single(await _journal.ListAsync(CancellationToken.None)).Entries));
+        Assert.Equal("IgnoreBatterySaver", Assert.Single(entry.PreviousValues).Name);
+        Assert.True(entry.Completed);
+        Assert.Equal("PerformanceBackgroundNever", app.AccessLabel);
+    }
+
+    [Fact]
+    public async Task ApplyBackgroundAccessAsync_SwitchMovedByUpkeep_IsNotApplied()
+    {
+        _backgroundApps.Apps.Add(new BackgroundApp(Music, "Media Player", BackgroundAccess.PowerOptimized));
+        var viewModel = await LoadedAsync();
+
+        await viewModel.ApplyBackgroundAccessAsync(viewModel.BackgroundApps[0], CancellationToken.None);
+
+        Assert.Empty(_backgroundApps.Changes);
+    }
+
+    [Fact]
+    public async Task ApplyBackgroundAccessAsync_WindowsRefuses_PutsTheSwitchBack()
+    {
+        _backgroundApps.Apps.Add(new BackgroundApp(Music, "Media Player", BackgroundAccess.PowerOptimized));
+        _backgroundApps.Succeeds = false;
+        var viewModel = await LoadedAsync();
+        var app = viewModel.BackgroundApps[0];
+
+        app.IsAllowed = false;
+        await viewModel.ApplyBackgroundAccessAsync(app, CancellationToken.None);
+
+        Assert.True(app.IsAllowed);
+        Assert.Contains("PerformanceChangeRefusedFormat", viewModel.StatusMessage, StringComparison.Ordinal);
+    }
 
     private async Task<PerformanceViewModel> LoadedAsync()
     {

@@ -2,7 +2,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using Upkeep.App.Core.Abstractions;
 using Upkeep.App.Core.Logging;
+using Upkeep.App.Core.Performance;
 using Upkeep.App.ViewModels;
 
 namespace Upkeep.App.Views;
@@ -19,13 +21,19 @@ public sealed partial class StartupPage : Page
 {
     public StartupPage()
     {
+        SpeedCheck = App.Services.GetRequiredService<SpeedCheckViewModel>();
         ViewModel = App.Services.GetRequiredService<StartupViewModel>();
         Services = App.Services.GetRequiredService<ServicesViewModel>();
         Performance = App.Services.GetRequiredService<PerformanceViewModel>();
+        _localization = App.Services.GetRequiredService<ILocalizationService>();
 
         InitializeComponent();
         Loaded += StartupPage_Loaded;
     }
+
+    private readonly ILocalizationService _localization;
+
+    public SpeedCheckViewModel SpeedCheck { get; }
 
     public StartupViewModel ViewModel { get; }
 
@@ -36,6 +44,7 @@ public sealed partial class StartupPage : Page
     /// <summary>The banner shows whichever tab is in front, so a warning can't follow you around.</summary>
     public string? CurrentStatusMessage => SelectedTab switch
     {
+        "SpeedCheck" => SpeedCheck.StatusMessage,
         "Services" => Services.StatusMessage,
         "Performance" => Performance.StatusMessage,
         _ => ViewModel.StatusMessage,
@@ -43,13 +52,14 @@ public sealed partial class StartupPage : Page
 
     public bool CurrentStatusIsOpen => !string.IsNullOrEmpty(CurrentStatusMessage);
 
-    private string SelectedTab => (Tabs.SelectedItem?.Tag as string) ?? "Startup";
+    private string SelectedTab => (Tabs.SelectedItem?.Tag as string) ?? "SpeedCheck";
 
     private async void StartupPage_Loaded(object sender, RoutedEventArgs e)
     {
         // async void is unavoidable on a XAML handler, so nothing escapes it.
         try
         {
+            await SpeedCheck.LoadAsync(CancellationToken.None);
             await ViewModel.LoadAsync(CancellationToken.None);
             await Services.LoadAsync(CancellationToken.None);
             await Performance.LoadAsync(CancellationToken.None);
@@ -87,10 +97,11 @@ public sealed partial class StartupPage : Page
         }
     }
 
-    private void Tabs_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
+    private async void Tabs_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)
     {
         string tab = SelectedTab;
 
+        SpeedCheckPanel.Visibility = tab == "SpeedCheck" ? Visibility.Visible : Visibility.Collapsed;
         StartupPanel.Visibility = tab == "Startup" ? Visibility.Visible : Visibility.Collapsed;
         ServicesPanel.Visibility = tab == "Services" ? Visibility.Visible : Visibility.Collapsed;
         PerformancePanel.Visibility = tab == "Performance" ? Visibility.Visible : Visibility.Collapsed;
@@ -101,6 +112,122 @@ public sealed partial class StartupPage : Page
         ServicesSpeedNote.Visibility = ServicesNote.Visibility;
 
         RefreshStatus();
+
+        // What would help changes as the other tabs are used, so coming back re-reads it.
+        if (tab == "SpeedCheck" && IsLoaded)
+        {
+            await RunAsync(() => SpeedCheck.LoadAsync(CancellationToken.None), "Refreshing Speed check failed.");
+        }
+    }
+
+    private async void OnSpeedCheckMeasureClicked(object sender, RoutedEventArgs e)
+    {
+        await RunAsync(async () =>
+        {
+            await SpeedCheck.MeasureAsync(CancellationToken.None);
+
+            // One read serves both tabs; the Startup tab picks the timings up without asking again.
+            await ViewModel.LoadAsync(CancellationToken.None);
+        }, "Measuring startup failed.");
+    }
+
+    private async void OnStartupMeasureClicked(object sender, RoutedEventArgs e)
+    {
+        await RunAsync(() => ViewModel.MeasureAsync(CancellationToken.None), "Measuring startup failed.");
+    }
+
+    private void OnRecommendationClicked(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: string target })
+        {
+            return;
+        }
+
+        foreach (var item in Tabs.Items)
+        {
+            item.IsSelected = (item.Tag as string) == target;
+        }
+    }
+
+    /// <summary>
+    /// Shows exactly which startup apps would be turned off, each one untickable, before anything
+    /// changes. The preview is the view model's; this only draws it.
+    /// </summary>
+    private async void OnPreviewPlanClicked(object sender, RoutedEventArgs e)
+    {
+        ViewModel.PreparePlan();
+        if (ViewModel.PlanItems.Count == 0)
+        {
+            return;
+        }
+
+        var lines = new StackPanel { Spacing = 8 };
+        lines.Children.Add(new TextBlock
+        {
+            Text = _localization.GetString("StartupPlanIntro"),
+            TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(0, 0, 0, 8),
+        });
+
+        foreach (var line in ViewModel.PlanItems)
+        {
+            var box = new CheckBox { IsChecked = line.IsSelected };
+            var label = new StackPanel { Spacing = 2 };
+            label.Children.Add(new TextBlock { Text = line.Name, FontWeight = Microsoft.UI.Text.FontWeights.SemiBold });
+            label.Children.Add(new TextBlock { Text = line.Detail, Style = (Style)Application.Current.Resources["CaptionTextStyle"] });
+            box.Content = label;
+            box.Checked += (_, _) => line.IsSelected = true;
+            box.Unchecked += (_, _) => line.IsSelected = false;
+            lines.Children.Add(box);
+        }
+
+        lines.Children.Add(new TextBlock
+        {
+            Text = _localization.GetString("StartupPlanMeasureNote"),
+            Style = (Style)Application.Current.Resources["CaptionTextStyle"],
+            TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(0, 8, 0, 0),
+        });
+
+        var dialog = new ContentDialog
+        {
+            XamlRoot = XamlRoot,
+            Title = _localization.GetString("StartupPlanTitle"),
+            Content = new ScrollViewer { Content = lines, MaxHeight = 420 },
+            PrimaryButtonText = _localization.GetString("StartupPlanPrimary"),
+            CloseButtonText = _localization.GetString("StartupPlanCancel"),
+            DefaultButton = ContentDialogButton.Primary,
+            PrimaryButtonStyle = (Style)Application.Current.Resources["PrimaryButtonStyle"],
+        };
+
+        if (await dialog.ShowAsync() == ContentDialogResult.Primary)
+        {
+            await RunAsync(() => ViewModel.ApplyPlanAsync(CancellationToken.None), "Turning off the suggested startup apps failed.");
+        }
+    }
+
+    private async void OnPluggedInModeChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ComboBox { IsLoaded: true })
+        {
+            await RunAsync(() => Performance.ApplyPowerModeAsync(PowerSource.PluggedIn, CancellationToken.None), "Changing the power mode failed.");
+        }
+    }
+
+    private async void OnOnBatteryModeChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ComboBox { IsLoaded: true })
+        {
+            await RunAsync(() => Performance.ApplyPowerModeAsync(PowerSource.OnBattery, CancellationToken.None), "Changing the power mode failed.");
+        }
+    }
+
+    private async void OnBackgroundAppToggled(object sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleSwitch { IsLoaded: true, DataContext: BackgroundAppDisplay display })
+        {
+            await RunAsync(() => Performance.ApplyBackgroundAccessAsync(display, CancellationToken.None), $"Changing background access for {display.Name} failed.");
+        }
     }
 
     private void ServiceFilters_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs args)

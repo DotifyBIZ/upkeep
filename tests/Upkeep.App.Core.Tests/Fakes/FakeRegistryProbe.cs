@@ -93,7 +93,8 @@ public sealed class FakeRegistryProbe : IRegistryProbe
         {
             "Binary" => value.Binary,
             "MultiString" => value.Lines?.ToArray(),
-            "DWord" or "QWord" => value.Number,
+            "DWord" => value.Number is long number ? unchecked((int)number) : null,
+            "QWord" => value.Number,
             _ => value.Text,
         };
 

@@ -13,6 +13,12 @@ namespace Upkeep.App.Core.Elevation;
 /// </summary>
 public sealed class HelperDispatcher
 {
+    /// <summary>
+    /// How many starts the helper reports: enough for a before and after on either side of a
+    /// change, and a cap the shell can't raise.
+    /// </summary>
+    public const int MaxBootsReported = 20;
+
     private readonly IHelperOperations _operations;
     private readonly IAppLogger _logger;
 
@@ -83,6 +89,12 @@ public sealed class HelperDispatcher
                             RequestId = request.RequestId,
                         };
                     }
+
+                case ReadBootPerformanceRequest:
+                    return new BootPerformanceResponse(_operations.ReadBootPerformance(MaxBootsReported, cancellationToken))
+                    {
+                        RequestId = request.RequestId,
+                    };
 
                 case CreateRestorePointRequest restorePoint:
                     {

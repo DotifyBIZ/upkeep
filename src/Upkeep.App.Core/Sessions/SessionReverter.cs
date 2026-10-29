@@ -49,6 +49,8 @@ public sealed class SessionReverter : ISessionReverter
     private readonly IStartupItemScanner _startupScanner;
     private readonly IStartupItemToggler _startupToggler;
     private readonly IPerformanceSettings _performance;
+    private readonly IPowerModeSettings _powerMode;
+    private readonly IBackgroundAppSettings _backgroundApps;
     private readonly ISessionJournal _journal;
     private readonly IAppLogger _logger;
     private readonly TimeProvider _timeProvider;
@@ -60,6 +62,8 @@ public sealed class SessionReverter : ISessionReverter
         IStartupItemScanner startupScanner,
         IStartupItemToggler startupToggler,
         IPerformanceSettings performance,
+        IPowerModeSettings powerMode,
+        IBackgroundAppSettings backgroundApps,
         ISessionJournal journal,
         IAppLogger logger,
         TimeProvider? timeProvider = null)
@@ -70,6 +74,8 @@ public sealed class SessionReverter : ISessionReverter
         _startupScanner = startupScanner;
         _startupToggler = startupToggler;
         _performance = performance;
+        _powerMode = powerMode;
+        _backgroundApps = backgroundApps;
         _journal = journal;
         _logger = logger;
         _timeProvider = timeProvider ?? TimeProvider.System;
@@ -128,6 +134,10 @@ public sealed class SessionReverter : ISessionReverter
 
                 case SystemSettingChangedEntry setting:
                     success = await RestoreSystemSettingAsync(setting, cancellationToken);
+                    break;
+
+                case BackgroundAccessChangedEntry background:
+                    success = await RestoreBackgroundAccessAsync(background, cancellationToken);
                     break;
 
                 default:
@@ -255,6 +265,16 @@ public sealed class SessionReverter : ISessionReverter
                 return Guid.TryParse(entry.PreviousValue, out Guid planId)
                     && _performance.SetActivePowerPlan(planId, out _);
 
+            case PerformanceSettingIds.PowerModePluggedIn:
+                return Enum.TryParse(entry.PreviousValue, out PowerMode pluggedIn)
+                    && Enum.IsDefined(pluggedIn)
+                    && _powerMode.SetMode(PowerSource.PluggedIn, pluggedIn, out _);
+
+            case PerformanceSettingIds.PowerModeOnBattery:
+                return Enum.TryParse(entry.PreviousValue, out PowerMode onBattery)
+                    && Enum.IsDefined(onBattery)
+                    && _powerMode.SetMode(PowerSource.OnBattery, onBattery, out _);
+
             case UpdateSettingIds.Pause:
                 return await RestoreUpdatePauseAsync(entry, cancellationToken);
 
@@ -265,6 +285,27 @@ public sealed class SessionReverter : ISessionReverter
             default:
                 return false;
         }
+    }
+
+    /// <summary>
+    /// Puts a Store app's background values back exactly as they were. The family name comes from a
+    /// file on disk, so it is validated before it becomes part of a registry path.
+    /// </summary>
+    private async Task<bool> RestoreBackgroundAccessAsync(BackgroundAccessChangedEntry entry, CancellationToken cancellationToken)
+    {
+        if (!BackgroundAccessValues.IsValidFamilyName(entry.PackageFamilyName))
+        {
+            await _logger.LogWarningAsync($"Revert refused a background-access entry with an invalid package name: {entry.PackageFamilyName}.", cancellationToken);
+            return false;
+        }
+
+        if (_backgroundApps.Restore(entry.PackageFamilyName, entry.PreviousValues ?? [], out string? failure))
+        {
+            return true;
+        }
+
+        await _logger.LogWarningAsync($"Putting background access for {entry.DisplayName} back failed: {failure}", cancellationToken);
+        return false;
     }
 
     /// <summary>
@@ -309,6 +350,10 @@ public static class PerformanceSettingIds
     public const string Transparency = "visual-effects-transparency";
 
     public const string PowerPlan = "power-plan";
+
+    public const string PowerModePluggedIn = "power-mode-plugged-in";
+
+    public const string PowerModeOnBattery = "power-mode-on-battery";
 }
 
 /// <summary>

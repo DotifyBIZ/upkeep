@@ -2,6 +2,7 @@ using Upkeep.App.Core.Cleanup;
 using Upkeep.App.Core.Drivers;
 using Upkeep.App.Core.Elevation;
 using Upkeep.App.Core.Logging;
+using Upkeep.App.Core.Performance;
 using Upkeep.App.Core.Safety;
 using Upkeep.App.Core.Updates;
 using Upkeep.App.Core.Tests.Fakes;
@@ -218,6 +219,30 @@ public class HelperDispatcherTests : IDisposable
         var error = Assert.IsType<HelperErrorResponse>(response);
         Assert.Equal(HelperErrorCodes.WindowsRefused, error.Code);
         Assert.Equal(9, error.RequestId);
+    }
+
+    [Fact]
+    public async Task ReadBootPerformanceRequest_ReadsAtMostTheHelpersOwnCap()
+    {
+        var boot = new BootRecord(DateTimeOffset.UnixEpoch, TimeSpan.FromSeconds(41));
+        _operations.BootPerformance = new BootPerformance([boot], []);
+
+        var response = await CreateDispatcher().DispatchAsync(new ReadBootPerformanceRequest { RequestId = 4 }, CancellationToken.None);
+
+        var performance = Assert.IsType<BootPerformanceResponse>(response);
+        Assert.Equal(4, performance.RequestId);
+        Assert.Equal(boot, Assert.Single(performance.Performance.Boots));
+        Assert.Equal(["boot-performance:" + HelperDispatcher.MaxBootsReported], _operations.Calls);
+    }
+
+    [Fact]
+    public async Task ReadBootPerformanceRequest_LogUnreadable_IsAnsweredAsWindowsRefusing()
+    {
+        _operations.ThrowOnOperation = new UnauthorizedAccessException("Access is denied.");
+
+        var response = await CreateDispatcher().DispatchAsync(new ReadBootPerformanceRequest(), CancellationToken.None);
+
+        Assert.Equal(HelperErrorCodes.WindowsRefused, Assert.IsType<HelperErrorResponse>(response).Code);
     }
 
     [Fact]
