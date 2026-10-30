@@ -23,3 +23,6 @@ spec:
   lifecycle: production
   # TR-ITOperations
   owner: group:default/1c2b973e-7b63-4f3b-bca4-17c950dfb1b6
+  # Its XAML resources are pasted from the Dotify One Design System.
+  dependsOn:
+    - component:default/one-design-system
