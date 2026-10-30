@@ -163,6 +163,62 @@
                             <SolidColorBrush x:Key="AccentButtonBackgroundPressed" Color="#FF6D0C0E" />
                             <SolidColorBrush x:Key="AccentButtonForegroundPressed" Color="#FFFFFFFF" />
                         </ResourceDictionary>
+                        <ResourceDictionary x:Key="HighContrast">
+                            <SolidColorBrush x:Key="DotifyColorPrimaryBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorPrimaryHoverBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorPrimaryActiveBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorPrimaryLightBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="DotifyColorPrimaryFgBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorPrimaryTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSecondaryBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSecondaryHoverBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSecondaryActiveBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSecondaryLightBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSecondaryFgBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorAccentBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorAccentHoverBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorAccentActiveBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorAccentLightBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="DotifyColorAccentFgBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorAccentTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSurfaceBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSurfaceRaisedBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSurfaceOverlayBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSurfaceInsetBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="DotifyColorOnSurfaceBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorOnSurfaceMutedBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorOnSurfaceFaintBrush" Color="{ThemeResource SystemColorGrayTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorBorderStrongBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorBorderControlBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorBorderFocusBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorFocusRingBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSuccessBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSuccessLightBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSuccessFgBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorSuccessTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorOnSuccessBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorErrorBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorErrorLightBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="DotifyColorErrorFgBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorErrorTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorOnErrorBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorWarningBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorWarningLightBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="DotifyColorWarningFgBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorWarningTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorOnWarningBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorInfoBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyColorInfoLightBrush" Color="{ThemeResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="DotifyColorInfoFgBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
+                            <SolidColorBrush x:Key="DotifyColorOnInfoBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyChart1Brush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyChart2Brush" Color="{ThemeResource SystemColorHotlightColor}" />
+                            <SolidColorBrush x:Key="DotifyChart3Brush" Color="{ThemeResource SystemColorHighlightColor}" />
+                            <SolidColorBrush x:Key="DotifyChart4Brush" Color="{ThemeResource SystemColorGrayTextColor}" />
+                            <SolidColorBrush x:Key="DotifyChart5Brush" Color="{ThemeResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="DotifyChart6Brush" Color="{ThemeResource SystemColorHotlightColor}" />
+                        </ResourceDictionary>
                     </ResourceDictionary.ThemeDictionaries>
 
                     <!-- Primitive colours. Prefer the semantic brushes above. -->
