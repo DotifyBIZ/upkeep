@@ -94,7 +94,7 @@ public sealed partial class AppsPage : Page
             TextWrapping = TextWrapping.Wrap,
             MaxWidth = 460,
             FontSize = 12,
-            Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["Gray500Brush"],
+            Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["DotifyColorOnSurfaceMutedBrush"],
         });
 
         var dialog = new ContentDialog
@@ -105,7 +105,7 @@ public sealed partial class AppsPage : Page
             PrimaryButtonText = _localization.GetString("AppsLeftoversPrimaryFormat", leftovers.Count),
             CloseButtonText = _localization.GetString("AppsLeftoversKeep"),
             DefaultButton = ContentDialogButton.Close,
-            PrimaryButtonStyle = (Style)Application.Current.Resources["PrimaryButtonStyle"],
+            PrimaryButtonStyle = (Style)Application.Current.Resources["DotifyPrimaryButtonStyle"],
         };
 
         if (await dialog.ShowAsync() != ContentDialogResult.Primary)
@@ -164,7 +164,7 @@ public sealed partial class AppsPage : Page
                 {
                     Glyph = "",
                     FontSize = 12,
-                    Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["Secondary600Brush"],
+                    Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["DotifyColorSecondaryBrush"],
                 });
             }
 

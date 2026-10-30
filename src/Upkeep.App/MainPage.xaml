@@ -85,12 +85,12 @@
             </NavigationView.MenuItems>
 
             <!--
-                Content pages are solid light cards per docs/design-tokens.md — Mica shows through
-                the title bar and this pane only, never through content. Forcing Light keeps native
-                control foregrounds legible against those explicit white surfaces whatever the
-                system theme is.
+                Content pages are solid Dotify surfaces per docs/design-tokens.md — Mica shows through
+                the title bar and this pane only, never through content. They follow the system
+                theme: every colour on them is a Dotify theme brush, so text and native controls
+                stay legible in light and dark.
             -->
-            <Frame x:Name="ContentFrame" RequestedTheme="Light" />
+            <Frame x:Name="ContentFrame" />
         </NavigationView>
 
         <!--
@@ -117,7 +117,7 @@
             which is what turns the standard modal into a bare search box rather than something
             needing its own from-scratch Popup and backdrop.
         -->
-        <ContentDialog x:Name="CommandPaletteDialog" RequestedTheme="Light" Opened="CommandPaletteDialog_Opened">
+        <ContentDialog x:Name="CommandPaletteDialog" Opened="CommandPaletteDialog_Opened">
             <Grid MinWidth="440" RowSpacing="4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -133,7 +133,7 @@
                 <TextBlock
                     Grid.Row="1"
                     x:Uid="CommandPaletteEmptyMessage"
-                    Style="{StaticResource CaptionTextStyle}"
+                    Style="{StaticResource DotifyHintTextStyle}"
                     Margin="4,8"
                     Visibility="{x:Bind PaletteViewModel.HasNoResults, Mode=OneWay}" />
 
@@ -158,7 +158,6 @@
         <ContentDialog
             x:Name="WelcomeDialog"
             x:Uid="WelcomeDialog"
-            RequestedTheme="Light"
             PrimaryButtonText="{x:Bind WelcomeViewModel.NextLabel, Mode=OneWay}"
             PrimaryButtonClick="WelcomeDialog_PrimaryButtonClick"
             Closed="WelcomeDialog_Closed">
@@ -167,23 +166,23 @@
                     Width="52"
                     Height="52"
                     CornerRadius="12"
-                    Background="{StaticResource Primary50Brush}"
+                    Background="{ThemeResource DotifyColorPrimaryLightBrush}"
                     HorizontalAlignment="Left">
                     <FontIcon
                         Glyph="{x:Bind WelcomeViewModel.Current.Glyph, Mode=OneWay}"
                         FontSize="24"
-                        Foreground="{StaticResource Primary600Brush}" />
+                        Foreground="{ThemeResource DotifyColorPrimaryTextBrush}" />
                 </Border>
 
                 <TextBlock
                     Text="{x:Bind WelcomeViewModel.Current.Title, Mode=OneWay}"
-                    Style="{StaticResource PageTitleTextStyle}"
+                    Style="{StaticResource DotifyPageTitleTextStyle}"
                     FontSize="18"
                     TextWrapping="Wrap" />
 
                 <TextBlock
                     Text="{x:Bind WelcomeViewModel.Current.Body, Mode=OneWay}"
-                    Style="{StaticResource BodyTextStyle}"
+                    Style="{StaticResource DotifyBodySmTextStyle}"
                     TextWrapping="Wrap" />
 
                 <PipsPager

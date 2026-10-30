@@ -120,7 +120,7 @@ public sealed partial class CleanupPage : Page
             PrimaryButtonText = _localization.GetString("CleanupConfirmPrimary"),
             CloseButtonText = _localization.GetString("CleanupConfirmCancel"),
             DefaultButton = ContentDialogButton.Primary,
-            PrimaryButtonStyle = (Style)Application.Current.Resources["PrimaryButtonStyle"],
+            PrimaryButtonStyle = (Style)Application.Current.Resources["DotifyPrimaryButtonStyle"],
         };
 
         return await dialog.ShowAsync();

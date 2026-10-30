@@ -7,11 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:Upkeep.App.ViewModels"
     mc:Ignorable="d"
-    Background="{StaticResource Gray50Brush}">
+    Background="{ThemeResource DotifyColorSurfaceBrush}">
 
     <Page.Resources>
         <DataTemplate x:Key="CategoryRowTemplate" x:DataType="viewmodels:CleanupCategoryDisplay">
-            <Grid Padding="20,14" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,1,0,0">
+            <Grid Padding="20,14" ColumnSpacing="16" BorderBrush="{ThemeResource DotifyColorBorderBrush}" BorderThickness="0,1,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -26,22 +26,22 @@
                     IsEnabled="{x:Bind IsSelectable}" />
 
                 <StackPanel Grid.Column="1" Spacing="2">
-                    <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" />
-                    <TextBlock Text="{x:Bind Description}" Style="{StaticResource CaptionTextStyle}" />
+                    <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource DotifyTextSm}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" />
+                    <TextBlock Text="{x:Bind Description}" Style="{StaticResource DotifyHintTextStyle}" />
                     <StackPanel Orientation="Horizontal" Spacing="6" Visibility="{x:Bind HasNote}">
-                        <FontIcon Glyph="&#xE7BA;" FontSize="12" Foreground="{StaticResource WarningTextBrush}" />
-                        <TextBlock Text="{x:Bind Note}" FontSize="{StaticResource FontSizeXs}" Foreground="{StaticResource WarningTextBrush}" TextWrapping="Wrap" />
+                        <FontIcon Glyph="&#xE7BA;" FontSize="12" Foreground="{ThemeResource DotifyColorWarningTextBrush}" />
+                        <TextBlock Text="{x:Bind Note}" FontSize="{StaticResource DotifyTextXs}" Foreground="{ThemeResource DotifyColorWarningTextBrush}" TextWrapping="Wrap" />
                     </StackPanel>
                 </StackPanel>
 
                 <Border
                     Grid.Column="2"
                     Visibility="{x:Bind IsIrreversible}"
-                    Background="{StaticResource WarningSurfaceBrush}"
+                    Background="{ThemeResource DotifyColorWarningLightBrush}"
                     CornerRadius="10"
                     Padding="8,2"
                     VerticalAlignment="Center">
-                    <TextBlock x:Uid="CommonCannotBeUndoneTagText" FontSize="{StaticResource FontSizeXs}" Foreground="{StaticResource WarningTextBrush}" />
+                    <TextBlock x:Uid="CommonCannotBeUndoneTagText" FontSize="{StaticResource DotifyTextXs}" Foreground="{ThemeResource DotifyColorWarningTextBrush}" />
                 </Border>
 
                 <TextBlock
@@ -50,9 +50,9 @@
                     MinWidth="110"
                     TextAlignment="Right"
                     VerticalAlignment="Center"
-                    FontSize="{StaticResource FontSizeSm}"
+                    FontSize="{StaticResource DotifyTextSm}"
                     FontWeight="SemiBold"
-                    Foreground="{StaticResource Gray900Brush}" />
+                    Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" />
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -73,8 +73,8 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Spacing="4">
-                    <TextBlock x:Uid="CleanupTitle" Style="{StaticResource PageTitleTextStyle}" />
-                    <TextBlock x:Uid="CleanupSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="620" HorizontalAlignment="Left" />
+                    <TextBlock x:Uid="CleanupTitle" Style="{StaticResource DotifyPageTitleTextStyle}" />
+                    <TextBlock x:Uid="CleanupSubtitle" Style="{StaticResource DotifyPageSubtitleTextStyle}" MaxWidth="620" HorizontalAlignment="Left" />
                 </StackPanel>
 
                 <Button
@@ -94,19 +94,13 @@
                         IsClosable="False" />
 
                     <!-- Before the first scan: say what scanning does, and nothing else. -->
-                    <Border Style="{StaticResource CardBorderStyle}" HorizontalAlignment="Left" Visibility="{x:Bind ViewModel.ShowScanPrompt, Mode=OneWay}">
+                    <Border Style="{StaticResource DotifyCardStyle}" HorizontalAlignment="Left" Visibility="{x:Bind ViewModel.ShowScanPrompt, Mode=OneWay}">
                         <StackPanel Spacing="12" HorizontalAlignment="Left">
-                            <TextBlock x:Uid="CleanupNotScannedMessage" Style="{StaticResource BodyTextStyle}" MaxWidth="520" TextWrapping="Wrap" />
-                            <Button Style="{StaticResource PrimaryButtonStyle}" Command="{x:Bind ViewModel.ScanCommand}" HorizontalAlignment="Left">
-                                <Button.Resources>
-                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
-                                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
-                                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
-                                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
-                                </Button.Resources>
+                            <TextBlock x:Uid="CleanupNotScannedMessage" Style="{StaticResource DotifyBodySmTextStyle}" MaxWidth="520" TextWrapping="Wrap" />
+                            <Button Style="{StaticResource DotifyPrimaryButtonStyle}" Command="{x:Bind ViewModel.ScanCommand}" HorizontalAlignment="Left">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <FontIcon Glyph="&#xE721;" FontSize="14" Foreground="White" />
-                                    <TextBlock x:Uid="CleanupScanButtonLabel" Foreground="White" FontWeight="SemiBold" />
+                                    <FontIcon Glyph="&#xE721;" FontSize="14" />
+                                    <TextBlock x:Uid="CleanupScanButtonLabel" FontWeight="SemiBold" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>
@@ -114,23 +108,23 @@
 
                     <StackPanel Orientation="Horizontal" Spacing="12" Visibility="{x:Bind ViewModel.IsScanning, Mode=OneWay}">
                         <ProgressRing IsActive="{x:Bind ViewModel.IsScanning, Mode=OneWay}" Width="20" Height="20" />
-                        <TextBlock x:Uid="CleanupScanningMessage" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" />
+                        <TextBlock x:Uid="CleanupScanningMessage" Style="{StaticResource DotifyBodySmTextStyle}" VerticalAlignment="Center" />
                     </StackPanel>
 
                     <!-- Your account -->
-                    <Border Style="{StaticResource CardBorderStyle}" Padding="0" Visibility="{x:Bind ViewModel.HasScanned, Mode=OneWay}">
+                    <Border Style="{StaticResource DotifyCardStyle}" Padding="0" Visibility="{x:Bind ViewModel.HasScanned, Mode=OneWay}">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="12" Padding="20,16" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE77B;" FontSize="16" Foreground="{StaticResource Gray700Brush}" />
-                                <TextBlock x:Uid="CleanupUserSectionHeader" Style="{StaticResource SectionLabelTextStyle}" VerticalAlignment="Center" />
-                                <TextBlock x:Uid="CleanupUserSectionNote" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
+                                <FontIcon Glyph="&#xE77B;" FontSize="16" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" />
+                                <TextBlock x:Uid="CleanupUserSectionHeader" Style="{StaticResource DotifySectionLabelTextStyle}" VerticalAlignment="Center" />
+                                <TextBlock x:Uid="CleanupUserSectionNote" Style="{StaticResource DotifyHintTextStyle}" VerticalAlignment="Center" />
                             </StackPanel>
                             <ItemsControl ItemsSource="{x:Bind ViewModel.UserCategories}" ItemTemplate="{StaticResource CategoryRowTemplate}" />
                         </StackPanel>
                     </Border>
 
                     <!-- System-wide -->
-                    <Border Style="{StaticResource CardBorderStyle}" Padding="0" Visibility="{x:Bind ViewModel.HasScanned, Mode=OneWay}">
+                    <Border Style="{StaticResource DotifyCardStyle}" Padding="0" Visibility="{x:Bind ViewModel.HasScanned, Mode=OneWay}">
                         <StackPanel>
                             <Grid Padding="20,16" ColumnSpacing="12">
                                 <Grid.ColumnDefinitions>
@@ -139,9 +133,9 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <FontIcon Grid.Column="0" Glyph="&#xE72E;" FontSize="16" Foreground="{StaticResource Secondary600Brush}" />
-                                <TextBlock Grid.Column="1" x:Uid="CleanupSystemSectionHeader" Style="{StaticResource SectionLabelTextStyle}" VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="2" x:Uid="CleanupSystemSectionNote" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
+                                <FontIcon Grid.Column="0" Glyph="&#xE72E;" FontSize="16" Foreground="{ThemeResource DotifyColorSecondaryBrush}" />
+                                <TextBlock Grid.Column="1" x:Uid="CleanupSystemSectionHeader" Style="{StaticResource DotifySectionLabelTextStyle}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="2" x:Uid="CleanupSystemSectionNote" Style="{StaticResource DotifyHintTextStyle}" VerticalAlignment="Center" />
                                 <Button
                                     Grid.Column="3"
                                     x:Uid="CleanupIncludeSystemButton"
@@ -163,7 +157,7 @@
                         HorizontalContentAlignment="Stretch"
                         Visibility="{x:Bind ViewModel.HasScanned, Mode=OneWay}">
                         <StackPanel Spacing="12">
-                            <TextBlock x:Uid="CleanupCustomRulesNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="560" HorizontalAlignment="Left" />
+                            <TextBlock x:Uid="CleanupCustomRulesNote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" MaxWidth="560" HorizontalAlignment="Left" />
 
                             <Grid ColumnSpacing="8">
                                 <Grid.ColumnDefinitions>
@@ -194,7 +188,7 @@
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Text="{x:Bind}" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                            <TextBlock Text="{x:Bind}" Style="{StaticResource DotifyBodySmTextStyle}" VerticalAlignment="Center" TextWrapping="Wrap" />
                                             <!--
                                                 Click rather than a command: ElementName does not
                                                 resolve inside a DataTemplate — the template is its
@@ -221,8 +215,8 @@
                 Grid.Row="2"
                 Margin="-32,16,-32,-24"
                 Padding="32,16"
-                Background="White"
-                BorderBrush="{StaticResource Gray200Brush}"
+                Background="{ThemeResource DotifyColorSurfaceRaisedBrush}"
+                BorderBrush="{ThemeResource DotifyColorBorderBrush}"
                 BorderThickness="0,1,0,0"
                 Visibility="{x:Bind ViewModel.HasScanned, Mode=OneWay}">
                 <Grid ColumnSpacing="16">
@@ -232,25 +226,19 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Spacing="2">
-                        <TextBlock Text="{x:Bind ViewModel.SelectionSummary, Mode=OneWay}" Style="{StaticResource SectionLabelTextStyle}" />
-                        <TextBlock x:Uid="CleanupFooterNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
+                        <TextBlock Text="{x:Bind ViewModel.SelectionSummary, Mode=OneWay}" Style="{StaticResource DotifySectionLabelTextStyle}" />
+                        <TextBlock x:Uid="CleanupFooterNote" Style="{StaticResource DotifyHintTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                         <ProgressRing IsActive="{x:Bind ViewModel.IsRunning, Mode=OneWay}" Width="20" Height="20" />
                         <Button
-                            Style="{StaticResource PrimaryButtonStyle}"
+                            Style="{StaticResource DotifyPrimaryButtonStyle}"
                             IsEnabled="{x:Bind ViewModel.CanClean, Mode=OneWay}"
                             Click="Clean_Click">
-                            <Button.Resources>
-                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
-                                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
-                                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
-                                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
-                            </Button.Resources>
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xE72E;" FontSize="14" Foreground="White" />
-                                <TextBlock x:Uid="CleanupCleanButtonLabel" Foreground="White" FontWeight="SemiBold" />
+                                <FontIcon Glyph="&#xE72E;" FontSize="14" />
+                                <TextBlock x:Uid="CleanupCleanButtonLabel" FontWeight="SemiBold" />
                             </StackPanel>
                         </Button>
                     </StackPanel>
@@ -262,48 +250,42 @@
         <ScrollViewer Padding="32,24" Visibility="{x:Bind ViewModel.ShowResults, Mode=OneWay}">
             <StackPanel Spacing="24">
                 <StackPanel Spacing="4">
-                    <TextBlock x:Uid="CleanupTitle" Style="{StaticResource PageTitleTextStyle}" />
-                    <TextBlock x:Uid="CleanupSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="620" HorizontalAlignment="Left" />
+                    <TextBlock x:Uid="CleanupTitle" Style="{StaticResource DotifyPageTitleTextStyle}" />
+                    <TextBlock x:Uid="CleanupSubtitle" Style="{StaticResource DotifyPageSubtitleTextStyle}" MaxWidth="620" HorizontalAlignment="Left" />
                 </StackPanel>
 
-                <Border Style="{StaticResource CardBorderStyle}" Padding="32" HorizontalAlignment="Left" MinWidth="560">
+                <Border Style="{StaticResource DotifyCardStyle}" Padding="32" HorizontalAlignment="Left" MinWidth="560">
                     <StackPanel Spacing="24">
                         <StackPanel Orientation="Horizontal" Spacing="20">
-                            <FontIcon Glyph="&#xE930;" FontSize="36" Foreground="{StaticResource SuccessBrush}" VerticalAlignment="Top" />
+                            <FontIcon Glyph="&#xE930;" FontSize="36" Foreground="{ThemeResource DotifyColorSuccessTextBrush}" VerticalAlignment="Top" />
                             <StackPanel Spacing="4">
                                 <TextBlock
                                     Text="{x:Bind ViewModel.FreedDisplay, Mode=OneWay}"
-                                    FontFamily="{StaticResource BrandFontFamily}"
-                                    FontSize="{StaticResource FontSize3xl}"
+                                    FontFamily="{StaticResource DotifyFontFamilySemiBold}"
+                                    FontSize="{StaticResource DotifyText3xl}"
                                     FontWeight="SemiBold"
-                                    Foreground="{StaticResource Gray900Brush}" />
-                                <TextBlock Text="{x:Bind ViewModel.FreeSpaceDisplay, Mode=OneWay}" Style="{StaticResource PageSubtitleTextStyle}" />
+                                    Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" />
+                                <TextBlock Text="{x:Bind ViewModel.FreeSpaceDisplay, Mode=OneWay}" Style="{StaticResource DotifyPageSubtitleTextStyle}" />
                             </StackPanel>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Spacing="40">
                             <StackPanel Spacing="2">
-                                <TextBlock Text="{x:Bind ViewModel.ItemsRemovedDisplay, Mode=OneWay}" FontSize="{StaticResource FontSizeBase}" FontWeight="SemiBold" />
-                                <TextBlock x:Uid="CleanupResultsItemsRemovedLabel" Style="{StaticResource CaptionTextStyle}" />
+                                <TextBlock Text="{x:Bind ViewModel.ItemsRemovedDisplay, Mode=OneWay}" FontSize="{StaticResource DotifyTextBase}" FontWeight="SemiBold" />
+                                <TextBlock x:Uid="CleanupResultsItemsRemovedLabel" Style="{StaticResource DotifyHintTextStyle}" />
                             </StackPanel>
                             <StackPanel Spacing="2">
-                                <TextBlock Text="{x:Bind ViewModel.ItemsSkippedDisplay, Mode=OneWay}" FontSize="{StaticResource FontSizeBase}" FontWeight="SemiBold" />
-                                <TextBlock x:Uid="CleanupResultsItemsSkippedLabel" Style="{StaticResource CaptionTextStyle}" />
+                                <TextBlock Text="{x:Bind ViewModel.ItemsSkippedDisplay, Mode=OneWay}" FontSize="{StaticResource DotifyTextBase}" FontWeight="SemiBold" />
+                                <TextBlock x:Uid="CleanupResultsItemsSkippedLabel" Style="{StaticResource DotifyHintTextStyle}" />
                             </StackPanel>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Spacing="8" Visibility="{x:Bind ViewModel.HasRestorePointNote, Mode=OneWay}">
-                            <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{StaticResource Gray500Brush}" VerticalAlignment="Top" />
-                            <TextBlock Text="{x:Bind ViewModel.RestorePointDisplay, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" MaxWidth="480" />
+                            <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource DotifyColorOnSurfaceMutedBrush}" VerticalAlignment="Top" />
+                            <TextBlock Text="{x:Bind ViewModel.RestorePointDisplay, Mode=OneWay}" Style="{StaticResource DotifyHintTextStyle}" MaxWidth="480" />
                         </StackPanel>
 
-                        <Button x:Uid="CleanupResultsDoneButton" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Left" Command="{x:Bind ViewModel.DoneCommand}">
-                            <Button.Resources>
-                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
-                                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
-                                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
-                                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
-                            </Button.Resources>
+                        <Button x:Uid="CleanupResultsDoneButton" Style="{StaticResource DotifyPrimaryButtonStyle}" HorizontalAlignment="Left" Command="{x:Bind ViewModel.DoneCommand}">
                         </Button>
                     </StackPanel>
                 </Border>

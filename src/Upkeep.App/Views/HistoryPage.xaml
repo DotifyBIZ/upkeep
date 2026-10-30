@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:Upkeep.App.ViewModels"
     mc:Ignorable="d"
-    Background="{StaticResource Gray50Brush}">
+    Background="{ThemeResource DotifyColorSurfaceBrush}">
 
     <Grid Padding="32,24" RowSpacing="16">
         <Grid.RowDefinitions>
@@ -18,8 +18,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Spacing="4">
-            <TextBlock x:Uid="HistoryTitle" Style="{StaticResource PageTitleTextStyle}" />
-            <TextBlock x:Uid="HistorySubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
+            <TextBlock x:Uid="HistoryTitle" Style="{StaticResource DotifyPageTitleTextStyle}" />
+            <TextBlock x:Uid="HistorySubtitle" Style="{StaticResource DotifyPageSubtitleTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
         </StackPanel>
 
         <InfoBar
@@ -33,13 +33,13 @@
             <StackPanel Spacing="12">
                 <TextBlock
                     x:Uid="HistoryEmptyMessage"
-                    Style="{StaticResource CaptionTextStyle}"
+                    Style="{StaticResource DotifyHintTextStyle}"
                     Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" />
 
                 <ItemsControl ItemsSource="{x:Bind ViewModel.Sessions}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="viewmodels:HistorySessionDisplay">
-                            <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,12">
+                            <Border Style="{StaticResource DotifyCardStyle}" Margin="0,0,0,12">
                                 <Grid ColumnSpacing="16">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -50,23 +50,23 @@
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock
                                                 Text="{x:Bind KindLabel}"
-                                                FontSize="{StaticResource FontSizeSm}"
+                                                FontSize="{StaticResource DotifyTextSm}"
                                                 FontWeight="SemiBold"
-                                                Foreground="{StaticResource Gray900Brush}" />
-                                            <TextBlock Text="{x:Bind WhenDisplay}" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
+                                                Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" />
+                                            <TextBlock Text="{x:Bind WhenDisplay}" Style="{StaticResource DotifyHintTextStyle}" VerticalAlignment="Center" />
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal" Spacing="12">
-                                            <TextBlock Text="{x:Bind ChangesDisplay}" Style="{StaticResource CaptionTextStyle}" />
+                                            <TextBlock Text="{x:Bind ChangesDisplay}" Style="{StaticResource DotifyHintTextStyle}" />
                                             <TextBlock
                                                 Text="{x:Bind FreedDisplay}"
-                                                Style="{StaticResource CaptionTextStyle}"
+                                                Style="{StaticResource DotifyHintTextStyle}"
                                                 Visibility="{x:Bind HasFreedDisplay}" />
                                         </StackPanel>
 
                                         <TextBlock
                                             Text="{x:Bind RestorePointNote}"
-                                            Style="{StaticResource CaptionTextStyle}"
+                                            Style="{StaticResource DotifyHintTextStyle}"
                                             TextWrapping="Wrap"
                                             MaxWidth="620"
                                             HorizontalAlignment="Left"
@@ -74,13 +74,13 @@
 
                                         <TextBlock
                                             Text="{x:Bind UnfinishedNote}"
-                                            Style="{StaticResource CaptionTextStyle}"
+                                            Style="{StaticResource DotifyHintTextStyle}"
                                             Visibility="{x:Bind HasUnfinishedNote}" />
 
                                         <TextBlock
                                             Text="{x:Bind RevertedNote}"
-                                            Style="{StaticResource CaptionTextStyle}"
-                                            Foreground="{StaticResource Secondary600Brush}"
+                                            Style="{StaticResource DotifyHintTextStyle}"
+                                            Foreground="{ThemeResource DotifyColorSecondaryBrush}"
                                             Visibility="{x:Bind HasRevertedNote}" />
                                     </StackPanel>
 

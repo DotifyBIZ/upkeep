@@ -174,7 +174,7 @@ public sealed partial class StartupPage : Page
             var box = new CheckBox { IsChecked = line.IsSelected };
             var label = new StackPanel { Spacing = 2 };
             label.Children.Add(new TextBlock { Text = line.Name, FontWeight = Microsoft.UI.Text.FontWeights.SemiBold });
-            label.Children.Add(new TextBlock { Text = line.Detail, Style = (Style)Application.Current.Resources["CaptionTextStyle"] });
+            label.Children.Add(new TextBlock { Text = line.Detail, Style = (Style)Application.Current.Resources["DotifyHintTextStyle"] });
             box.Content = label;
             box.Checked += (_, _) => line.IsSelected = true;
             box.Unchecked += (_, _) => line.IsSelected = false;
@@ -184,7 +184,7 @@ public sealed partial class StartupPage : Page
         lines.Children.Add(new TextBlock
         {
             Text = _localization.GetString("StartupPlanMeasureNote"),
-            Style = (Style)Application.Current.Resources["CaptionTextStyle"],
+            Style = (Style)Application.Current.Resources["DotifyHintTextStyle"],
             TextWrapping = TextWrapping.Wrap,
             Margin = new Thickness(0, 8, 0, 0),
         });
@@ -197,7 +197,7 @@ public sealed partial class StartupPage : Page
             PrimaryButtonText = _localization.GetString("StartupPlanPrimary"),
             CloseButtonText = _localization.GetString("StartupPlanCancel"),
             DefaultButton = ContentDialogButton.Primary,
-            PrimaryButtonStyle = (Style)Application.Current.Resources["PrimaryButtonStyle"],
+            PrimaryButtonStyle = (Style)Application.Current.Resources["DotifyPrimaryButtonStyle"],
         };
 
         if (await dialog.ShowAsync() == ContentDialogResult.Primary)

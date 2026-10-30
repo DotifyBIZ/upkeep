@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:Upkeep.App.ViewModels"
     mc:Ignorable="d"
-    Background="{StaticResource Gray50Brush}">
+    Background="{ThemeResource DotifyColorSurfaceBrush}">
 
     <Grid Padding="32,24" RowSpacing="16">
         <Grid.RowDefinitions>
@@ -19,8 +19,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Spacing="4">
-            <TextBlock x:Uid="StartupTitle" Style="{StaticResource PageTitleTextStyle}" />
-            <TextBlock x:Uid="StartupSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
+            <TextBlock x:Uid="StartupTitle" Style="{StaticResource DotifyPageTitleTextStyle}" />
+            <TextBlock x:Uid="StartupSubtitle" Style="{StaticResource DotifyPageSubtitleTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
         </StackPanel>
 
         <SelectorBar x:Name="Tabs" Grid.Row="1" Margin="-12,4,0,0" SelectionChanged="Tabs_SelectionChanged">
@@ -43,40 +43,34 @@
                 <!--  Speed check  -->
                 <StackPanel x:Name="SpeedCheckPanel" Spacing="16">
                     <!--  Before anything is measured: say what measuring needs, and ask.  -->
-                    <Border Style="{StaticResource CardBorderStyle}" HorizontalAlignment="Left" Visibility="{x:Bind SpeedCheck.NeedsMeasurement, Mode=OneWay}">
+                    <Border Style="{StaticResource DotifyCardStyle}" HorizontalAlignment="Left" Visibility="{x:Bind SpeedCheck.NeedsMeasurement, Mode=OneWay}">
                         <StackPanel Spacing="12" HorizontalAlignment="Left">
-                            <TextBlock x:Uid="SpeedCheckIntro" Style="{StaticResource BodyTextStyle}" MaxWidth="560" TextWrapping="Wrap" />
-                            <Button Style="{StaticResource PrimaryButtonStyle}" Click="OnSpeedCheckMeasureClicked" IsEnabled="{x:Bind SpeedCheck.IsNotMeasuring, Mode=OneWay}" HorizontalAlignment="Left">
-                                <Button.Resources>
-                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
-                                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
-                                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
-                                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
-                                </Button.Resources>
+                            <TextBlock x:Uid="SpeedCheckIntro" Style="{StaticResource DotifyBodySmTextStyle}" MaxWidth="560" TextWrapping="Wrap" />
+                            <Button Style="{StaticResource DotifyPrimaryButtonStyle}" Click="OnSpeedCheckMeasureClicked" IsEnabled="{x:Bind SpeedCheck.IsNotMeasuring, Mode=OneWay}" HorizontalAlignment="Left">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <FontIcon Glyph="&#xEA18;" FontSize="14" Foreground="White" />
-                                    <TextBlock x:Uid="SpeedCheckMeasureButton" Foreground="White" FontWeight="SemiBold" />
+                                    <FontIcon Glyph="&#xEA18;" FontSize="14" />
+                                    <TextBlock x:Uid="SpeedCheckMeasureButton" FontWeight="SemiBold" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>
                     </Border>
 
                     <!--  After a change and a restart: what Windows measured, before against after.  -->
-                    <Border Style="{StaticResource CardBorderStyle}" Visibility="{x:Bind SpeedCheck.HasComparison, Mode=OneWay}">
+                    <Border Style="{StaticResource DotifyCardStyle}" Visibility="{x:Bind SpeedCheck.HasComparison, Mode=OneWay}">
                         <StackPanel Spacing="8">
-                            <Border Background="{StaticResource SuccessSurfaceBrush}" CornerRadius="10" Padding="10,2" HorizontalAlignment="Left">
+                            <Border Background="{ThemeResource DotifyColorSuccessLightBrush}" CornerRadius="10" Padding="10,2" HorizontalAlignment="Left">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="{StaticResource SuccessTextBrush}" />
-                                    <TextBlock x:Uid="SpeedCheckMeasuredByWindows" FontSize="{StaticResource FontSizeXs}" FontWeight="SemiBold" Foreground="{StaticResource SuccessTextBrush}" />
+                                    <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="{ThemeResource DotifyColorSuccessTextBrush}" />
+                                    <TextBlock x:Uid="SpeedCheckMeasuredByWindows" FontSize="{StaticResource DotifyTextXs}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorSuccessTextBrush}" />
                                 </StackPanel>
                             </Border>
                             <TextBlock
                                 Text="{x:Bind SpeedCheck.ComparisonHeadline, Mode=OneWay}"
-                                FontFamily="{StaticResource BrandFontFamily}"
-                                FontSize="{StaticResource FontSize3xl}"
+                                FontFamily="{StaticResource DotifyFontFamilySemiBold}"
+                                FontSize="{StaticResource DotifyText3xl}"
                                 FontWeight="SemiBold"
-                                Foreground="{StaticResource Gray900Brush}" />
-                            <TextBlock Text="{x:Bind SpeedCheck.ComparisonDetail, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" MaxWidth="640" HorizontalAlignment="Left" />
+                                Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" />
+                            <TextBlock Text="{x:Bind SpeedCheck.ComparisonDetail, Mode=OneWay}" Style="{StaticResource DotifyBodySmTextStyle}" TextWrapping="Wrap" MaxWidth="640" HorizontalAlignment="Left" />
                         </StackPanel>
                     </Border>
 
@@ -87,25 +81,25 @@
                         IsClosable="False" />
 
                     <!--  The last start and the ones before it.  -->
-                    <Border Style="{StaticResource CardBorderStyle}" Visibility="{x:Bind SpeedCheck.HasLastBoot, Mode=OneWay}">
+                    <Border Style="{StaticResource DotifyCardStyle}" Visibility="{x:Bind SpeedCheck.HasLastBoot, Mode=OneWay}">
                         <Grid ColumnSpacing="32">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Spacing="6" VerticalAlignment="Bottom">
-                                <TextBlock x:Uid="SpeedCheckLastBootLabel" Style="{StaticResource SectionLabelTextStyle}" />
+                                <TextBlock x:Uid="SpeedCheckLastBootLabel" Style="{StaticResource DotifySectionLabelTextStyle}" />
                                 <TextBlock
                                     Text="{x:Bind SpeedCheck.LastBootDisplay, Mode=OneWay}"
-                                    FontFamily="{StaticResource BrandFontFamily}"
+                                    FontFamily="{StaticResource DotifyFontFamilySemiBold}"
                                     FontSize="48"
                                     FontWeight="SemiBold"
-                                    Foreground="{StaticResource Gray900Brush}" />
-                                <TextBlock Text="{x:Bind SpeedCheck.LastBootCaption, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" />
-                                <TextBlock x:Uid="SpeedCheckLastBootWhat" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                    Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" />
+                                <TextBlock Text="{x:Bind SpeedCheck.LastBootCaption, Mode=OneWay}" Style="{StaticResource DotifyBodySmTextStyle}" TextWrapping="Wrap" />
+                                <TextBlock x:Uid="SpeedCheckLastBootWhat" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" />
                             </StackPanel>
                             <StackPanel Grid.Column="1" Spacing="6" VerticalAlignment="Bottom">
-                                <TextBlock x:Uid="SpeedCheckChartCaption" Style="{StaticResource CaptionTextStyle}" />
+                                <TextBlock x:Uid="SpeedCheckChartCaption" Style="{StaticResource DotifyHintTextStyle}" />
                                 <ItemsControl ItemsSource="{x:Bind SpeedCheck.Bars}" Height="96">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -115,41 +109,41 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate x:DataType="viewmodels:BootBar">
                                             <Grid Height="96" Width="20" Background="Transparent" ToolTipService.ToolTip="{x:Bind Tooltip}">
-                                                <Border Height="{x:Bind Height}" VerticalAlignment="Bottom" CornerRadius="3,3,0,0" Background="{StaticResource Secondary200Brush}" Visibility="{x:Bind IsEarlier}" />
-                                                <Border Height="{x:Bind Height}" VerticalAlignment="Bottom" CornerRadius="3,3,0,0" Background="{StaticResource Secondary600Brush}" Visibility="{x:Bind IsLatest}" />
+                                                <Border Height="{x:Bind Height}" VerticalAlignment="Bottom" CornerRadius="3,3,0,0" Background="{ThemeResource DotifyColorBorderStrongBrush}" Visibility="{x:Bind IsEarlier}" />
+                                                <Border Height="{x:Bind Height}" VerticalAlignment="Bottom" CornerRadius="3,3,0,0" Background="{ThemeResource DotifyColorSecondaryBrush}" Visibility="{x:Bind IsLatest}" />
                                             </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
                                 <Grid>
-                                    <TextBlock Text="{x:Bind SpeedCheck.ChartStartLabel, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" HorizontalAlignment="Left" />
-                                    <TextBlock Text="{x:Bind SpeedCheck.ChartEndLabel, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" HorizontalAlignment="Right" />
+                                    <TextBlock Text="{x:Bind SpeedCheck.ChartStartLabel, Mode=OneWay}" Style="{StaticResource DotifyHintTextStyle}" HorizontalAlignment="Left" />
+                                    <TextBlock Text="{x:Bind SpeedCheck.ChartEndLabel, Mode=OneWay}" Style="{StaticResource DotifyHintTextStyle}" HorizontalAlignment="Right" />
                                 </Grid>
                             </StackPanel>
                         </Grid>
                     </Border>
 
-                    <TextBlock x:Uid="SpeedCheckNoBoots" Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" Visibility="{x:Bind SpeedCheck.HasNoBoots, Mode=OneWay}" />
+                    <TextBlock x:Uid="SpeedCheckNoBoots" Style="{StaticResource DotifyBodySmTextStyle}" TextWrapping="Wrap" Visibility="{x:Bind SpeedCheck.HasNoBoots, Mode=OneWay}" />
 
                     <!--  What would help, biggest first.  -->
-                    <Border Style="{StaticResource CardBorderStyle}" Padding="0" Visibility="{x:Bind SpeedCheck.HasRecommendations, Mode=OneWay}">
+                    <Border Style="{StaticResource DotifyCardStyle}" Padding="0" Visibility="{x:Bind SpeedCheck.HasRecommendations, Mode=OneWay}">
                         <StackPanel>
-                            <TextBlock x:Uid="SpeedCheckRecommendationsHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Margin="20,16,20,8" />
+                            <TextBlock x:Uid="SpeedCheckRecommendationsHeader" Style="{StaticResource DotifyBodySmTextStyle}" FontWeight="SemiBold" Margin="20,16,20,8" />
                             <ItemsControl ItemsSource="{x:Bind SpeedCheck.Recommendations}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="viewmodels:SpeedRecommendation">
-                                        <Grid Padding="20,12" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,1,0,0">
+                                        <Grid Padding="20,12" ColumnSpacing="16" BorderBrush="{ThemeResource DotifyColorBorderBrush}" BorderThickness="0,1,0,0">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind Title}" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextWrapping="Wrap" />
-                                                <TextBlock Text="{x:Bind Detail}" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                                <TextBlock Text="{x:Bind Title}" Style="{StaticResource DotifyBodySmTextStyle}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" TextWrapping="Wrap" />
+                                                <TextBlock Text="{x:Bind Detail}" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" />
                                             </StackPanel>
-                                            <Border Grid.Column="1" Background="{StaticResource Gray100Brush}" CornerRadius="10" Padding="10,2" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind Badge}" FontSize="{StaticResource FontSizeXs}" FontWeight="SemiBold" Foreground="{StaticResource Gray700Brush}" />
+                                            <Border Grid.Column="1" Background="{ThemeResource DotifyColorSurfaceInsetBrush}" CornerRadius="10" Padding="10,2" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind Badge}" FontSize="{StaticResource DotifyTextXs}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" />
                                             </Border>
                                             <Button Grid.Column="2" x:Uid="SpeedCheckReviewButton" Tag="{x:Bind TargetTab}" Click="OnRecommendationClicked" VerticalAlignment="Center" />
                                         </Grid>
@@ -159,51 +153,45 @@
                         </StackPanel>
                     </Border>
 
-                    <TextBlock x:Uid="SpeedCheckFootnote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="720" HorizontalAlignment="Left" />
+                    <TextBlock x:Uid="SpeedCheckFootnote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" MaxWidth="720" HorizontalAlignment="Left" />
                 </StackPanel>
 
                 <!--  Startup  -->
                 <StackPanel x:Name="StartupPanel" Spacing="16" Visibility="Collapsed">
                     <!--  Timings need the administrator-only log, so they're asked for rather than read on open.  -->
-                    <Border Style="{StaticResource CardBorderStyle}" Visibility="{x:Bind ViewModel.NeedsMeasurement, Mode=OneWay}">
+                    <Border Style="{StaticResource DotifyCardStyle}" Visibility="{x:Bind ViewModel.NeedsMeasurement, Mode=OneWay}">
                         <Grid ColumnSpacing="16">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" x:Uid="StartupMeasurePrompt" Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="0" x:Uid="StartupMeasurePrompt" Style="{StaticResource DotifyBodySmTextStyle}" TextWrapping="Wrap" VerticalAlignment="Center" />
                             <Button Grid.Column="1" Click="OnStartupMeasureClicked" VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <FontIcon Glyph="&#xEA18;" FontSize="14" Foreground="{StaticResource Secondary600Brush}" />
+                                    <FontIcon Glyph="&#xEA18;" FontSize="14" Foreground="{ThemeResource DotifyColorSecondaryBrush}" />
                                     <TextBlock x:Uid="StartupMeasureButton" />
                                 </StackPanel>
                             </Button>
                         </Grid>
                     </Border>
 
-                    <Border Background="{StaticResource Primary50Brush}" BorderBrush="{StaticResource Primary100Brush}" BorderThickness="1" CornerRadius="16" Padding="20,16" Visibility="{x:Bind ViewModel.HasSuggestions, Mode=OneWay}">
+                    <Border Background="{ThemeResource DotifyColorPrimaryLightBrush}" BorderBrush="{ThemeResource DotifyColorBorderBrush}" BorderThickness="1" CornerRadius="16" Padding="20,16" Visibility="{x:Bind ViewModel.HasSuggestions, Mode=OneWay}">
                         <Grid ColumnSpacing="16">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="{x:Bind ViewModel.SuggestionHeadline, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextWrapping="Wrap" />
-                                <TextBlock x:Uid="StartupSuggestionBody" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                <TextBlock Text="{x:Bind ViewModel.SuggestionHeadline, Mode=OneWay}" Style="{StaticResource DotifyBodySmTextStyle}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" TextWrapping="Wrap" />
+                                <TextBlock x:Uid="StartupSuggestionBody" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" />
                             </StackPanel>
-                            <Button Grid.Column="1" Style="{StaticResource PrimaryButtonStyle}" Click="OnPreviewPlanClicked" VerticalAlignment="Center">
-                                <Button.Resources>
-                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
-                                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
-                                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
-                                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
-                                </Button.Resources>
-                                <TextBlock x:Uid="StartupPreviewPlanButton" Foreground="White" FontWeight="SemiBold" />
+                            <Button Grid.Column="1" Style="{StaticResource DotifyPrimaryButtonStyle}" Click="OnPreviewPlanClicked" VerticalAlignment="Center">
+                                <TextBlock x:Uid="StartupPreviewPlanButton" FontWeight="SemiBold" />
                             </Button>
                         </Grid>
                     </Border>
 
-                <Border Style="{StaticResource CardBorderStyle}" Padding="0" VerticalAlignment="Top">
+                <Border Style="{StaticResource DotifyCardStyle}" Padding="0" VerticalAlignment="Top">
                     <StackPanel>
                         <!--  WinUI has no SharedSizeGroup, so a header row and its data rows are separate Grids
                               that size independently. Auto columns therefore cannot line up: the header's Auto
@@ -211,7 +199,7 @@
                               own template minimum and comes out wider. The widths below are declared on the
                               ColumnDefinitions of both grids so neither depends on what its children want. Change
                               one and change the other.  -->
-                        <Grid Padding="20,12" ColumnSpacing="16" Background="{StaticResource Gray50Brush}" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                        <Grid Padding="20,12" ColumnSpacing="16" Background="{ThemeResource DotifyColorSurfaceInsetBrush}" BorderBrush="{ThemeResource DotifyColorBorderBrush}" BorderThickness="0,0,0,1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="140" />
@@ -219,16 +207,16 @@
                                 <ColumnDefinition Width="260" />
                                 <ColumnDefinition Width="154" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" x:Uid="StartupColumnName" Style="{StaticResource CaptionTextStyle}" />
-                            <TextBlock Grid.Column="1" x:Uid="StartupColumnTiming" Style="{StaticResource CaptionTextStyle}" />
-                            <TextBlock Grid.Column="2" x:Uid="StartupColumnLastStarted" Style="{StaticResource CaptionTextStyle}" />
-                            <TextBlock Grid.Column="3" x:Uid="StartupColumnSource" Style="{StaticResource CaptionTextStyle}" />
-                            <TextBlock Grid.Column="4" x:Uid="StartupColumnEnabled" Style="{StaticResource CaptionTextStyle}" />
+                            <TextBlock Grid.Column="0" x:Uid="StartupColumnName" Style="{StaticResource DotifyHintTextStyle}" />
+                            <TextBlock Grid.Column="1" x:Uid="StartupColumnTiming" Style="{StaticResource DotifyHintTextStyle}" />
+                            <TextBlock Grid.Column="2" x:Uid="StartupColumnLastStarted" Style="{StaticResource DotifyHintTextStyle}" />
+                            <TextBlock Grid.Column="3" x:Uid="StartupColumnSource" Style="{StaticResource DotifyHintTextStyle}" />
+                            <TextBlock Grid.Column="4" x:Uid="StartupColumnEnabled" Style="{StaticResource DotifyHintTextStyle}" />
                         </Grid>
 
                         <TextBlock
                             x:Uid="StartupEmptyMessage"
-                            Style="{StaticResource CaptionTextStyle}"
+                            Style="{StaticResource DotifyHintTextStyle}"
                             Margin="20,16"
                             Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" />
 
@@ -236,7 +224,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="viewmodels:StartupItemDisplay">
                                     <!--  Widths must match the header grid above.  -->
-                                    <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{ThemeResource DotifyColorBorderBrush}" BorderThickness="0,0,0,1">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="140" />
@@ -246,32 +234,32 @@
                                         </Grid.ColumnDefinitions>
 
                                         <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                                            <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{x:Bind Subtitle}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{x:Bind DisabledAtDisplay}" Style="{StaticResource CaptionTextStyle}" />
+                                            <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource DotifyTextSm}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{x:Bind Subtitle}" Style="{StaticResource DotifyHintTextStyle}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{x:Bind DisabledAtDisplay}" Style="{StaticResource DotifyHintTextStyle}" />
                                         </StackPanel>
 
                                         <!--  What Windows measured, with the reason in a tooltip — including why a row is "Not timed".  -->
                                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Background="Transparent" ToolTipService.ToolTip="{x:Bind TimingTooltip, Mode=OneWay}">
-                                            <Border Width="72" Height="6" CornerRadius="3" Background="{StaticResource Gray100Brush}" VerticalAlignment="Center">
-                                                <Border HorizontalAlignment="Left" Width="{x:Bind TimingBarWidth, Mode=OneWay}" CornerRadius="3" Background="{StaticResource Secondary400Brush}" />
+                                            <Border Width="72" Height="6" CornerRadius="3" Background="{ThemeResource DotifyColorSurfaceInsetBrush}" VerticalAlignment="Center">
+                                                <Border HorizontalAlignment="Left" Width="{x:Bind TimingBarWidth, Mode=OneWay}" CornerRadius="3" Background="{ThemeResource DotifyColorSecondaryBrush}" />
                                             </Border>
-                                            <TextBlock Text="{x:Bind TimingDisplay, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" FontSize="13" VerticalAlignment="Center" />
+                                            <TextBlock Text="{x:Bind TimingDisplay, Mode=OneWay}" Style="{StaticResource DotifyBodySmTextStyle}" FontSize="13" VerticalAlignment="Center" />
                                         </StackPanel>
 
                                         <Grid Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left">
-                                            <Border Background="{StaticResource WarningSurfaceBrush}" CornerRadius="10" Padding="8,1" Visibility="{x:Bind IsStale, Mode=OneWay}">
-                                                <TextBlock Text="{x:Bind LastStartedDisplay, Mode=OneWay}" FontSize="{StaticResource FontSizeXs}" FontWeight="SemiBold" Foreground="{StaticResource WarningTextBrush}" />
+                                            <Border Background="{ThemeResource DotifyColorWarningLightBrush}" CornerRadius="10" Padding="8,1" Visibility="{x:Bind IsStale, Mode=OneWay}">
+                                                <TextBlock Text="{x:Bind LastStartedDisplay, Mode=OneWay}" FontSize="{StaticResource DotifyTextXs}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorWarningTextBrush}" />
                                             </Border>
-                                            <TextBlock Text="{x:Bind LastStartedDisplay, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" FontSize="13" Visibility="{x:Bind IsRecent, Mode=OneWay}" />
+                                            <TextBlock Text="{x:Bind LastStartedDisplay, Mode=OneWay}" Style="{StaticResource DotifyBodySmTextStyle}" FontSize="13" Visibility="{x:Bind IsRecent, Mode=OneWay}" />
                                         </Grid>
 
                                         <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                            <TextBlock Text="{x:Bind SourceLabel}" Style="{StaticResource BodyTextStyle}" FontSize="13" TextWrapping="Wrap" />
+                                            <TextBlock Text="{x:Bind SourceLabel}" Style="{StaticResource DotifyBodySmTextStyle}" FontSize="13" TextWrapping="Wrap" />
                                             <FontIcon
                                                 Glyph="&#xE72E;"
                                                 FontSize="12"
-                                                Foreground="{StaticResource Secondary600Brush}"
+                                                Foreground="{ThemeResource DotifyColorSecondaryBrush}"
                                                 Visibility="{x:Bind RequiresElevation}"
                                                 VerticalAlignment="Center" />
                                         </StackPanel>
@@ -315,24 +303,24 @@
                         </SelectorBar>
                     </Grid>
 
-                    <Border Style="{StaticResource CardBorderStyle}" Padding="0">
+                    <Border Style="{StaticResource DotifyCardStyle}" Padding="0">
                         <StackPanel>
                             <!--  Widths declared on the ColumnDefinitions, matching the row grid below, for the
                                   reason spelled out over the startup table above.  -->
-                            <Grid Padding="20,12" ColumnSpacing="16" Background="{StaticResource Gray50Brush}" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                            <Grid Padding="20,12" ColumnSpacing="16" Background="{ThemeResource DotifyColorSurfaceInsetBrush}" BorderBrush="{ThemeResource DotifyColorBorderBrush}" BorderThickness="0,0,0,1">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="140" />
                                     <ColumnDefinition Width="154" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" x:Uid="ServicesColumnName" Style="{StaticResource CaptionTextStyle}" />
-                                <TextBlock Grid.Column="1" x:Uid="ServicesColumnLabel" Style="{StaticResource CaptionTextStyle}" />
-                                <TextBlock Grid.Column="2" x:Uid="ServicesColumnEnabled" Style="{StaticResource CaptionTextStyle}" />
+                                <TextBlock Grid.Column="0" x:Uid="ServicesColumnName" Style="{StaticResource DotifyHintTextStyle}" />
+                                <TextBlock Grid.Column="1" x:Uid="ServicesColumnLabel" Style="{StaticResource DotifyHintTextStyle}" />
+                                <TextBlock Grid.Column="2" x:Uid="ServicesColumnEnabled" Style="{StaticResource DotifyHintTextStyle}" />
                             </Grid>
 
                             <TextBlock
                                 x:Uid="ServicesEmptyMessage"
-                                Style="{StaticResource CaptionTextStyle}"
+                                Style="{StaticResource DotifyHintTextStyle}"
                                 Margin="20,16"
                                 Visibility="{x:Bind Services.IsEmpty, Mode=OneWay}" />
 
@@ -340,7 +328,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="viewmodels:ServiceItemDisplay">
                                         <!--  Widths must match the header grid above.  -->
-                                        <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                                        <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{ThemeResource DotifyColorBorderBrush}" BorderThickness="0,0,0,1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="140" />
@@ -348,11 +336,11 @@
                                             </Grid.ColumnDefinitions>
 
                                             <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind DisplayName}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="{x:Bind StateLabel}" Style="{StaticResource CaptionTextStyle}" />
+                                                <TextBlock Text="{x:Bind DisplayName}" FontSize="{StaticResource DotifyTextSm}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{x:Bind StateLabel}" Style="{StaticResource DotifyHintTextStyle}" />
                                                 <TextBlock
                                                     Text="{x:Bind WhatBreaks}"
-                                                    Style="{StaticResource CaptionTextStyle}"
+                                                    Style="{StaticResource DotifyHintTextStyle}"
                                                     TextWrapping="Wrap"
                                                     MaxWidth="520"
                                                     HorizontalAlignment="Left"
@@ -362,7 +350,7 @@
                                             <TextBlock
                                                 Grid.Column="1"
                                                 Text="{x:Bind TierLabel}"
-                                                Style="{StaticResource BodyTextStyle}"
+                                                Style="{StaticResource DotifyBodySmTextStyle}"
                                                 FontSize="13"
                                                 TextWrapping="Wrap"
                                                 VerticalAlignment="Center" />
@@ -385,14 +373,14 @@
 
                     <Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Left">
                         <Expander.Header>
-                            <TextBlock x:Uid="ServicesLegendHeader" Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock x:Uid="ServicesLegendHeader" Style="{StaticResource DotifyBodySmTextStyle}" />
                         </Expander.Header>
                         <ItemsControl ItemsSource="{x:Bind Services.Legend}" Margin="0,4,0,8">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="viewmodels:ServiceTierLegendEntry">
                                     <StackPanel Spacing="2" Margin="0,0,0,10">
-                                        <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
-                                        <TextBlock Text="{x:Bind Description}" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                        <TextBlock Text="{x:Bind Name}" Style="{StaticResource DotifyBodySmTextStyle}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{x:Bind Description}" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" />
                                     </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -402,9 +390,9 @@
 
                 <!--  Performance  -->
                 <StackPanel x:Name="PerformancePanel" Spacing="16" Visibility="Collapsed">
-                    <Border Style="{StaticResource CardBorderStyle}">
+                    <Border Style="{StaticResource DotifyCardStyle}">
                         <StackPanel Spacing="16">
-                            <TextBlock x:Uid="PerformanceVisualEffectsHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                            <TextBlock x:Uid="PerformanceVisualEffectsHeader" Style="{StaticResource DotifyBodySmTextStyle}" FontWeight="SemiBold" />
 
                             <Grid ColumnSpacing="16">
                                 <Grid.ColumnDefinitions>
@@ -412,8 +400,8 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" Spacing="2">
-                                    <TextBlock x:Uid="PerformanceAnimations" Style="{StaticResource BodyTextStyle}" />
-                                    <TextBlock x:Uid="PerformanceAnimationsNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                    <TextBlock x:Uid="PerformanceAnimations" Style="{StaticResource DotifyBodySmTextStyle}" />
+                                    <TextBlock x:Uid="PerformanceAnimationsNote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" />
                                 </StackPanel>
                                 <ToggleSwitch
                                     Grid.Column="1"
@@ -430,8 +418,8 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" Spacing="2">
-                                    <TextBlock x:Uid="PerformanceTransparency" Style="{StaticResource BodyTextStyle}" />
-                                    <TextBlock x:Uid="PerformanceTransparencyNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                    <TextBlock x:Uid="PerformanceTransparency" Style="{StaticResource DotifyBodySmTextStyle}" />
+                                    <TextBlock x:Uid="PerformanceTransparencyNote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" />
                                 </StackPanel>
                                 <ToggleSwitch
                                     Grid.Column="1"
@@ -444,21 +432,21 @@
 
                             <StackPanel Spacing="4">
                                 <Button x:Uid="PerformanceAdvancedButton" Command="{x:Bind Performance.OpenAdvancedPerformanceOptionsCommand}" />
-                                <TextBlock x:Uid="PerformanceAdvancedNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                <TextBlock x:Uid="PerformanceAdvancedNote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" />
                             </StackPanel>
                         </StackPanel>
                     </Border>
 
                     <!--  Power mode: Windows' own, per power source, and only meaningful under Balanced.  -->
-                    <Border Style="{StaticResource CardBorderStyle}" Visibility="{x:Bind Performance.HasPowerMode, Mode=OneWay}">
+                    <Border Style="{StaticResource DotifyCardStyle}" Visibility="{x:Bind Performance.HasPowerMode, Mode=OneWay}">
                         <StackPanel Spacing="12">
-                            <TextBlock x:Uid="PerformancePowerModeHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
-                            <TextBlock x:Uid="PerformancePowerModeNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="620" HorizontalAlignment="Left" />
+                            <TextBlock x:Uid="PerformancePowerModeHeader" Style="{StaticResource DotifyBodySmTextStyle}" FontWeight="SemiBold" />
+                            <TextBlock x:Uid="PerformancePowerModeNote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" MaxWidth="620" HorizontalAlignment="Left" />
 
                             <InfoBar x:Uid="PerformancePowerModeInert" IsOpen="{x:Bind Performance.PowerModeIsInert, Mode=OneWay}" Severity="Informational" IsClosable="False" />
 
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <TextBlock x:Uid="PerformancePowerModePluggedIn" Style="{StaticResource BodyTextStyle}" Width="120" VerticalAlignment="Center" />
+                                <TextBlock x:Uid="PerformancePowerModePluggedIn" Style="{StaticResource DotifyBodySmTextStyle}" Width="120" VerticalAlignment="Center" />
                                 <ComboBox
                                     MinWidth="240"
                                     SelectedIndex="{x:Bind Performance.PluggedInModeIndex, Mode=TwoWay}"
@@ -471,7 +459,7 @@
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="16" Visibility="{x:Bind Performance.HasBattery, Mode=OneWay}">
-                                <TextBlock x:Uid="PerformancePowerModeOnBattery" Style="{StaticResource BodyTextStyle}" Width="120" VerticalAlignment="Center" />
+                                <TextBlock x:Uid="PerformancePowerModeOnBattery" Style="{StaticResource DotifyBodySmTextStyle}" Width="120" VerticalAlignment="Center" />
                                 <ComboBox
                                     MinWidth="240"
                                     SelectedIndex="{x:Bind Performance.OnBatteryModeIndex, Mode=TwoWay}"
@@ -486,23 +474,23 @@
                     </Border>
 
                     <!--  Background apps: on hands the choice back to Windows, off is "Never".  -->
-                    <Border Style="{StaticResource CardBorderStyle}" Padding="0" Visibility="{x:Bind Performance.HasBackgroundApps, Mode=OneWay}">
+                    <Border Style="{StaticResource DotifyCardStyle}" Padding="0" Visibility="{x:Bind Performance.HasBackgroundApps, Mode=OneWay}">
                         <StackPanel>
                             <StackPanel Padding="20,16,20,12" Spacing="2">
-                                <TextBlock x:Uid="PerformanceBackgroundHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
-                                <TextBlock x:Uid="PerformanceBackgroundNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="620" HorizontalAlignment="Left" />
+                                <TextBlock x:Uid="PerformanceBackgroundHeader" Style="{StaticResource DotifyBodySmTextStyle}" FontWeight="SemiBold" />
+                                <TextBlock x:Uid="PerformanceBackgroundNote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" MaxWidth="620" HorizontalAlignment="Left" />
                             </StackPanel>
                             <ItemsControl ItemsSource="{x:Bind Performance.BackgroundApps}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="viewmodels:BackgroundAppDisplay">
-                                        <Grid Padding="20,8" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,1,0,0">
+                                        <Grid Padding="20,8" ColumnSpacing="16" BorderBrush="{ThemeResource DotifyColorBorderBrush}" BorderThickness="0,1,0,0">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="154" />
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="{x:Bind AccessLabel, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" />
+                                                <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource DotifyTextSm}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{x:Bind AccessLabel, Mode=OneWay}" Style="{StaticResource DotifyHintTextStyle}" />
                                             </StackPanel>
                                             <ToggleSwitch
                                                 Grid.Column="1"
@@ -518,9 +506,9 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Style="{StaticResource CardBorderStyle}">
+                    <Border Style="{StaticResource DotifyCardStyle}">
                         <StackPanel Spacing="12">
-                            <TextBlock x:Uid="PerformancePowerPlanHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                            <TextBlock x:Uid="PerformancePowerPlanHeader" Style="{StaticResource DotifyBodySmTextStyle}" FontWeight="SemiBold" />
 
                             <ComboBox
                                 x:Name="PowerPlanBox"
@@ -532,14 +520,14 @@
                                 IsEnabled="{x:Bind Performance.HasPowerPlanChoice, Mode=OneWay}"
                                 SelectionChanged="OnPowerPlanChanged" />
 
-                            <TextBlock x:Uid="PerformancePowerPlanNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="620" HorizontalAlignment="Left" />
+                            <TextBlock x:Uid="PerformancePowerPlanNote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" MaxWidth="620" HorizontalAlignment="Left" />
                             <Button x:Uid="PerformancePowerSettingsButton" Command="{x:Bind Performance.OpenPowerSettingsCommand}" />
                         </StackPanel>
                     </Border>
 
-                    <Border Style="{StaticResource CardBorderStyle}">
+                    <Border Style="{StaticResource DotifyCardStyle}">
                         <StackPanel Spacing="12">
-                            <TextBlock x:Uid="PerformanceIndexingHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                            <TextBlock x:Uid="PerformanceIndexingHeader" Style="{StaticResource DotifyBodySmTextStyle}" FontWeight="SemiBold" />
 
                             <Grid ColumnSpacing="16">
                                 <Grid.ColumnDefinitions>
@@ -547,8 +535,8 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" Spacing="2">
-                                    <TextBlock x:Uid="PerformanceIndexingLabel" Style="{StaticResource BodyTextStyle}" />
-                                    <TextBlock x:Uid="PerformanceIndexingNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                                    <TextBlock x:Uid="PerformanceIndexingLabel" Style="{StaticResource DotifyBodySmTextStyle}" />
+                                    <TextBlock x:Uid="PerformanceIndexingNote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" />
                                 </StackPanel>
                                 <ToggleSwitch
                                     Grid.Column="1"
@@ -568,9 +556,9 @@
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="12">
             <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Width="20" Height="20" />
-            <TextBlock x:Name="StartupNote" x:Uid="StartupToggleNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" VerticalAlignment="Center" Visibility="Collapsed" />
-            <TextBlock x:Name="ServicesNote" x:Uid="ServicesDisableNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" VerticalAlignment="Center" Visibility="Collapsed" />
-            <TextBlock x:Name="ServicesSpeedNote" x:Uid="ServicesSpeedNote" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" VerticalAlignment="Center" Visibility="Collapsed" />
+            <TextBlock x:Name="StartupNote" x:Uid="StartupToggleNote" Style="{StaticResource DotifyHintTextStyle}" MaxWidth="720" VerticalAlignment="Center" Visibility="Collapsed" />
+            <TextBlock x:Name="ServicesNote" x:Uid="ServicesDisableNote" Style="{StaticResource DotifyHintTextStyle}" MaxWidth="720" VerticalAlignment="Center" Visibility="Collapsed" />
+            <TextBlock x:Name="ServicesSpeedNote" x:Uid="ServicesSpeedNote" Style="{StaticResource DotifyHintTextStyle}" MaxWidth="720" VerticalAlignment="Center" Visibility="Collapsed" />
         </StackPanel>
     </Grid>
 </Page>
