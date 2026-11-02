@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/DotifyBIZ/upkeep/compare/v1.2.0...v1.3.0) (2026-11-02)
+
+
+### Features
+
+* **app:** adopt the Dotify One Design System, with dark mode ([f064027](https://github.com/DotifyBIZ/upkeep/commit/f0640271f100564d2f9cfb268af48af614b85592))
+* **ui:** follow Windows high contrast ([979e7b1](https://github.com/DotifyBIZ/upkeep/commit/979e7b1cca7f82b42d5b94b40291474e63322cc1))
+
 # [1.2.0](https://github.com/DotifyBIZ/upkeep/compare/v1.1.0...v1.2.0) (2026-10-29)
 
 
