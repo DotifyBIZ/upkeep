@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:Upkeep.App.ViewModels"
     mc:Ignorable="d"
-    Background="{StaticResource Gray50Brush}">
+    Background="{ThemeResource DotifyColorSurfaceBrush}">
 
     <Grid Padding="32,24" RowSpacing="16">
         <Grid.RowDefinitions>
@@ -18,8 +18,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Spacing="4">
-            <TextBlock x:Uid="DriversTitle" Style="{StaticResource PageTitleTextStyle}" />
-            <TextBlock x:Uid="DriversSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
+            <TextBlock x:Uid="DriversTitle" Style="{StaticResource DotifyPageTitleTextStyle}" />
+            <TextBlock x:Uid="DriversSubtitle" Style="{StaticResource DotifyPageSubtitleTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
         </StackPanel>
 
         <SelectorBar x:Name="Tabs" Grid.Row="1" Margin="-12,4,0,0" SelectionChanged="Tabs_SelectionChanged">
@@ -42,32 +42,32 @@
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <Button x:Uid="DriversScanButton" Click="CheckForUpdates_Click" />
                         <ProgressRing IsActive="{x:Bind ViewModel.IsSearching, Mode=OneWay}" Width="18" Height="18" VerticalAlignment="Center" />
-                        <TextBlock Text="{x:Bind ViewModel.SearchSummary, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="520" />
+                        <TextBlock Text="{x:Bind ViewModel.SearchSummary, Mode=OneWay}" Style="{StaticResource DotifyHintTextStyle}" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="520" />
                     </StackPanel>
 
-                    <Border Style="{StaticResource CardBorderStyle}" Padding="0">
+                    <Border Style="{StaticResource DotifyCardStyle}" Padding="0">
                         <StackPanel>
-                            <Grid Padding="20,12" ColumnSpacing="16" Background="{StaticResource Gray50Brush}" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                            <Grid Padding="20,12" ColumnSpacing="16" Background="{ThemeResource DotifyColorSurfaceInsetBrush}" BorderBrush="{ThemeResource DotifyColorBorderBrush}" BorderThickness="0,0,0,1">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" x:Uid="DriversColumnDevice" Style="{StaticResource CaptionTextStyle}" />
-                                <TextBlock Grid.Column="1" x:Uid="DriversColumnVersion" Style="{StaticResource CaptionTextStyle}" Width="220" />
-                                <TextBlock Grid.Column="2" x:Uid="DriversColumnStatus" Style="{StaticResource CaptionTextStyle}" Width="160" />
+                                <TextBlock Grid.Column="0" x:Uid="DriversColumnDevice" Style="{StaticResource DotifyHintTextStyle}" />
+                                <TextBlock Grid.Column="1" x:Uid="DriversColumnVersion" Style="{StaticResource DotifyHintTextStyle}" Width="220" />
+                                <TextBlock Grid.Column="2" x:Uid="DriversColumnStatus" Style="{StaticResource DotifyHintTextStyle}" Width="160" />
                             </Grid>
 
                             <TextBlock
                                 x:Uid="DriversEmptyMessage"
-                                Style="{StaticResource CaptionTextStyle}"
+                                Style="{StaticResource DotifyHintTextStyle}"
                                 Margin="20,16"
                                 Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" />
 
                             <ItemsControl ItemsSource="{x:Bind ViewModel.Drivers}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="viewmodels:DriverDisplay">
-                                        <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,0,0,1">
+                                        <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{ThemeResource DotifyColorBorderBrush}" BorderThickness="0,0,0,1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
@@ -75,14 +75,14 @@
                                             </Grid.ColumnDefinitions>
 
                                             <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind DeviceName}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="{x:Bind Subtitle}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{x:Bind DeviceName}" FontSize="{StaticResource DotifyTextSm}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{x:Bind Subtitle}" Style="{StaticResource DotifyHintTextStyle}" TextTrimming="CharacterEllipsis" />
                                             </StackPanel>
 
                                             <TextBlock
                                                 Grid.Column="1"
                                                 Text="{x:Bind VersionDisplay}"
-                                                Style="{StaticResource BodyTextStyle}"
+                                                Style="{StaticResource DotifyBodySmTextStyle}"
                                                 FontSize="13"
                                                 Width="220"
                                                 VerticalAlignment="Center"
@@ -91,7 +91,7 @@
                                             <TextBlock
                                                 Grid.Column="2"
                                                 Text="{x:Bind StatusDisplay, Mode=OneWay}"
-                                                Style="{StaticResource CaptionTextStyle}"
+                                                Style="{StaticResource DotifyHintTextStyle}"
                                                 Width="160"
                                                 VerticalAlignment="Center" />
                                         </Grid>
@@ -106,19 +106,19 @@
                             <Button x:Uid="DriversInstallButton" Command="{x:Bind ViewModel.OpenWindowsUpdateCommand}" />
                             <Button x:Uid="DriversRollbackButton" Command="{x:Bind ViewModel.OpenDeviceManagerCommand}" />
                         </StackPanel>
-                        <TextBlock x:Uid="DriversInstallNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="720" HorizontalAlignment="Left" />
-                        <TextBlock x:Uid="DriversRollbackNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" MaxWidth="720" HorizontalAlignment="Left" />
+                        <TextBlock x:Uid="DriversInstallNote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" MaxWidth="720" HorizontalAlignment="Left" />
+                        <TextBlock x:Uid="DriversRollbackNote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" MaxWidth="720" HorizontalAlignment="Left" />
                     </StackPanel>
                 </StackPanel>
 
                 <!--  Windows Update  -->
                 <StackPanel x:Name="UpdatesPanel" Spacing="16" Visibility="Collapsed" MaxWidth="720" HorizontalAlignment="Left">
-                    <Border Style="{StaticResource CardBorderStyle}">
+                    <Border Style="{StaticResource DotifyCardStyle}">
                         <StackPanel Spacing="12">
-                            <TextBlock x:Uid="UpdatesPauseHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                            <TextBlock x:Uid="UpdatesPauseHeader" Style="{StaticResource DotifyBodySmTextStyle}" FontWeight="SemiBold" />
 
                             <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock x:Uid="UpdatesPauseLabel" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" />
+                                <TextBlock x:Uid="UpdatesPauseLabel" Style="{StaticResource DotifyBodySmTextStyle}" VerticalAlignment="Center" />
                                 <NumberBox
                                     x:Name="PauseDaysBox"
                                     Minimum="1"
@@ -130,20 +130,20 @@
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="12" Visibility="{x:Bind ViewModel.IsPaused, Mode=OneWay}">
-                                <TextBlock Text="{x:Bind ViewModel.PausedUntilDisplay, Mode=OneWay}" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" />
+                                <TextBlock Text="{x:Bind ViewModel.PausedUntilDisplay, Mode=OneWay}" Style="{StaticResource DotifyBodySmTextStyle}" VerticalAlignment="Center" />
                                 <Button x:Uid="UpdatesResumeButton" Click="Resume_Click" />
                             </StackPanel>
 
-                            <TextBlock x:Uid="UpdatesPauseNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                            <TextBlock x:Uid="UpdatesPauseNote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
 
-                    <Border x:Name="DeferralCard" Style="{StaticResource CardBorderStyle}">
+                    <Border x:Name="DeferralCard" Style="{StaticResource DotifyCardStyle}">
                         <StackPanel Spacing="12">
-                            <TextBlock x:Uid="UpdatesDeferHeader" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" />
+                            <TextBlock x:Uid="UpdatesDeferHeader" Style="{StaticResource DotifyBodySmTextStyle}" FontWeight="SemiBold" />
 
                             <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock x:Uid="UpdatesDeferFeatureLabel" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" />
+                                <TextBlock x:Uid="UpdatesDeferFeatureLabel" Style="{StaticResource DotifyBodySmTextStyle}" VerticalAlignment="Center" />
                                 <NumberBox
                                     Minimum="0"
                                     Maximum="365"
@@ -153,7 +153,7 @@
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock x:Uid="UpdatesDeferQualityLabel" Style="{StaticResource BodyTextStyle}" VerticalAlignment="Center" />
+                                <TextBlock x:Uid="UpdatesDeferQualityLabel" Style="{StaticResource DotifyBodySmTextStyle}" VerticalAlignment="Center" />
                                 <NumberBox
                                     Minimum="0"
                                     Maximum="30"
@@ -162,7 +162,7 @@
                                     Width="140" />
                             </StackPanel>
 
-                            <TextBlock x:Uid="UpdatesDeferNote" Style="{StaticResource CaptionTextStyle}" TextWrapping="Wrap" />
+                            <TextBlock x:Uid="UpdatesDeferNote" Style="{StaticResource DotifyHintTextStyle}" TextWrapping="Wrap" />
 
                             <Button x:Uid="UpdatesDeferApplyButton" Click="ApplyDeferral_Click" HorizontalAlignment="Left" />
                         </StackPanel>

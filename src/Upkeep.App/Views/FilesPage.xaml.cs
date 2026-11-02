@@ -103,7 +103,7 @@ public sealed partial class FilesPage : Page
             PrimaryButtonText = _localization.GetString(ViewModel.DeletePermanently ? "FilesConfirmDeletePrimary" : "FilesConfirmQuarantinePrimary"),
             CloseButtonText = _localization.GetString("CleanupConfirmCancel"),
             DefaultButton = ContentDialogButton.Close,
-            PrimaryButtonStyle = (Style)Application.Current.Resources["PrimaryButtonStyle"],
+            PrimaryButtonStyle = (Style)Application.Current.Resources["DotifyPrimaryButtonStyle"],
         };
 
         return await dialog.ShowAsync();

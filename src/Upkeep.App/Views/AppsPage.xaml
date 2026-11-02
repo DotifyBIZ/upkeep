@@ -8,7 +8,7 @@
     xmlns:viewmodels="using:Upkeep.App.ViewModels"
     xmlns:converters="using:Upkeep.App.Converters"
     mc:Ignorable="d"
-    Background="{StaticResource Gray50Brush}">
+    Background="{ThemeResource DotifyColorSurfaceBrush}">
 
     <Page.Resources>
         <!-- Declared per page rather than in App.xaml — see FilesPage.xaml for why (WMC0001). -->
@@ -24,8 +24,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Spacing="4">
-            <TextBlock x:Uid="AppsTitle" Style="{StaticResource PageTitleTextStyle}" />
-            <TextBlock x:Uid="AppsSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
+            <TextBlock x:Uid="AppsTitle" Style="{StaticResource DotifyPageTitleTextStyle}" />
+            <TextBlock x:Uid="AppsSubtitle" Style="{StaticResource DotifyPageSubtitleTextStyle}" MaxWidth="640" HorizontalAlignment="Left" />
         </StackPanel>
 
         <Grid Grid.Row="1" ColumnSpacing="12">
@@ -46,7 +46,7 @@
             <TextBlock
                 Grid.Column="1"
                 Text="{x:Bind ViewModel.SummaryText, Mode=OneWay}"
-                Style="{StaticResource CaptionTextStyle}"
+                Style="{StaticResource DotifyHintTextStyle}"
                 VerticalAlignment="Center" />
 
             <ProgressRing
@@ -64,7 +64,7 @@
             Severity="Informational"
             IsClosable="False" />
 
-        <Border Grid.Row="3" Style="{StaticResource CardBorderStyle}" Padding="0">
+        <Border Grid.Row="3" Style="{StaticResource DotifyCardStyle}" Padding="0">
             <ListView
                 ItemsSource="{x:Bind ViewModel.Apps}"
                 SelectedItem="{x:Bind ViewModel.SelectedApp, Mode=TwoWay}"
@@ -95,21 +95,21 @@
                                 Background="{x:Bind Tint, Converter={StaticResource HexBrush}}">
                                 <TextBlock
                                     Text="{x:Bind Initial}"
-                                    FontSize="{StaticResource FontSizeSm}"
+                                    FontSize="{StaticResource DotifyTextSm}"
                                     FontWeight="SemiBold"
-                                    Foreground="{StaticResource Gray700Brush}"
+                                    Foreground="{ThemeResource DotifyColorOnSurfaceBrush}"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center" />
                             </Border>
 
                             <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{x:Bind Subtitle}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource DotifyTextSm}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{x:Bind Subtitle}" Style="{StaticResource DotifyHintTextStyle}" TextTrimming="CharacterEllipsis" />
                             </StackPanel>
 
-                            <TextBlock Grid.Column="2" Text="{x:Bind SourceLabel}" Style="{StaticResource CaptionTextStyle}" Width="120" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="3" Text="{x:Bind InstalledDisplay}" Style="{StaticResource CaptionTextStyle}" Width="110" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="4" Text="{x:Bind SizeDisplay}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Width="90" TextAlignment="Right" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="{x:Bind SourceLabel}" Style="{StaticResource DotifyHintTextStyle}" Width="120" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="3" Text="{x:Bind InstalledDisplay}" Style="{StaticResource DotifyHintTextStyle}" Width="110" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="4" Text="{x:Bind SizeDisplay}" FontSize="{StaticResource DotifyTextSm}" FontWeight="SemiBold" Width="90" TextAlignment="Right" VerticalAlignment="Center" />
 
                             <Button
                                 Grid.Column="5"

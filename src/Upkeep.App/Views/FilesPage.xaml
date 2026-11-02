@@ -8,7 +8,7 @@
     xmlns:viewmodels="using:Upkeep.App.ViewModels"
     xmlns:converters="using:Upkeep.App.Converters"
     mc:Ignorable="d"
-    Background="{StaticResource Gray50Brush}">
+    Background="{ThemeResource DotifyColorSurfaceBrush}">
 
     <Page.Resources>
         <!-- Declared per page rather than in App.xaml: the XAML compiler's second pass runs
@@ -27,8 +27,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Spacing="4">
-            <TextBlock x:Uid="FilesTitle" Style="{StaticResource PageTitleTextStyle}" />
-            <TextBlock x:Uid="FilesSubtitle" Style="{StaticResource PageSubtitleTextStyle}" MaxWidth="620" HorizontalAlignment="Left" />
+            <TextBlock x:Uid="FilesTitle" Style="{StaticResource DotifyPageTitleTextStyle}" />
+            <TextBlock x:Uid="FilesSubtitle" Style="{StaticResource DotifyPageSubtitleTextStyle}" MaxWidth="620" HorizontalAlignment="Left" />
         </StackPanel>
 
         <SelectorBar x:Name="Tabs" Grid.Row="1" Margin="-12,16,0,0" SelectionChanged="Tabs_SelectionChanged">
@@ -48,10 +48,10 @@
 
                 <!-- Where to look. Shared by all three scans, because they all answer questions
                      about the same folders. -->
-                <Border Style="{StaticResource CardBorderStyle}" Padding="20">
+                <Border Style="{StaticResource DotifyCardStyle}" Padding="20">
                     <StackPanel Spacing="14">
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock x:Uid="FilesLookInLabel" Style="{StaticResource SectionLabelTextStyle}" VerticalAlignment="Center" Width="72" />
+                            <TextBlock x:Uid="FilesLookInLabel" Style="{StaticResource DotifySectionLabelTextStyle}" VerticalAlignment="Center" Width="72" />
                             <ItemsControl ItemsSource="{x:Bind ViewModel.Folders}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -60,9 +60,9 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="x:String">
-                                        <Border Background="{StaticResource Gray100Brush}" CornerRadius="14" Padding="10,4" Height="28">
+                                        <Border Background="{ThemeResource DotifyColorSurfaceInsetBrush}" CornerRadius="14" Padding="10,4" Height="28">
                                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                                <TextBlock Text="{x:Bind}" FontSize="{StaticResource FontSizeSm}" VerticalAlignment="Center" />
+                                                <TextBlock Text="{x:Bind}" FontSize="{StaticResource DotifyTextSm}" VerticalAlignment="Center" />
                                                 <Button
                                                     x:Uid="FilesRemoveFolderButton"
                                                     Tag="{x:Bind}"
@@ -71,7 +71,7 @@
                                                     BorderThickness="0"
                                                     Padding="2"
                                                     MinWidth="0">
-                                                    <FontIcon Glyph="&#xE711;" FontSize="10" Foreground="{StaticResource Gray500Brush}" />
+                                                    <FontIcon Glyph="&#xE711;" FontSize="10" Foreground="{ThemeResource DotifyColorOnSurfaceMutedBrush}" />
                                                 </Button>
                                             </StackPanel>
                                         </Border>
@@ -82,18 +82,18 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Spacing="16">
-                            <TextBlock x:Uid="FilesSkippedExplanation" Style="{StaticResource CaptionTextStyle}" MaxWidth="560" VerticalAlignment="Center" />
+                            <TextBlock x:Uid="FilesSkippedExplanation" Style="{StaticResource DotifyHintTextStyle}" MaxWidth="560" VerticalAlignment="Center" />
                             <Button x:Name="ScanButton" x:Uid="FilesScanButton" Click="Scan_Click" VerticalAlignment="Center" />
                             <ProgressRing IsActive="{x:Bind ViewModel.IsScanning, Mode=OneWay}" Width="20" Height="20" VerticalAlignment="Center" />
                         </StackPanel>
                     </StackPanel>
                 </Border>
 
-                <TextBlock Text="{x:Bind ViewModel.SummaryText, Mode=OneWay}" Style="{StaticResource SectionLabelTextStyle}" />
+                <TextBlock Text="{x:Bind ViewModel.SummaryText, Mode=OneWay}" Style="{StaticResource DotifySectionLabelTextStyle}" />
 
             <TextBlock
                 Text="{x:Bind ViewModel.ShowingSomeOfTotal, Mode=OneWay}"
-                Style="{StaticResource CaptionTextStyle}"
+                Style="{StaticResource DotifyHintTextStyle}"
                 Visibility="{x:Bind ViewModel.IsShowingSomeOfTotal, Mode=OneWay}" />
         </StackPanel>
 
@@ -109,10 +109,10 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" x:Uid="FilesMatchExplanation" Style="{StaticResource CaptionTextStyle}" MaxWidth="720" HorizontalAlignment="Left" />
+                    <TextBlock Grid.Row="0" x:Uid="FilesMatchExplanation" Style="{StaticResource DotifyHintTextStyle}" MaxWidth="720" HorizontalAlignment="Left" />
                     <TextBlock Grid.Row="1"
                         x:Uid="FilesNoDuplicatesMessage"
-                        Style="{StaticResource CaptionTextStyle}"
+                        Style="{StaticResource DotifyHintTextStyle}"
                         Visibility="{x:Bind ViewModel.HasNoDuplicates, Mode=OneWay}" />
 
                 <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
@@ -122,17 +122,17 @@
                                 </ItemsRepeater.Layout>
                                 <ItemsRepeater.ItemTemplate>
                             <DataTemplate x:DataType="viewmodels:DuplicateGroupDisplay">
-                                <Border Style="{StaticResource CardBorderStyle}" Padding="0">
+                                <Border Style="{StaticResource DotifyCardStyle}" Padding="0">
                                     <StackPanel>
                                         <StackPanel Orientation="Horizontal" Spacing="12" Padding="20,14">
-                                            <FontIcon Glyph="&#xE8A5;" FontSize="16" Foreground="{StaticResource Gray700Brush}" />
-                                            <TextBlock Text="{x:Bind Name}" Style="{StaticResource SectionLabelTextStyle}" VerticalAlignment="Center" />
-                                            <TextBlock Text="{x:Bind Summary}" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
+                                            <FontIcon Glyph="&#xE8A5;" FontSize="16" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" />
+                                            <TextBlock Text="{x:Bind Name}" Style="{StaticResource DotifySectionLabelTextStyle}" VerticalAlignment="Center" />
+                                            <TextBlock Text="{x:Bind Summary}" Style="{StaticResource DotifyHintTextStyle}" VerticalAlignment="Center" />
                                         </StackPanel>
                                         <ItemsControl ItemsSource="{x:Bind Files}">
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate x:DataType="viewmodels:DuplicateFileDisplay">
-                                                    <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,1,0,0">
+                                                    <Grid Padding="20,10" ColumnSpacing="16" BorderBrush="{ThemeResource DotifyColorBorderBrush}" BorderThickness="0,1,0,0">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" />
                                                             <ColumnDefinition Width="*" />
@@ -143,17 +143,17 @@
                                                             <ColumnDefinition Width="96" />
                                                         </Grid.ColumnDefinitions>
                                                         <CheckBox Grid.Column="0" MinWidth="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
-                                                        <TextBlock Grid.Column="1" Text="{x:Bind Path}" Style="{StaticResource BodyTextStyle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-                                                        <TextBlock Grid.Column="2" Text="{x:Bind ModifiedDisplay}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                                        <TextBlock Grid.Column="1" Text="{x:Bind Path}" Style="{StaticResource DotifyBodySmTextStyle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                                        <TextBlock Grid.Column="2" Text="{x:Bind ModifiedDisplay}" Style="{StaticResource DotifyHintTextStyle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                                                         <Border
                                                             Grid.Column="3"
                                                             Visibility="{x:Bind IsKeeper}"
-                                                            Background="{StaticResource SuccessSurfaceBrush}"
+                                                            Background="{ThemeResource DotifyColorSuccessLightBrush}"
                                                             CornerRadius="10"
                                                             Padding="8,2"
                                                             HorizontalAlignment="Left"
                                                             VerticalAlignment="Center">
-                                                            <TextBlock x:Uid="FilesKeepingTagText" FontSize="{StaticResource FontSizeXs}" Foreground="{StaticResource SuccessTextBrush}" />
+                                                            <TextBlock x:Uid="FilesKeepingTagText" FontSize="{StaticResource DotifyTextXs}" Foreground="{ThemeResource DotifyColorSuccessTextBrush}" />
                                                         </Border>
                                                     </Grid>
                                                 </DataTemplate>
@@ -175,15 +175,15 @@
                 </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0"
                         x:Uid="FilesNoLargeFilesMessage"
-                        Style="{StaticResource CaptionTextStyle}"
+                        Style="{StaticResource DotifyHintTextStyle}"
                         Visibility="{x:Bind ViewModel.HasNoLargeFiles, Mode=OneWay}" />
 
-                    <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Padding="0">
+                    <Border Grid.Row="1" Style="{StaticResource DotifyCardStyle}" Padding="0">
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <ItemsRepeater ItemsSource="{x:Bind ViewModel.LargeFiles}">
                                 <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="viewmodels:LargeFileDisplay">
-                                    <Grid Padding="20,12" ColumnSpacing="16" BorderBrush="{StaticResource Gray200Brush}" BorderThickness="0,1,0,0">
+                                    <Grid Padding="20,12" ColumnSpacing="16" BorderBrush="{ThemeResource DotifyColorBorderBrush}" BorderThickness="0,1,0,0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
@@ -196,12 +196,12 @@
                                         </Grid.ColumnDefinitions>
                                         <CheckBox Grid.Column="0" MinWidth="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
                                         <StackPanel Grid.Column="1" Spacing="2">
-                                            <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{x:Bind Path}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource DotifyTextSm}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{x:Bind Path}" Style="{StaticResource DotifyHintTextStyle}" TextTrimming="CharacterEllipsis" />
                                         </StackPanel>
-                                        <TextBlock Grid.Column="2" Text="{x:Bind Reason}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Column="3" Text="{x:Bind ModifiedDisplay}" Style="{StaticResource CaptionTextStyle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Column="4" Text="{x:Bind SizeDisplay}" TextAlignment="Right" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" Text="{x:Bind Reason}" Style="{StaticResource DotifyHintTextStyle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="3" Text="{x:Bind ModifiedDisplay}" Style="{StaticResource DotifyHintTextStyle}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="4" Text="{x:Bind SizeDisplay}" TextAlignment="Right" FontSize="{StaticResource DotifyTextSm}" FontWeight="SemiBold" VerticalAlignment="Center" />
                                     </Grid>
                                 </DataTemplate>
                                 </ItemsRepeater.ItemTemplate>
@@ -214,12 +214,12 @@
             <ScrollViewer x:Name="UsagePanel" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
                 <StackPanel Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="16">
-                        <TextBlock Text="{x:Bind ViewModel.UsageBreadcrumb, Mode=OneWay}" Style="{StaticResource SectionLabelTextStyle}" VerticalAlignment="Center" />
-                        <TextBlock Text="{x:Bind ViewModel.UsageSummary, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Bind ViewModel.UsageBreadcrumb, Mode=OneWay}" Style="{StaticResource DotifySectionLabelTextStyle}" VerticalAlignment="Center" />
+                        <TextBlock Text="{x:Bind ViewModel.UsageSummary, Mode=OneWay}" Style="{StaticResource DotifyHintTextStyle}" VerticalAlignment="Center" />
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Spacing="16">
-                        <Border Style="{StaticResource CardBorderStyle}" Padding="16" VerticalAlignment="Top">
+                        <Border Style="{StaticResource DotifyCardStyle}" Padding="16" VerticalAlignment="Top">
                             <ItemsControl ItemsSource="{x:Bind ViewModel.TreemapRects}" Width="560" Height="468">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -241,8 +241,8 @@
                                             CornerRadius="4"
                                             Background="{x:Bind Fill, Converter={StaticResource HexBrush}}">
                                             <StackPanel Margin="8,6" Visibility="{x:Bind ShowLabel}">
-                                                <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource FontSizeXs}" FontWeight="SemiBold" Foreground="{StaticResource Gray900Brush}" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="{x:Bind SizeDisplay}" FontSize="{StaticResource FontSizeXs}" Foreground="{StaticResource Gray900Brush}" />
+                                                <TextBlock Text="{x:Bind Name}" FontSize="{StaticResource DotifyTextXs}" FontWeight="SemiBold" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{x:Bind SizeDisplay}" FontSize="{StaticResource DotifyTextXs}" Foreground="{ThemeResource DotifyColorOnSurfaceBrush}" />
                                             </StackPanel>
                                         </Border>
                                     </DataTemplate>
@@ -250,9 +250,9 @@
                             </ItemsControl>
                         </Border>
 
-                        <Border Style="{StaticResource CardBorderStyle}" Padding="20" Width="300" VerticalAlignment="Top">
+                        <Border Style="{StaticResource DotifyCardStyle}" Padding="20" Width="300" VerticalAlignment="Top">
                             <StackPanel Spacing="12">
-                                <TextBlock x:Uid="FilesUsageLargestHeader" Style="{StaticResource SectionLabelTextStyle}" />
+                                <TextBlock x:Uid="FilesUsageLargestHeader" Style="{StaticResource DotifySectionLabelTextStyle}" />
                                 <ItemsControl ItemsSource="{x:Bind ViewModel.UsageRows}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -267,15 +267,15 @@
                                                         <ColumnDefinition Width="*" />
                                                         <ColumnDefinition Width="Auto" />
                                                     </Grid.ColumnDefinitions>
-                                                    <TextBlock Grid.Column="0" Text="{x:Bind Name}" Style="{StaticResource BodyTextStyle}" TextTrimming="CharacterEllipsis" />
-                                                    <TextBlock Grid.Column="1" Text="{x:Bind SizeDisplay}" FontSize="{StaticResource FontSizeSm}" FontWeight="SemiBold" />
+                                                    <TextBlock Grid.Column="0" Text="{x:Bind Name}" Style="{StaticResource DotifyBodySmTextStyle}" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Grid.Column="1" Text="{x:Bind SizeDisplay}" FontSize="{StaticResource DotifyTextSm}" FontWeight="SemiBold" />
                                                 </Grid>
-                                                <ProgressBar Value="{x:Bind Share}" Maximum="1" Height="4" CornerRadius="2" Foreground="{StaticResource Secondary600Brush}" Background="{StaticResource Gray100Brush}" />
+                                                <ProgressBar Value="{x:Bind Share}" Maximum="1" Height="4" CornerRadius="2" Foreground="{ThemeResource DotifyColorSecondaryBrush}" Background="{ThemeResource DotifyColorSurfaceInsetBrush}" />
                                             </StackPanel>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
-                                <TextBlock Text="{x:Bind ViewModel.UsageUnreadableNote, Mode=OneWay}" Style="{StaticResource CaptionTextStyle}" />
+                                <TextBlock Text="{x:Bind ViewModel.UsageUnreadableNote, Mode=OneWay}" Style="{StaticResource DotifyHintTextStyle}" />
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -290,8 +290,8 @@
             Grid.Row="4"
             Margin="-32,16,-32,-24"
             Padding="32,16"
-            Background="White"
-            BorderBrush="{StaticResource Gray200Brush}"
+            Background="{ThemeResource DotifyColorSurfaceRaisedBrush}"
+            BorderBrush="{ThemeResource DotifyColorBorderBrush}"
             BorderThickness="0,1,0,0">
             <Grid ColumnSpacing="16">
                 <Grid.ColumnDefinitions>
@@ -301,8 +301,8 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Spacing="2">
-                    <TextBlock Text="{x:Bind ViewModel.SelectionSummary, Mode=OneWay}" Style="{StaticResource SectionLabelTextStyle}" />
-                    <TextBlock x:Uid="FilesQuarantineNote" Style="{StaticResource CaptionTextStyle}" />
+                    <TextBlock Text="{x:Bind ViewModel.SelectionSummary, Mode=OneWay}" Style="{StaticResource DotifySectionLabelTextStyle}" />
+                    <TextBlock x:Uid="FilesQuarantineNote" Style="{StaticResource DotifyHintTextStyle}" />
                 </StackPanel>
 
                 <CheckBox
@@ -313,16 +313,10 @@
 
                 <Button
                     Grid.Column="2"
-                    Style="{StaticResource PrimaryButtonStyle}"
+                    Style="{StaticResource DotifyPrimaryButtonStyle}"
                     IsEnabled="{x:Bind ViewModel.CanRemove, Mode=OneWay}"
                     Click="Remove_Click">
-                    <Button.Resources>
-                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Primary700Color}" />
-                        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Primary700Color}" />
-                        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
-                        <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
-                    </Button.Resources>
-                    <TextBlock x:Uid="FilesQuarantineButtonLabel" Foreground="White" FontWeight="SemiBold" />
+                    <TextBlock x:Uid="FilesQuarantineButtonLabel" FontWeight="SemiBold" />
                 </Button>
             </Grid>
         </Border>
