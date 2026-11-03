@@ -26,3 +26,5 @@ spec:
   # Its XAML resources are pasted from the Dotify One Design System.
   dependsOn:
     - component:default/one-design-system
+  consumesApis:
+    - github-rest-api
