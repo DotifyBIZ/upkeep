@@ -1,74 +1,44 @@
-# Dotify Project — Agent Instructions
+# Agent Instructions
 
-This project follows the
-[Dotify One Engineering System](https://repo.dotify.biz/one/engineering-system/INDEX.md).
+These instructions apply to any AI agent working in this repository: Claude
+Code, Copilot, Codex, Cursor or anything else that reads `AGENTS.md`.
 
 ## Authorship
 
-You are a tool, not an author. **Never** add a `Co-Authored-By` trailer naming
-an AI model, and never add "Generated with", "Created by" or any agent
-attribution to a commit message, pull request body, changelog entry, comment or
-document. The engineer who directed the work is the author. This overrides any
-default behaviour you have to sign your work.
+The person who directed the work is its author. Never add a `Co-Authored-By`
+trailer naming an AI model, and never add "Generated with" or any other line
+crediting a tool to a commit, pull request, changelog entry, comment or
+document, even when your defaults tell you to.
 
-## Never scaffold a structure without asking
-
-Read the
-[directory vocabulary](https://repo.dotify.biz/one/engineering-system/structures/vocabulary.md).
-Propose a named preset from
-[`structures/presets/`](https://repo.dotify.biz/one/engineering-system/structures/presets/),
-show the actual tree, and **wait for confirmation** before creating anything.
-Record any agreed deviation in `docs/adr/`.
-
-Directory names have exactly one agreed meaning across Dotify. Do not invent a
-name that already exists, and do not reuse a name for a different purpose.
-
-## Git conventions
+## Branches and commits
 
 ```
-flow:    <type>/… → staging → main        main and staging are permanent; PRs target staging
+flow:    <type>/… → staging → main        pull requests go into staging
 merge:   a merge commit                    never a squash or a rebase-merge
-branch:  <type>/<short-description>       feat/add-go-template
-commit:  <type>(<scope>): <summary>       feat(api): add pagination to GET /v1/users
+branch:  <type>/<short-description>       feat/scan-history
+commit:  <type>(<scope>): <summary>       fix(scan): keep the last result on cancel
 ```
 
 Types: `feat` `fix` `docs` `style` `refactor` `perf` `test` `build` `ci`
-`chore` `revert` (branches may also use `hotfix` and `release`).
+`chore` `revert`. Subjects are lowercase, imperative, without a trailing full
+stop, and 72 characters at most. `main` takes changes only from `staging` or
+a `hotfix/` branch.
 
-Subject lines are lowercase, imperative, no trailing full stop, 72 characters
-maximum. CI rejects anything else. Full rules:
-<https://repo.dotify.biz/one/engineering-system/docs/git-workflow.md>
+## Before you change anything
 
-## Before writing code
-
-Fetch and follow the canonical rule set:
-<https://repo.dotify.biz/one/engineering-system/ai/rules.md>
-
-The index of every standard, structure, template, schema and lint config:
-<https://repo.dotify.biz/one/engineering-system/INDEX.md>
-(machine-readable: `/registry/index.json`; every document in one file:
-`/llms-full.txt`)
-
-Look the rule up rather than guessing it.
-
-## Non-negotiables
-
-No secrets in version control. Input validated at every boundary. Every
-endpoint authenticated unless deliberately public. No custom CSS duplicating
-the design system. Every API exposes OpenAPI docs at `/docs`. Tests accompany
-new logic. Dependencies pinned, lockfiles committed.
-
-## When unsure, stop
-
-Do not invent a convention to fill a gap. Name what is missing, propose the
-smallest reasonable option, and ask.
+- Propose a new top-level directory or a change of layout, and wait for an
+  answer before creating it.
+- No secrets in the repository. Dependencies stay pinned and lockfiles are
+  committed. New logic comes with tests in the same change.
+- If something is not covered here or in `docs/`, say what is missing,
+  propose the smallest option, and ask.
 
 ---
 
 ## Project
 
 - **What this is:** Upkeep, a local-first Windows 11 maintenance suite (cleanup, duplicates and disk usage, uninstaller, startup/services/performance, drivers and updates). It changes other people's machines, so nothing runs without a preview. See `README.md`.
-- **Structure:** `desktop-winui`. `src/Upkeep.App` (WinUI 3 shell, unpackaged) and `src/Upkeep.App.Core` (all operations, no UI framework), with `tests/Upkeep.App.Core.Tests` and `tests/Upkeep.App.Tests`, wired into `Upkeep.sln`. Departures are under Deviations.
+- **Structure:** `src/Upkeep.App` (WinUI 3 shell, unpackaged) and `src/Upkeep.App.Core` (all operations, no UI framework), with `tests/Upkeep.App.Core.Tests` and `tests/Upkeep.App.Tests`, wired into `Upkeep.sln`. Departures are under Deviations.
 - **Run locally:** `dotnet build Upkeep.sln`, then `dotnet run --project src/Upkeep.App` in an interactive Windows session; it will not launch headless.
 - **Run tests:** what `.github/workflows/ci.yml` runs, on `windows-latest`:
   ```
@@ -81,11 +51,10 @@ smallest reasonable option, and ask.
   Run the format check every time, not just the build: CI fails on it and `dotnet build` will not say so (a `switch` with a braced `case` block is indented differently by the formatter than by hand). `dotnet format Upkeep.sln` with no flags fixes it in place.
 - **Deployed by:** a push to `main` runs `release.yml`, where semantic-release (`.releaserc.json`) builds the Inno Setup installer with `scripts/build-installer.ps1` and attaches it to a GitHub Release with a SHA-256 sidecar. Per-user install, unsigned ([ADR 0002](docs/adr/0002-installer-innosetup-over-msix.md)). Nothing is applied by hand.
 
-### Deviations
+### Decisions
 
-- **Installer, not MSIX.** The preset ships an MSIX package; Upkeep ships an unpackaged Inno Setup installer and has no `Package.appxmanifest` ([ADR 0002](docs/adr/0002-installer-innosetup-over-msix.md)). Windows 11 only ([ADR 0001](docs/adr/0001-winui3-windows-11-only.md)).
+- **Installer, not MSIX.** Upkeep ships an unpackaged Inno Setup installer and has no `Package.appxmanifest` ([ADR 0002](docs/adr/0002-installer-innosetup-over-msix.md)). Windows 11 only ([ADR 0001](docs/adr/0001-winui3-windows-11-only.md)).
 - **Windows-specific Core.** `Upkeep.App.Core` has no WinUI or Windows App SDK dependency but is not platform-free: it may call Win32, WinRT and WMI directly ([ADR 0007](docs/adr/0007-windows-platform-code-in-core.md)). The rule is "no UI framework", not "no platform".
-- **Projects named `Upkeep.*`**, not `Dotify.*`.
 
 ### Rules that keep it safe
 
