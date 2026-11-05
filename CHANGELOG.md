@@ -1,3 +1,44 @@
+# [1.3.0](https://github.com/DotifyBIZ/upkeep/compare/v1.2.0...v1.3.0) (2026-11-02)
+
+
+### Features
+
+* **app:** adopt the Dotify One Design System, with dark mode ([f064027](https://github.com/DotifyBIZ/upkeep/commit/f0640271f100564d2f9cfb268af48af614b85592))
+* **ui:** follow Windows high contrast ([979e7b1](https://github.com/DotifyBIZ/upkeep/commit/979e7b1cca7f82b42d5b94b40291474e63322cc1))
+
+# [1.2.0](https://github.com/DotifyBIZ/upkeep/compare/v1.1.0...v1.2.0) (2026-10-29)
+
+
+### Bug Fixes
+
+* **performance:** list only real apps for background access, and quiet the startup table ([ba9b893](https://github.com/DotifyBIZ/upkeep/commit/ba9b893ddbad0e71f0d1a7d38fddbe2e00f0eb2c))
+
+
+### Features
+
+* **elevation:** read Windows' own startup timings in the helper ([1b0f1df](https://github.com/DotifyBIZ/upkeep/commit/1b0f1dff75ecb50c969ef8bc8b7e633226b8d029))
+* **milestones:** add a Milestones section for rhythm and measured outcomes ([686d4e5](https://github.com/DotifyBIZ/upkeep/commit/686d4e5443309a448319ec69038ea17e5786ec2a))
+* **performance:** power mode, background apps and a measured before-and-after ([e5f32bb](https://github.com/DotifyBIZ/upkeep/commit/e5f32bbc7d0824e66e54eef5f5702b01ab33fab6))
+* **startup:** add Speed check and measured startup, power mode and background apps ([ae64cdf](https://github.com/DotifyBIZ/upkeep/commit/ae64cdf1670d426f36bd80bd163b91cc3ee2d54a))
+* **startup:** rank startup apps by the delay Windows measured ([6c270f9](https://github.com/DotifyBIZ/upkeep/commit/6c270f97b6ae2d57855604881d2527c2180067f1))
+
+# [1.1.0](https://github.com/DotifyBIZ/upkeep/compare/v1.0.0...v1.1.0) (2026-09-18)
+
+
+### Bug Fixes
+
+* five defects found by running the app ([1ea26cb](https://github.com/DotifyBIZ/upkeep/commit/1ea26cb62bb7e391fd087299ce344635ba598f65))
+
+
+### Features
+
+* **cleanup:** let people add their own cleanup rules ([e346732](https://github.com/DotifyBIZ/upkeep/commit/e34673211b08b95b2b34ce53fedc60ed201427ec))
+* **home:** turn Home into a real dashboard ([935a3b3](https://github.com/DotifyBIZ/upkeep/commit/935a3b3eb0ce9b4f157e78118b4e09333e668083))
+* **settings:** show the diagnostic log in the app ([b0a43ff](https://github.com/DotifyBIZ/upkeep/commit/b0a43ff9ce93f5f640b0a45e4fa13acc0260debd))
+* **shell:** add a Ctrl+K command palette ([ae16c1f](https://github.com/DotifyBIZ/upkeep/commit/ae16c1f33c7e2c0b41ea85ccfdaaf7f6ceae1c81))
+* **shell:** introduce Upkeep on first launch ([3c11be3](https://github.com/DotifyBIZ/upkeep/commit/3c11be35a33e05085884daf6b5295a54a3ff3187))
+* **shell:** say when a cleanup finished off-page ([2d4c5f8](https://github.com/DotifyBIZ/upkeep/commit/2d4c5f833bc953e2463a425ce4be293629bf5313))
+
 # 1.0.0 (2026-09-14)
 
 
