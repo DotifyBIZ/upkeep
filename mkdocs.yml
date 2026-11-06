@@ -1,0 +1,9 @@
+site_name: Upkeep
+repo_url: https://github.com/DotifyBIZ/upkeep
+edit_uri: edit/main/docs/
+
+docs_dir: docs
+
+# No nav: TechDocs builds it from docs/, so a new page appears without editing this file.
+plugins:
+  - techdocs-core
