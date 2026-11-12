@@ -35,7 +35,7 @@ can hold personal files the user chose to move. Nothing leaves the machine.
   Actions, NuGet and npm
   ([dependabot.yml](https://github.com/DotifyBIZ/upkeep/blob/main/.github/dependabot.yml)).
 - **Lockfiles:** a committed `packages.lock.json` per project; CI restores in locked mode.
-- **Code signing:** the installer is unsigned today. Signing is not set up.
+- **Code signing:** the installer is unsigned, because a signing certificate costs money. That is decided.
 
 ## Lifecycle
 
