@@ -4,6 +4,30 @@ edit_uri: edit/main/docs/
 
 docs_dir: docs
 
-# No nav: TechDocs builds it from docs/, so a new page appears without editing this file.
+nav:
+  - Overview: index.md
+  - For users:
+      - User guide: user-guide.md
+  - For admins:
+      - Admin guide: admin-guide.md
+  - For the owner:
+      - Ownership: ownership.md
+  - For developers:
+      - Developer guide: developer-guide.md
+      - Design tokens: design-tokens.md
+  - Decisions:
+      - Index: adr/README.md
+      - "0001 WinUI 3, Windows 11 only": adr/0001-winui3-windows-11-only.md
+      - "0002 Inno Setup installer": adr/0002-installer-innosetup-over-msix.md
+      - "0003 Local diagnostic logging": adr/0003-local-diagnostic-logging.md
+      - "0004 Update check": adr/0004-update-check-network-call.md
+      - "0005 Elevated helper": adr/0005-elevated-helper-named-pipe.md
+      - "0006 Safety model": adr/0006-safety-model.md
+      - "0007 Platform code in Core": adr/0007-windows-platform-code-in-core.md
+      - "0008 Deferred privacy cleaner": adr/0008-deferred-privacy-cleaner-and-shredder.md
+      - "0009 Driver updates": adr/0009-driver-updates-search-in-app-install-in-windows.md
+      - "0010 Measured speed": adr/0010-measured-speed-and-where-the-numbers-come-from.md
+      - Template: adr/template.md
+
 plugins:
   - techdocs-core
