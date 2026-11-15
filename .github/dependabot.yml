@@ -1,19 +1,35 @@
 version: 2
+# Monthly, one grouped pull request per ecosystem (1ES GitHub Actions standard,
+# "Spend minutes deliberately"). Security updates still arrive when published.
 updates:
   - package-ecosystem: github-actions
     directory: /
     target-branch: staging
     schedule:
-      interval: weekly
+      interval: monthly
+    groups:
+      all:
+        patterns: ["*"]
 
   - package-ecosystem: nuget
     directory: /
     target-branch: staging
     schedule:
-      interval: weekly
+      interval: monthly
+    groups:
+      all:
+        patterns: ["*"]
+    ignore:
+      # Microsoft.Extensions.* follow the .NET major version; 11.x targets net10+
+      # and the app is on net9.0. Move them together with the TargetFramework.
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: npm
     directory: /
     target-branch: staging
     schedule:
-      interval: weekly
+      interval: monthly
+    groups:
+      all:
+        patterns: ["*"]
