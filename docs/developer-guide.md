@@ -2,8 +2,8 @@
 
 How the codebase is organized, how a scan becomes an executed change, and where the rules live that
 keep a maintenance tool from doing damage. Process — branching, commits, the PR checklist — is in
-[CONTRIBUTING.md](../CONTRIBUTING.md); the engineering rules and platform footguns are in
-[CLAUDE.md](../CLAUDE.md), which is worth reading before your first change.
+[CONTRIBUTING.md](https://github.com/DotifyBIZ/upkeep/blob/main/CONTRIBUTING.md); the engineering rules and platform footguns are in
+[CLAUDE.md](https://github.com/DotifyBIZ/upkeep/blob/main/CLAUDE.md), which is worth reading before your first change.
 
 ## Contents
 
