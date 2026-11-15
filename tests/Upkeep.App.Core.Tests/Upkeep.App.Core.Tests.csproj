@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="coverlet.collector" Version="10.1.0" />
     <!-- MSBuild-integration coverage collector, not the VSTest coverlet.collector above — this
          one supports failing the build itself via /p:Threshold, which CI uses to enforce
          CLAUDE.md's 80% branch-coverage bar on this project specifically (the UI project is
